@@ -1,6 +1,6 @@
 import os
 import unittest
-from pyJMT.network import Network, Source, Queue, Sink, OpenClass, Exponential, Erlang, Replayer, SchedStrategy
+from pyJMT.network import Network, Source, Queue, Delay, Sink, OpenClass, ClosedClass, Exp, Erlang, Replayer, SchedStrategy
 import xml.etree.ElementTree as ET
 
 def elements_equal(e1, e2, path=''):
@@ -42,8 +42,8 @@ class TestXML(unittest.TestCase):
 
         # declare and set classes
         oclass = OpenClass(model, "myClass")
-        source.setArrival(oclass, Exponential(1))
-        queue.setService(oclass, Exponential(2))
+        source.setArrival(oclass, Exp(1))
+        queue.setService(oclass, Exp(2))
 
         # topology
         model.link(source, queue)
@@ -60,7 +60,6 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("M/M/1 Ok")
 
-
     def test_MG1(self):
         # declare model
         model = Network("M/G/1")
@@ -73,8 +72,8 @@ class TestXML(unittest.TestCase):
         # declare and set classes
         jobclass1 = OpenClass(model, 'Class1')
         jobclass2 = OpenClass(model, 'Class2')
-        source.setArrival(jobclass1, Exponential(0.5))
-        source.setArrival(jobclass2, Exponential(0.5))
+        source.setArrival(jobclass1, Exp(0.5))
+        source.setArrival(jobclass2, Exp(0.5))
 
         queue.setService(jobclass1, Erlang.fitMeanAndSCV(1, 1/3))
         queue.setService(jobclass2, Replayer('example_trace.txt'))
@@ -94,6 +93,37 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("M/G/1 Ok")
 
+    def test_MIP(self):
+        # declare model
+        S = 2
+        N = 3
+        model = Network('MIP')
+
+        # declare nodes
+        delay = Delay(model, 'WorkingState')
+        queue = Queue(model, 'RepairQueue', SchedStrategy.FCFS)
+        queue.setNumberOfServers(S)
+
+        # declare and set classes
+        cclass = ClosedClass(model, 'Machines', N, delay)
+        delay.setService(cclass, Exp(0.5))
+        queue.setService(cclass, Exp(4.0))
+
+        # topology
+        #TODO CHECK HOW LINKING SHOULD WORK
+        model.link(delay, queue)
+        model.link(queue, delay)
+
+        # create solution file
+        model.generate_xml("testmip_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse('testmip_solution.jsimg')
+        reference_tree = ET.parse('testmip_reference.jsimg')
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("MIP Ok")
 
 if __name__ == '__main__':
     unittest.main()

@@ -5,14 +5,19 @@ from enum import Enum
 class Network:
     def __init__(self, name):
         self.name = name
-        self.sources = []
-        self.sinks = []
-        self.queues = []
+        self.sources: [Source] = []
+        self.sinks: [Sink] = []
+        self.queues: [Queue] = []
+        self.delays: [Delay] = []
         self.links: [Link] = []
-        self.classes = []
+        self.openclasses: [OpenClass] = []
+        self.closedclasses: [ClosedClass] = []
 
-    def add_class(self, oclass):
-        self.classes.append(oclass)
+    def add_openclass(self, oclass):
+        self.openclasses.append(oclass)
+
+    def add_closedclass(self, cclass):
+        self.openclasses.append(cclass)
 
     def add_source(self, source):
         self.sources.append(source)
@@ -22,6 +27,9 @@ class Network:
 
     def add_queue(self, queue):
         self.queues.append(queue)
+
+    def add_delay(self, delay):
+        self.delays.append(delay)
 
     def add_link(self, link):
         self.links.append(link)
@@ -50,8 +58,11 @@ class Network:
                                     "polling": "1.0",
                                     "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "SIMmodeldefinition.xsd"})
 
-        for oclass in self.classes:
+        for oclass in self.openclasses:
             ET.SubElement(sim, "userClass", name=oclass.name, priority="0", referenceSource=oclass.referenceSource, type="open")
+
+        for cclass in self.closedclasses:
+            ET.SubElement(sim, "userClass", customers=cclass.numMachines ,name=cclass.name, priority="0", referenceSource=cclass.referenceSource, type="closed")
 
         for source in self.sources:
             node = ET.SubElement(sim, "node", name=source.name)
@@ -99,7 +110,6 @@ class Network:
                                             name="probability")
                 ET.SubElement(probability, "value").text = "1.0"
 
-
         for queue in self.queues:
             node = ET.SubElement(sim, "node", name=queue.name)
             section = ET.SubElement(node, "section", className="Queue")
@@ -128,7 +138,7 @@ class Network:
 
             section = ET.SubElement(node, "section", className="Server")
             maxJobsPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxJobs")
-            ET.SubElement(maxJobsPar, "value").text = "1"
+            ET.SubElement(maxJobsPar, "value").text = str(queue.numberOfServers)
 
             parameter = ET.SubElement(section, "parameter", array="true", classPath="java.lang.Integer",
                                       name="numberOfVisits")
@@ -146,7 +156,7 @@ class Network:
                                              classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
                                              name="ServiceTimeStrategy")
 
-                if isinstance(service, Exponential):
+                if isinstance(service, Exp):
                     ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Exponential",
                                   name="Exponential")
                     distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ExponentialPar",
@@ -196,17 +206,112 @@ class Network:
                                             name="probability")
                 ET.SubElement(probability, "value").text = "1.0"
 
+        for delay in self.delays:
+            node = ET.SubElement(sim, "node", name=delay.name)
+            section = ET.SubElement(node, "section", className="Queue")
+            sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
+            ET.SubElement(sizepar, "value").text = "-1"
+
+            dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
+                                           name="dropStrategies")
+
+            for cclass in delay.services.keys():
+                ET.SubElement(dropStrategies, "refClass").text = cclass
+                dropStrategy = ET.SubElement(dropStrategies, "subParameter", classPath="java.lang.String",
+                                             name="dropStrategy")
+                ET.SubElement(dropStrategy, "value").text = "drop"
+
+            ET.SubElement(section, "parameter",
+                          classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
+            parameter = ET.SubElement(section, "parameter", array="true",
+                                      classPath="jmt.engine.NetStrategies.QueuePutStrategy",
+                                      name="QueuePutStrategy")
+
+            for cclass in delay.services.keys():
+                ET.SubElement(parameter, "refClass").text = cclass
+                ET.SubElement(parameter, "subParameter",
+                              classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+
+            section = ET.SubElement(node, "section", className="Delay")
+            parameter = ET.SubElement(section, "parameter", array="true",
+                                      classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
+            for jobclass, service in delay.services.items():
+                ET.SubElement(parameter, "refClass").text = jobclass
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
+                                             name="ServiceTimeStrategy")
+
+                if isinstance(service, Exp):
+                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Exponential",
+                                  name="Exponential")
+                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ExponentialPar",
+                                             name="distrPar")
+                    lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda")
+                    ET.SubElement(lambdaPar, "value").text = str(float(service.lambda_value))
+                elif isinstance(service, Erlang):
+                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Erlang",
+                                  name="Erlang")
+                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ErlangPar",
+                                             name="distrPar")
+                    alphaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
+                    ET.SubElement(alphaPar, "value").text = str(float(service.alpha))
+                    rPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Long", name="r")
+                    ET.SubElement(rPar, "value").text = str(int(service.r))
+                elif isinstance(service, Replayer):
+                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Replayer",
+                                  name="Replayer")
+                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ReplayerPar",
+                                             name="distrPar")
+                    lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.String", name="fileName")
+                    ET.SubElement(lambdaPar, "value").text = service.fileName
+
+
+            section = ET.SubElement(node, "section", className="Router")
+            parameter = ET.SubElement(section, "parameter", array="true",
+                                      classPath="jmt.engine.NetStrategies.RoutingStrategy", name="RoutingStrategy")
+            for oclass in delay.services.keys():
+                refClass = ET.SubElement(parameter, "refClass")
+                refClass.text = oclass
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
+                                             name="Probabilities")
+                empiricalEntryArray = ET.SubElement(subParameter, "subParameter", array="true",
+                                                    classPath="jmt.engine.random.EmpiricalEntry",
+                                                    name="EmpiricalEntryArray")
+                empiricalEntry = ET.SubElement(empiricalEntryArray, "subParameter",
+                                               classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
+                stationName = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.String",
+                                            name="stationName")
+                target = ""
+                for link in self.links:
+                    if link.source.name == delay.name:
+                        target = link.target.name
+                        break
+                ET.SubElement(stationName, "value").text = target
+                probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
+                                            name="probability")
+                ET.SubElement(probability, "value").text = "1.0"
+
         for sink in self.sinks:
             node = ET.SubElement(sim, "node", name=sink.name)
             ET.SubElement(node, "section", className="JobSink")
-
 
         measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
         for measure in measuresQueue:
             for queue in self.queues:
                 for oclass in queue.services.keys():
                     ET.SubElement(sim, "measure", alpha="0.01", name=f"{queue.name}_{oclass}_{measure}", nodeType="station",
-                                  precision="0.03", referenceNode=queue.name, referenceUserClass="myClass", type=measure,
+                                  precision="0.03", referenceNode=queue.name, referenceUserClass=f"{oclass}", type=measure,
+                                  verbose="false")
+
+        measuresDelay = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
+        for measure in measuresDelay:
+            for delay in self.delays:
+                for jobclass in delay.services.keys():
+                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{delay.name}_{jobclass}_{measure}",
+                                  nodeType="station",
+                                  precision="0.03", referenceNode=delay.name, referenceUserClass=f"{jobclass}",
+                                  type=measure,
                                   verbose="false")
 
         measuresSource = ["Throughput", "Arrival Rate"]
@@ -214,11 +319,19 @@ class Network:
             for source in self.sources:
                 for oclass in source.arrivals.keys():
                     ET.SubElement(sim, "measure", alpha="0.01", name=f"{source.name}_{oclass}_{measure}", nodeType="station",
-                                  precision="0.03", referenceNode=source.name, referenceUserClass="myClass", type=measure,
+                                  precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}", type=measure,
                                   verbose="false")
+
 
         for link in self.links:
             ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
+
+
+        for delay in self.delays:
+            preload = ET.SubElement(sim, "preload")
+            stationPopulations = ET.SubElement(preload, "stationPopulations", stationName=delay.name)
+            ET.SubElement(stationPopulations, "classPopulation", population=str(delay.numMachines), refClass=delay.name)
+
 
         tree = ET.ElementTree(root)
         with open(fileName, 'wb') as f:
@@ -231,7 +344,7 @@ class SchedStrategy(Enum):
     FCFS = "FCFS"
     # Add other scheduling strategies here as needed
 
-class Exponential:
+class Exp:
     def __init__(self, lambda_value):
         self.lambda_value = lambda_value
 
@@ -260,8 +373,19 @@ class OpenClass:
     def __init__(self, model: Network, name):
         self.model = model
         self.name = name
-        self.model.add_class(self)
+        self.model.add_openclass(self)
         self.referenceSource = None
+
+class ClosedClass:
+    def __init__(self, model: Network, name, numMachines, delay):
+        self.model = model
+        self.name = name
+        self.model.add_closedclass(self)
+        self.referenceSource = delay.name
+        self.delay = delay
+        self.numMachines = numMachines
+        delay.numMachines = numMachines
+
 
 class Queue:
     def __init__(self, model: Network, name, strategy):
@@ -270,9 +394,24 @@ class Queue:
         self.strategy = strategy
         self.services = {}
         self.model.add_queue(self)
+        self.numberOfServers = 1
 
     def setService(self, oclass, service):
         self.services[oclass.name] = service
+
+    def setNumberOfServers(self, x):
+        self.numberOfServers = x
+
+class Delay:
+    def __init__(self, model: Network, name):
+        self.model = model
+        self.name = name
+        self.services = {}
+        self.model.add_delay(self)
+        self.numMachines = 1
+
+    def setService(self, jobclass, service):
+        self.services[jobclass.name] = service
 
 class Source:
     def __init__(self, model: Network, name):
