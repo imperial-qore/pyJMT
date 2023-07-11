@@ -17,7 +17,7 @@ class Network:
         self.openclasses.append(oclass)
 
     def add_closedclass(self, cclass):
-        self.openclasses.append(cclass)
+        self.closedclasses.append(cclass)
 
     def add_source(self, source):
         self.sources.append(source)
@@ -62,7 +62,7 @@ class Network:
             ET.SubElement(sim, "userClass", name=oclass.name, priority="0", referenceSource=oclass.referenceSource, type="open")
 
         for cclass in self.closedclasses:
-            ET.SubElement(sim, "userClass", customers=cclass.numMachines ,name=cclass.name, priority="0", referenceSource=cclass.referenceSource, type="closed")
+            ET.SubElement(sim, "userClass", customers=str(cclass.numMachines) ,name=cclass.name, priority="0", referenceSource=cclass.referenceSource, type="closed")
 
         for source in self.sources:
             node = ET.SubElement(sim, "node", name=source.name)
@@ -330,8 +330,9 @@ class Network:
         for delay in self.delays:
             preload = ET.SubElement(sim, "preload")
             stationPopulations = ET.SubElement(preload, "stationPopulations", stationName=delay.name)
-            ET.SubElement(stationPopulations, "classPopulation", population=str(delay.numMachines), refClass=delay.name)
-
+            for jobclass in delay.services.keys():
+                ET.SubElement(stationPopulations, "classPopulation", population=str(delay.numMachines),
+                              refClass=jobclass)
 
         tree = ET.ElementTree(root)
         with open(fileName, 'wb') as f:

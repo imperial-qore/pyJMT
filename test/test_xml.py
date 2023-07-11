@@ -7,17 +7,17 @@ def elements_equal(e1, e2, path=''):
     if e1.tag != e2.tag:
         print(f"Different tag at {path}: {e1.tag} != {e2.tag}")
         return False
-    if e1.text != None and e2.text != None:
-        if os.path.basename(e1.text) != os.path.basename(e2.text):
-            print(f'Different text {e1.text} != {e2.text}')
+    if (e1.text or '').strip() != (e2.text or '').strip():
+        # Check if the text is a filename
+        if not (os.path.isfile(e1.text.strip()) and os.path.isfile(e2.text.strip())):
+            print(f'Different text at {path}: {e1.text} != {e2.text}')
             return False
     if (e1.tail or '').strip() != (e2.tail or '').strip():
         print(f"Different tail at {path}: {e1.tail} != {e2.tail}")
         return False
-    # Ignore attributes for now as timestamp and file name will be different
-    # if e1.attrib != e2.attrib:
-    #     print(f"Different attributes at {path}: {e1.attrib} != {e2.attrib}")
-    #     return False
+    if path != '' and path != '/sim' and e1.attrib != e2.attrib:  # Skip attribute check for top-level element
+        print(f"Different attributes at {path}: {e1.attrib} != {e2.attrib}")
+        return False
     if len(e1) != len(e2):
         e1children = []
         e2children = []
@@ -28,6 +28,7 @@ def elements_equal(e1, e2, path=''):
         print(f"Different number of children at {path}, solution has {e1children}, reference has {e2children}")
         return False
     return all(elements_equal(c1, c2, path=f"{path}/{c1.tag}") for c1, c2 in zip(sorted(e1, key=ET.tostring), sorted(e2, key=ET.tostring)))
+
 
 class TestXML(unittest.TestCase):
 
