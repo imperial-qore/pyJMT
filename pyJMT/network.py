@@ -1,6 +1,9 @@
-import os
 import xml.etree.ElementTree as ET
-from enum import Enum
+from .nodes import Source, Sink, Queue, Delay
+from .classes import OpenClass, ClosedClass
+from .services import Exp, Erlang, Replayer
+from .link import Link
+
 
 class Network:
     def __init__(self, name):
@@ -341,96 +344,14 @@ class Network:
         tree.write(fileName)
 
 
-class SchedStrategy(Enum):
-    FCFS = "FCFS"
-    # Add other scheduling strategies here as needed
-
-class Exp:
-    def __init__(self, lambda_value):
-        self.lambda_value = lambda_value
 
 
-class Erlang:
-    def __init__(self, alpha, r):
-        self.alpha = alpha
-        self.r = r
-
-    @staticmethod
-    def fitMeanAndSCV(mean, scv):
-        r = 1/scv
-        alpha = r/mean
-        return Erlang(alpha, r)
-
-class Replayer:
-    def __init__(self, fileName):
-        self.fileName = os.getcwd() + "/" + fileName
-
-class Link:
-    def __init__(self, source, target):
-        self.source = source
-        self.target = target
-
-class OpenClass:
-    def __init__(self, model: Network, name):
-        self.model = model
-        self.name = name
-        self.model.add_openclass(self)
-        self.referenceSource = None
-
-class ClosedClass:
-    def __init__(self, model: Network, name, numMachines, delay):
-        self.model = model
-        self.name = name
-        self.model.add_closedclass(self)
-        self.referenceSource = delay.name
-        self.delay = delay
-        self.numMachines = numMachines
-        delay.numMachines = numMachines
 
 
-class Queue:
-    def __init__(self, model: Network, name, strategy):
-        self.model = model
-        self.name = name
-        self.strategy = strategy
-        self.services = {}
-        self.model.add_queue(self)
-        self.numberOfServers = 1
-
-    def setService(self, oclass, service):
-        self.services[oclass.name] = service
-
-    def setNumberOfServers(self, x):
-        self.numberOfServers = x
-
-class Delay:
-    def __init__(self, model: Network, name):
-        self.model = model
-        self.name = name
-        self.services = {}
-        self.model.add_delay(self)
-        self.numMachines = 1
-
-    def setService(self, jobclass, service):
-        self.services[jobclass.name] = service
-
-class Source:
-    def __init__(self, model: Network, name):
-        self.model = model
-        self.name = name
-        self.arrivals = {}
-        self.model.add_source(self)
 
 
-    def setArrival(self, oclass, arrival):
-        self.arrivals[oclass.name] = arrival
-        oclass.referenceSource = self.name
 
-class Sink:
-    def __init__(self, model: Network, name):
-        self.model = model
-        self.name = name
-        self.model.add_sink(self)
+
 
 
 

@@ -1,0 +1,25 @@
+from enum import Enum
+import os
+class SchedStrategy(Enum):
+    FCFS = "FCFS"
+    # Add other scheduling strategies here as needed
+
+class Exp:
+    def __init__(self, lambda_value):
+        self.lambda_value = lambda_value
+
+
+class Erlang:
+    def __init__(self, alpha, r):
+        self.alpha = alpha
+        self.r = r
+
+    @staticmethod
+    def fitMeanAndSCV(mean, scv):
+        r = 1/scv
+        alpha = r/mean
+        return Erlang(alpha, r)
+
+class Replayer:
+    def __init__(self, fileName):
+        self.fileName = os.getcwd() + "/" + fileName

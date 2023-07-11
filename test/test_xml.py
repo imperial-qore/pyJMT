@@ -1,6 +1,6 @@
 import os
 import unittest
-from pyJMT.network import Network, Source, Queue, Delay, Sink, OpenClass, ClosedClass, Exp, Erlang, Replayer, SchedStrategy
+import pyJMT as pj
 import xml.etree.ElementTree as ET
 
 def elements_equal(e1, e2, path=''):
@@ -34,17 +34,17 @@ class TestXML(unittest.TestCase):
 
     def test_MM1(self):
         # declare model
-        model = Network("M/M/1")
+        model = pj.Network("M/M/1")
 
         # declare nodes
-        source = Source(model, "mySource")
-        queue = Queue(model, "myQueue", SchedStrategy.FCFS)
-        sink = Sink(model, "mySink")
+        source = pj.Source(model, "mySource")
+        queue = pj.Queue(model, "myQueue", pj.SchedStrategy.FCFS)
+        sink = pj.Sink(model, "mySink")
 
         # declare and set classes
-        oclass = OpenClass(model, "myClass")
-        source.setArrival(oclass, Exp(1))
-        queue.setService(oclass, Exp(2))
+        oclass = pj.OpenClass(model, "myClass")
+        source.setArrival(oclass, pj.Exp(1))
+        queue.setService(oclass, pj.Exp(2))
 
         # topology
         model.link(source, queue)
@@ -63,21 +63,21 @@ class TestXML(unittest.TestCase):
 
     def test_MG1(self):
         # declare model
-        model = Network("M/G/1")
+        model = pj.Network("M/G/1")
 
         # declare nodes
-        source = Source(model, "Source")
-        queue = Queue(model, "Queue", SchedStrategy.FCFS)
-        sink = Sink(model, "Sink")
+        source = pj.Source(model, "Source")
+        queue = pj.Queue(model, "Queue", pj.SchedStrategy.FCFS)
+        sink = pj.Sink(model, "Sink")
 
         # declare and set classes
-        jobclass1 = OpenClass(model, 'Class1')
-        jobclass2 = OpenClass(model, 'Class2')
-        source.setArrival(jobclass1, Exp(0.5))
-        source.setArrival(jobclass2, Exp(0.5))
+        jobclass1 = pj.OpenClass(model, 'Class1')
+        jobclass2 = pj.OpenClass(model, 'Class2')
+        source.setArrival(jobclass1, pj.Exp(0.5))
+        source.setArrival(jobclass2, pj.Exp(0.5))
 
-        queue.setService(jobclass1, Erlang.fitMeanAndSCV(1, 1/3))
-        queue.setService(jobclass2, Replayer('example_trace.txt'))
+        queue.setService(jobclass1, pj.Erlang.fitMeanAndSCV(1, 1/3))
+        queue.setService(jobclass2, pj.Replayer('example_trace.txt'))
 
         # topology
         model.link(source, queue)
@@ -98,17 +98,17 @@ class TestXML(unittest.TestCase):
         # declare model
         S = 2
         N = 3
-        model = Network('MIP')
+        model = pj.Network('MIP')
 
         # declare nodes
-        delay = Delay(model, 'WorkingState')
-        queue = Queue(model, 'RepairQueue', SchedStrategy.FCFS)
+        delay = pj.Delay(model, 'WorkingState')
+        queue = pj.Queue(model, 'RepairQueue', pj.SchedStrategy.FCFS)
         queue.setNumberOfServers(S)
 
         # declare and set classes
-        cclass = ClosedClass(model, 'Machines', N, delay)
-        delay.setService(cclass, Exp(0.5))
-        queue.setService(cclass, Exp(4.0))
+        cclass = pj.ClosedClass(model, 'Machines', N, delay)
+        delay.setService(cclass, pj.Exp(0.5))
+        queue.setService(cclass, pj.Exp(4.0))
 
         # topology
         #TODO CHECK HOW LINKING SHOULD WORK
