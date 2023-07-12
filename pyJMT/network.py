@@ -69,21 +69,9 @@ class Network:
 
         for source in self.sources:
             node = ET.SubElement(sim, "node", name=source.name)
-            section = ET.SubElement(node, "section", className="RandomSource")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
 
-            for oclass, arrival in source.arrivals.items():
-                ET.SubElement(parameter, "refClass").text = oclass
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
-                                             name="ServiceTimeStrategy")
-                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Exponential",
-                              name="Exponential")
-                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ExponentialPar",
-                                         name="distrPar")
-                lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda")
-                ET.SubElement(lambdaPar, "value").text = str(float(arrival.lambda_value))
+            section = ET.SubElement(node, "section", className="RandomSource")
+            self.generate_servicestrategy(source, section)
 
             ET.SubElement(node, "section", className="ServiceTunnel")
 
@@ -91,58 +79,17 @@ class Network:
 
         for router in self.routers:
             node = ET.SubElement(sim, "node", name=router.name)
-            section = ET.SubElement(node, "section", className="Queue")
-            sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
-            ET.SubElement(sizepar, "value").text = "-1"
 
-            dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
-                                           name="dropStrategies")
-
-            for jobclass in self.classes:
-                ET.SubElement(dropStrategies, "refClass").text = jobclass.name
-                dropStrategy = ET.SubElement(dropStrategies, "subParameter", classPath="java.lang.String",
-                                             name="dropStrategy")
-                ET.SubElement(dropStrategy, "value").text = "drop"
-
-            ET.SubElement(section, "parameter",
-                          classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.QueuePutStrategy",
-                                      name="QueuePutStrategy")
-
-            for jobclass in self.classes:
-                ET.SubElement(parameter, "refClass").text = jobclass.name
-                ET.SubElement(parameter, "subParameter",
-                              classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+            self.generate_queuesection(router, node)
 
             ET.SubElement(node, "section", className="ServiceTunnel")
+
             self.generate_router(router, node)
 
         for queue in self.queues:
             node = ET.SubElement(sim, "node", name=queue.name)
-            section = ET.SubElement(node, "section", className="Queue")
-            sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
-            ET.SubElement(sizepar, "value").text = "-1"
 
-            dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
-                                           name="dropStrategies")
-
-            for oclass in queue.services.keys():
-                ET.SubElement(dropStrategies, "refClass").text = oclass
-                dropStrategy = ET.SubElement(dropStrategies, "subParameter", classPath="java.lang.String",
-                                             name="dropStrategy")
-                ET.SubElement(dropStrategy, "value").text = "waiting queue"
-
-            ET.SubElement(section, "parameter",
-                          classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.QueuePutStrategy",
-                                      name="QueuePutStrategy")
-
-            for oclass in queue.services.keys():
-                ET.SubElement(parameter, "refClass").text = oclass
-                ET.SubElement(parameter, "subParameter",
-                              classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+            self.generate_queuesection(queue, node)
 
             serverclassname = ""
             if(queue.strategy == SchedStrategy.FCFS):
@@ -164,37 +111,7 @@ class Network:
                                                name="numberOfVisits")
                 ET.SubElement(numberOfVisits, "value").text = "1"
 
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
-            for oclass, service in queue.services.items():
-                ET.SubElement(parameter, "refClass").text = oclass
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
-                                             name="ServiceTimeStrategy")
-
-                if isinstance(service, Exp):
-                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Exponential",
-                                  name="Exponential")
-                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ExponentialPar",
-                                             name="distrPar")
-                    lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda")
-                    ET.SubElement(lambdaPar, "value").text = str(float(service.lambda_value))
-                elif isinstance(service, Erlang):
-                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Erlang",
-                                  name="Erlang")
-                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ErlangPar",
-                                             name="distrPar")
-                    alphaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
-                    ET.SubElement(alphaPar, "value").text = str(float(service.alpha))
-                    rPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Long", name="r")
-                    ET.SubElement(rPar, "value").text = str(int(service.r))
-                elif isinstance(service, Replayer):
-                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Replayer",
-                                  name="Replayer")
-                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ReplayerPar",
-                                             name="distrPar")
-                    lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.String", name="fileName")
-                    ET.SubElement(lambdaPar, "value").text = service.fileName
+            self.generate_servicestrategy(queue, section)
 
 
             if(queue.strategy == SchedStrategy.PS):
@@ -219,62 +136,12 @@ class Network:
 
         for delay in self.delays:
             node = ET.SubElement(sim, "node", name=delay.name)
-            section = ET.SubElement(node, "section", className="Queue")
-            sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
-            ET.SubElement(sizepar, "value").text = "-1"
 
-            dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
-                                           name="dropStrategies")
-
-            for cclass in delay.services.keys():
-                ET.SubElement(dropStrategies, "refClass").text = cclass
-                dropStrategy = ET.SubElement(dropStrategies, "subParameter", classPath="java.lang.String",
-                                             name="dropStrategy")
-                ET.SubElement(dropStrategy, "value").text = "drop"
-
-            ET.SubElement(section, "parameter",
-                          classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.QueuePutStrategy",
-                                      name="QueuePutStrategy")
-
-            for cclass in delay.services.keys():
-                ET.SubElement(parameter, "refClass").text = cclass
-                ET.SubElement(parameter, "subParameter",
-                              classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+            self.generate_queuesection(delay, node)
 
             section = ET.SubElement(node, "section", className="Delay")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
-            for jobclass, service in delay.services.items():
-                ET.SubElement(parameter, "refClass").text = jobclass
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
-                                             name="ServiceTimeStrategy")
 
-                if isinstance(service, Exp):
-                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Exponential",
-                                  name="Exponential")
-                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ExponentialPar",
-                                             name="distrPar")
-                    lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda")
-                    ET.SubElement(lambdaPar, "value").text = str(float(service.lambda_value))
-                elif isinstance(service, Erlang):
-                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Erlang",
-                                  name="Erlang")
-                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ErlangPar",
-                                             name="distrPar")
-                    alphaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
-                    ET.SubElement(alphaPar, "value").text = str(float(service.alpha))
-                    rPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Long", name="r")
-                    ET.SubElement(rPar, "value").text = str(int(service.r))
-                elif isinstance(service, Replayer):
-                    ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Replayer",
-                                  name="Replayer")
-                    distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ReplayerPar",
-                                             name="distrPar")
-                    lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.String", name="fileName")
-                    ET.SubElement(lambdaPar, "value").text = service.fileName
+            self.generate_servicestrategy(delay, section)
 
             self.generate_router(delay, node)
 
@@ -303,7 +170,7 @@ class Network:
         measuresSource = ["Throughput", "Arrival Rate"]
         for measure in measuresSource:
             for source in self.sources:
-                for oclass in source.arrivals.keys():
+                for oclass in source.services.keys():
                     ET.SubElement(sim, "measure", alpha="0.01", name=f"{source.name}_{oclass}_{measure}", nodeType="station",
                                   precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}", type=measure,
                                   verbose="false")
@@ -368,3 +235,76 @@ class Network:
             elif isinstance(jobclass, ClosedClass):
                 ET.SubElement(simTag, "userClass", customers=str(jobclass.numMachines), name=jobclass.name, priority="0",
                               referenceSource=jobclass.referenceSource, type="closed")
+
+    def generate_servicestrategy(self, node,  parentTag):
+        parameter = ET.SubElement(parentTag, "parameter", array="true",
+                                  classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
+        for jobclass in self.classes:
+            service = node.services.get(jobclass.name)
+
+            ET.SubElement(parameter, "refClass").text = jobclass.name
+            subParameter = ET.SubElement(parameter, "subParameter",
+                                         classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
+                                         name="ServiceTimeStrategy")
+            if service is None:
+                if isinstance(node, Source):
+                    ET.SubElement(subParameter, "value").text="null"
+                else:
+                    print(f"for {node.name}, {jobclass.name} service distribution not found")
+
+            elif isinstance(service, Exp):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Exponential",
+                              name="Exponential")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ExponentialPar",
+                                         name="distrPar")
+                lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda")
+                ET.SubElement(lambdaPar, "value").text = str(float(service.lambda_value))
+            elif isinstance(service, Erlang):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Erlang",
+                              name="Erlang")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ErlangPar",
+                                         name="distrPar")
+                alphaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
+                ET.SubElement(alphaPar, "value").text = str(float(service.alpha))
+                rPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Long", name="r")
+                ET.SubElement(rPar, "value").text = str(int(service.r))
+            elif isinstance(service, Replayer):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Replayer",
+                              name="Replayer")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ReplayerPar",
+                                         name="distrPar")
+                lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.String", name="fileName")
+                ET.SubElement(lambdaPar, "value").text = service.fileName
+
+    def generate_queuesection(self, node, parentTag):
+
+        section = ET.SubElement(parentTag, "section", className="Queue")
+        #TODO ADD DIFFERENT CAPACITIES BASED ON QUEUE
+        sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
+        ET.SubElement(sizepar, "value").text = "-1"
+
+        dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
+                                       name="dropStrategies")
+
+        #TODO FIGURE OUT WHAT CAUSES DROP TYPE TO CHANGE
+        drop = "drop"
+        if isinstance(node, Queue):
+            drop = "waiting queue"
+
+        for jobclass in self.classes:
+            ET.SubElement(dropStrategies, "refClass").text = jobclass.name
+            dropStrategy = ET.SubElement(dropStrategies, "subParameter", classPath="java.lang.String",
+                                         name="dropStrategy")
+            ET.SubElement(dropStrategy, "value").text = drop
+
+        ET.SubElement(section, "parameter",
+                      classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
+        parameter = ET.SubElement(section, "parameter", array="true",
+                                  classPath="jmt.engine.NetStrategies.QueuePutStrategy",
+                                  name="QueuePutStrategy")
+
+        for jobclass in self.classes:
+            ET.SubElement(parameter, "refClass").text = jobclass.name
+            ET.SubElement(parameter, "subParameter",
+                          classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+

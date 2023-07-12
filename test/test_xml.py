@@ -154,6 +154,8 @@ class TestXML(unittest.TestCase):
                         (queue1, sink),
                         (queue2, sink)])
 
+        lb.setRouting(oclass, pj.RoutingStrategy.RROBIN)
+
         # create solution file
         model.generate_xml("testrrlb_solution.jsimg")
 

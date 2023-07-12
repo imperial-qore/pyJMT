@@ -1,106 +1,107 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<archive xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="testmip_reference.jsimg" timestamp="Wed Jul 12 11:53:11 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
-<sim disableStatisticStop="true" logDecimalSeparator="." logDelimiter=";" logPath="C:\Users\James\JMT\" logReplaceMode="0" maxEvents="-1" maxSamples="10000" name="testmip_reference.jsimg" polling="1.0" seed="286273" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
-<userClass customers="3" name="Machines" priority="0" referenceSource="WorkingState" type="closed"/>
-<node name="WorkingState">
-<section className="Queue">
-<parameter classPath="java.lang.Integer" name="size">
-<value>-1</value>
-</parameter>
-<parameter array="true" classPath="java.lang.String" name="dropStrategies">
-<refClass>Machines</refClass>
-<subParameter classPath="java.lang.String" name="dropStrategy">
-<value>drop</value>
-</subParameter>
-</parameter>
-<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
-<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
-<refClass>Machines</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
-</parameter>
-</section>
-<section className="Delay">
-<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
-<refClass>Machines</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
-<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
-<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
-<subParameter classPath="java.lang.Double" name="lambda">
-<value>0.5</value>
-</subParameter>
-</subParameter>
-</subParameter>
-</parameter>
-</section>
-<section className="Router">
-<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
-<refClass>Machines</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
-</parameter>
-</section>
-</node>
-<node name="RepairQueue">
-<section className="Queue">
-<parameter classPath="java.lang.Integer" name="size">
-<value>-1</value>
-</parameter>
-<parameter array="true" classPath="java.lang.String" name="dropStrategies">
-<refClass>Machines</refClass>
-<subParameter classPath="java.lang.String" name="dropStrategy">
-<value>waiting queue</value>
-</subParameter>
-</parameter>
-<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
-<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
-<refClass>Machines</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
-</parameter>
-</section>
-<section className="Server">
-<parameter classPath="java.lang.Integer" name="maxJobs">
-<value>2</value>
-</parameter>
-<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
-<refClass>Machines</refClass>
-<subParameter classPath="java.lang.Integer" name="numberOfVisits">
-<value>1</value>
-</subParameter>
-</parameter>
-<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
-<refClass>Machines</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
-<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
-<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
-<subParameter classPath="java.lang.Double" name="lambda">
-<value>4.0</value>
-</subParameter>
-</subParameter>
-</subParameter>
-</parameter>
-</section>
-<section className="Router">
-<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
-<refClass>Machines</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
-</parameter>
-</section>
-</node>
-<measure alpha="0.01" name="WorkingState_Machines_Number of Customers" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Number of Customers" verbose="false"/>
-<measure alpha="0.01" name="RepairQueue_Machines_Number of Customers" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Number of Customers" verbose="false"/>
-<measure alpha="0.01" name="WorkingState_Machines_Utilization" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Utilization" verbose="false"/>
-<measure alpha="0.01" name="RepairQueue_Machines_Utilization" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Utilization" verbose="false"/>
-<measure alpha="0.01" name="WorkingState_Machines_Response Time" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Response Time" verbose="false"/>
-<measure alpha="0.01" name="RepairQueue_Machines_Response Time" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Response Time" verbose="false"/>
-<measure alpha="0.01" name="WorkingState_Machines_Throughput" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Throughput" verbose="false"/>
-<measure alpha="0.01" name="RepairQueue_Machines_Throughput" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Throughput" verbose="false"/>
-<measure alpha="0.01" name="WorkingState_Machines_Arrival Rate" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Arrival Rate" verbose="false"/>
-<measure alpha="0.01" name="RepairQueue_Machines_Arrival Rate" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Arrival Rate" verbose="false"/>
-<connection source="WorkingState" target="RepairQueue"/>
-<connection source="RepairQueue" target="WorkingState"/>
-<preload>
-<stationPopulations stationName="WorkingState">
-<classPopulation population="3" refClass="Machines"/>
-</stationPopulations>
-</preload>
-</sim>
+<archive
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="testmip_reference.jsimg" timestamp="Wed Jul 12 11:53:11 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
+	<sim disableStatisticStop="true" logDecimalSeparator="." logDelimiter=";" logPath="C:\Users\James\JMT\" logReplaceMode="0" maxEvents="-1" maxSamples="10000" name="testmip_reference.jsimg" polling="1.0" seed="286273" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
+		<userClass customers="3" name="Machines" priority="0" referenceSource="WorkingState" type="closed"/>
+		<node name="WorkingState">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Machines</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>drop</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Machines</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Delay">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Machines</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>0.5</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Machines</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="RepairQueue">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Machines</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>waiting queue</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Machines</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Server">
+				<parameter classPath="java.lang.Integer" name="maxJobs">
+					<value>2</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+					<refClass>Machines</refClass>
+					<subParameter classPath="java.lang.Integer" name="numberOfVisits">
+						<value>1</value>
+					</subParameter>
+				</parameter>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Machines</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>4.0</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Machines</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+				</parameter>
+			</section>
+		</node>
+		<measure alpha="0.01" name="WorkingState_Machines_Number of Customers" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Number of Customers" verbose="false"/>
+		<measure alpha="0.01" name="RepairQueue_Machines_Number of Customers" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Number of Customers" verbose="false"/>
+		<measure alpha="0.01" name="WorkingState_Machines_Utilization" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Utilization" verbose="false"/>
+		<measure alpha="0.01" name="RepairQueue_Machines_Utilization" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Utilization" verbose="false"/>
+		<measure alpha="0.01" name="WorkingState_Machines_Response Time" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Response Time" verbose="false"/>
+		<measure alpha="0.01" name="RepairQueue_Machines_Response Time" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Response Time" verbose="false"/>
+		<measure alpha="0.01" name="WorkingState_Machines_Throughput" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Throughput" verbose="false"/>
+		<measure alpha="0.01" name="RepairQueue_Machines_Throughput" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Throughput" verbose="false"/>
+		<measure alpha="0.01" name="WorkingState_Machines_Arrival Rate" nodeType="station" precision="0.03" referenceNode="WorkingState" referenceUserClass="Machines" type="Arrival Rate" verbose="false"/>
+		<measure alpha="0.01" name="RepairQueue_Machines_Arrival Rate" nodeType="station" precision="0.03" referenceNode="RepairQueue" referenceUserClass="Machines" type="Arrival Rate" verbose="false"/>
+		<connection source="WorkingState" target="RepairQueue"/>
+		<connection source="RepairQueue" target="WorkingState"/>
+		<preload>
+			<stationPopulations stationName="WorkingState">
+				<classPopulation population="3" refClass="Machines"/>
+			</stationPopulations>
+		</preload>
+	</sim>
 </archive>

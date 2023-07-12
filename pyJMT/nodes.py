@@ -32,12 +32,12 @@ class Source:
     def __init__(self, model, name):
         self.model = model
         self.name = name
-        self.arrivals = {}
         self.routings = {}
+        self.services = {}
         self.model.add_source(self)
 
     def setArrival(self, jobclass, arrivalDist):
-        self.arrivals[jobclass.name] = arrivalDist
+        self.services[jobclass.name] = arrivalDist
         jobclass.referenceSource = self.name
 
 
