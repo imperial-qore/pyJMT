@@ -95,6 +95,8 @@ class TestXML(unittest.TestCase):
         print("M/G/1 Ok")
 
     def test_MIP(self):
+        # Machine interference problem example
+
         # declare model
         S = 2
         N = 3
@@ -126,5 +128,41 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("MIP Ok")
 
+    def test_RRLB(self):
+        # Round robin load balancing example
+        # declare model
+        model = pj.Network('RRLB');
+
+        # declare nodes
+        source = pj.Source(model, 'Source')
+        lb = pj.Router(model, 'LB')
+        queue1 = pj.Queue(model, 'Queue1', pj.SchedStrategy.PS)
+        queue2 = pj.Queue(model, 'Queue2', pj.SchedStrategy.PS)
+        sink = pj.Sink(model, 'Sink')
+
+        # declare and set classes
+        oclass = pj.OpenClass(model, 'Class1')
+        source.setArrival(oclass, pj.Exp(1))
+        queue1.setService(oclass, pj.Exp(2))
+        queue2.setService(oclass, pj.Exp(2))
+
+        # topology
+        #TODO CHECK HOW LINKING SHOULD WORK
+        model.addLinks([(source, lb),
+                        (lb, queue1),
+                        (lb, queue2),
+                        (queue1, sink),
+                        (queue2, sink)])
+
+        # create solution file
+        model.generate_xml("testrrlb_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse('testrrlb_solution.jsimg')
+        reference_tree = ET.parse('testrrlb_reference.jsimg')
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("RRLB Ok")
 if __name__ == '__main__':
     unittest.main()

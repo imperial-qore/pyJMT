@@ -1,7 +1,7 @@
 import xml.etree.ElementTree as ET
-from .nodes import Source, Sink, Queue, Delay
+from .nodes import Source, Sink, Queue, Delay, Router
 from .classes import OpenClass, ClosedClass
-from .services import Exp, Erlang, Replayer
+from .services import Exp, Erlang, Replayer, SchedStrategy, RoutingStrategy
 from .link import Link
 
 
@@ -13,14 +13,11 @@ class Network:
         self.queues: [Queue] = []
         self.delays: [Delay] = []
         self.links: [Link] = []
-        self.openclasses: [OpenClass] = []
-        self.closedclasses: [ClosedClass] = []
+        self.routers: [Router] = []
+        self.classes = []
 
-    def add_openclass(self, oclass):
-        self.openclasses.append(oclass)
-
-    def add_closedclass(self, cclass):
-        self.closedclasses.append(cclass)
+    def add_class(self, jobclass):
+        self.classes.append(jobclass)
 
     def add_source(self, source):
         self.sources.append(source)
@@ -34,12 +31,19 @@ class Network:
     def add_delay(self, delay):
         self.delays.append(delay)
 
+    def add_router(self, router):
+        self.routers.append(router)
+
     def add_link(self, link):
         self.links.append(link)
 
     def link(self, source, target):
         link = Link(source, target)
         self.add_link(link)
+
+    def addLinks(self, linkList):
+        for source, target in linkList:
+            self.link(source, target)
 
     def generate_xml(self, fileName):
         ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
@@ -61,11 +65,7 @@ class Network:
                                     "polling": "1.0",
                                     "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "SIMmodeldefinition.xsd"})
 
-        for oclass in self.openclasses:
-            ET.SubElement(sim, "userClass", name=oclass.name, priority="0", referenceSource=oclass.referenceSource, type="open")
-
-        for cclass in self.closedclasses:
-            ET.SubElement(sim, "userClass", customers=str(cclass.numMachines) ,name=cclass.name, priority="0", referenceSource=cclass.referenceSource, type="closed")
+        self.generate_classes(sim)
 
         for source in self.sources:
             node = ET.SubElement(sim, "node", name=source.name)
@@ -86,32 +86,37 @@ class Network:
                 ET.SubElement(lambdaPar, "value").text = str(float(arrival.lambda_value))
 
             ET.SubElement(node, "section", className="ServiceTunnel")
-            section = ET.SubElement(node, "section", className="Router")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.RoutingStrategy", name="RoutingStrategy")
 
-            for oclass in source.arrivals.keys():
-                refClass = ET.SubElement(parameter, "refClass")
-                refClass.text = oclass
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
-                                             name="Probabilities")
-                empiricalEntryArray = ET.SubElement(subParameter, "subParameter", array="true",
-                                                    classPath="jmt.engine.random.EmpiricalEntry",
-                                                    name="EmpiricalEntryArray")
-                empiricalEntry = ET.SubElement(empiricalEntryArray, "subParameter",
-                                               classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
-                stationName = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.String",
-                                            name="stationName")
-                target = ""
-                for link in self.links:
-                    if link.source.name == source.name:
-                        target = link.target.name
-                        break
-                ET.SubElement(stationName, "value").text = target
-                probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
-                                            name="probability")
-                ET.SubElement(probability, "value").text = "1.0"
+            self.generate_router(source, node)
+
+        for router in self.routers:
+            node = ET.SubElement(sim, "node", name=router.name)
+            section = ET.SubElement(node, "section", className="Queue")
+            sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
+            ET.SubElement(sizepar, "value").text = "-1"
+
+            dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
+                                           name="dropStrategies")
+
+            for jobclass in self.classes:
+                ET.SubElement(dropStrategies, "refClass").text = jobclass.name
+                dropStrategy = ET.SubElement(dropStrategies, "subParameter", classPath="java.lang.String",
+                                             name="dropStrategy")
+                ET.SubElement(dropStrategy, "value").text = "drop"
+
+            ET.SubElement(section, "parameter",
+                          classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
+            parameter = ET.SubElement(section, "parameter", array="true",
+                                      classPath="jmt.engine.NetStrategies.QueuePutStrategy",
+                                      name="QueuePutStrategy")
+
+            for jobclass in self.classes:
+                ET.SubElement(parameter, "refClass").text = jobclass.name
+                ET.SubElement(parameter, "subParameter",
+                              classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+
+            ET.SubElement(node, "section", className="ServiceTunnel")
+            self.generate_router(router, node)
 
         for queue in self.queues:
             node = ET.SubElement(sim, "node", name=queue.name)
@@ -139,10 +144,18 @@ class Network:
                 ET.SubElement(parameter, "subParameter",
                               classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
 
-            section = ET.SubElement(node, "section", className="Server")
+            serverclassname = ""
+            if(queue.strategy == SchedStrategy.FCFS):
+                serverclassname = "Server"
+            elif(queue.strategy == SchedStrategy.PS):
+                serverclassname = "PSServer"
+            section = ET.SubElement(node, "section", className=serverclassname)
             maxJobsPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxJobs")
             ET.SubElement(maxJobsPar, "value").text = str(queue.numberOfServers)
 
+            if(queue.strategy == SchedStrategy.PS):
+                maxRunningPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxRunning")
+                ET.SubElement(maxRunningPar, "value").text = "-1"
             parameter = ET.SubElement(section, "parameter", array="true", classPath="java.lang.Integer",
                                       name="numberOfVisits")
             for oclass in queue.services.keys():
@@ -183,31 +196,26 @@ class Network:
                     lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.String", name="fileName")
                     ET.SubElement(lambdaPar, "value").text = service.fileName
 
-            section = ET.SubElement(node, "section", className="Router")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.RoutingStrategy", name="RoutingStrategy")
-            for oclass in queue.services.keys():
-                refClass = ET.SubElement(parameter, "refClass")
-                refClass.text = oclass
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
-                                             name="Probabilities")
-                empiricalEntryArray = ET.SubElement(subParameter, "subParameter", array="true",
-                                                    classPath="jmt.engine.random.EmpiricalEntry",
-                                                    name="EmpiricalEntryArray")
-                empiricalEntry = ET.SubElement(empiricalEntryArray, "subParameter",
-                                               classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
-                stationName = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.String",
-                                            name="stationName")
-                target = ""
-                for link in self.links:
-                    if link.source.name == queue.name:
-                        target = link.target.name
-                        break
-                ET.SubElement(stationName, "value").text = target
-                probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
-                                            name="probability")
-                ET.SubElement(probability, "value").text = "1.0"
+
+            if(queue.strategy == SchedStrategy.PS):
+                parameter = ET.SubElement(section, "parameter", array="true",
+                                          classPath="jmt.engine.NetStrategies.PSStrategy", name="PSStrategy")
+                for oclass, service in queue.services.items():
+                    ET.SubElement(parameter, "refClass").text = oclass
+                    ET.SubElement(parameter, "subParameter",
+                                                 classPath="jmt.engine.NetStrategies.PSStrategies.EPSStrategy",
+                                                 name="EPSStrategy")
+
+                parameter = ET.SubElement(section, "parameter", array="true",
+                                          classPath="java.lang.Double", name="serviceWeights")
+                for oclass, service in queue.services.items():
+                    ET.SubElement(parameter, "refClass").text = oclass
+                    subParameter = ET.SubElement(parameter, "subParameter",
+                                  classPath="java.lang.Double",
+                                  name="serviceWeight")
+                    ET.SubElement(subParameter, "value").text = "1.0"
+
+            self.generate_router(queue, node)
 
         for delay in self.delays:
             node = ET.SubElement(sim, "node", name=delay.name)
@@ -268,32 +276,7 @@ class Network:
                     lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.String", name="fileName")
                     ET.SubElement(lambdaPar, "value").text = service.fileName
 
-
-            section = ET.SubElement(node, "section", className="Router")
-            parameter = ET.SubElement(section, "parameter", array="true",
-                                      classPath="jmt.engine.NetStrategies.RoutingStrategy", name="RoutingStrategy")
-            for oclass in delay.services.keys():
-                refClass = ET.SubElement(parameter, "refClass")
-                refClass.text = oclass
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
-                                             name="Probabilities")
-                empiricalEntryArray = ET.SubElement(subParameter, "subParameter", array="true",
-                                                    classPath="jmt.engine.random.EmpiricalEntry",
-                                                    name="EmpiricalEntryArray")
-                empiricalEntry = ET.SubElement(empiricalEntryArray, "subParameter",
-                                               classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
-                stationName = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.String",
-                                            name="stationName")
-                target = ""
-                for link in self.links:
-                    if link.source.name == delay.name:
-                        target = link.target.name
-                        break
-                ET.SubElement(stationName, "value").text = target
-                probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
-                                            name="probability")
-                ET.SubElement(probability, "value").text = "1.0"
+            self.generate_router(delay, node)
 
         for sink in self.sinks:
             node = ET.SubElement(sim, "node", name=sink.name)
@@ -325,10 +308,8 @@ class Network:
                                   precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}", type=measure,
                                   verbose="false")
 
-
         for link in self.links:
             ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
-
 
         for delay in self.delays:
             preload = ET.SubElement(sim, "preload")
@@ -343,17 +324,47 @@ class Network:
 
         tree.write(fileName)
 
+    def generate_router(self, node, nodeTag):
+        section = ET.SubElement(nodeTag, "section", className="Router")
+        parameter = ET.SubElement(section, "parameter", array="true",
+                                  classPath="jmt.engine.NetStrategies.RoutingStrategy", name="RoutingStrategy")
+        for jobclass in self.classes:
+            routing = node.routings.get(jobclass.name)
+            refClass = ET.SubElement(parameter, "refClass")
+            refClass.text = jobclass.name
+            if routing == RoutingStrategy.RANDOM or routing is None:
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy",
+                                             name="Random")
+            elif routing == RoutingStrategy.RROBIN:
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.RoundRobinStrategy",
+                                             name="Round Robin")
+            elif routing == RoutingStrategy.PROBABILITIES: #TODO IMPLEMENT THIS PROPERLY
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
+                                             name="Probabilities")
+                empiricalEntryArray = ET.SubElement(subParameter, "subParameter", array="true",
+                                                    classPath="jmt.engine.random.EmpiricalEntry",
+                                                    name="EmpiricalEntryArray")
+                empiricalEntry = ET.SubElement(empiricalEntryArray, "subParameter",
+                                               classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
+                stationName = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.String",
+                                            name="stationName")
+                for link in self.links:
+                    if link.source.name == node.name:
+                        target = link.target.name
+                        ET.SubElement(stationName, "value").text = target
+                        probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
+                                                    name="probability")
+                        ET.SubElement(probability, "value").text = "1.0"
 
+    def generate_classes(self, simTag):
+        for jobclass in self.classes:
+            if isinstance(jobclass, OpenClass):
+                ET.SubElement(simTag, "userClass", name=jobclass.name, priority="0",
+                              referenceSource=jobclass.referenceSource, type="open")
 
-
-
-
-
-
-
-
-
-
-
-
-
+            elif isinstance(jobclass, ClosedClass):
+                ET.SubElement(simTag, "userClass", customers=str(jobclass.numMachines), name=jobclass.name, priority="0",
+                              referenceSource=jobclass.referenceSource, type="closed")

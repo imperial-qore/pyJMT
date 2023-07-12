@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<archive xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="testmm1_reference.jsimg" timestamp="Mon Jul 10 12:53:59 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
-<sim disableStatisticStop="true" logDecimalSeparator="." logDelimiter=";" logPath="C:\Users\James\JMT\" logReplaceMode="0" maxEvents="-1" maxSamples="10000" name="testmm1_reference.jsimg" polling="1.0" seed="655741" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
+<archive xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="testmm1_reference.jsimg" timestamp="Wed Jul 12 11:33:18 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
+<sim disableStatisticStop="true" logDecimalSeparator="." logDelimiter=";" logPath="C:\Users\James\JMT\" logReplaceMode="0" maxEvents="-1" maxSamples="10000" name="testmm1_reference.jsimg" polling="1.0" seed="844722" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
 <userClass name="myClass" priority="0" referenceSource="mySource" type="open"/>
 <node name="mySource">
 <section className="RandomSource">
@@ -20,18 +20,7 @@
 <section className="Router">
 <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
 <refClass>myClass</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy" name="Probabilities">
-<subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntryArray">
-<subParameter classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntry">
-<subParameter classPath="java.lang.String" name="stationName">
-<value>myQueue</value>
-</subParameter>
-<subParameter classPath="java.lang.Double" name="probability">
-<value>1.0</value>
-</subParameter>
-</subParameter>
-</subParameter>
-</subParameter>
+<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
 </parameter>
 </section>
 </node>
@@ -77,18 +66,7 @@
 <section className="Router">
 <parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
 <refClass>myClass</refClass>
-<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy" name="Probabilities">
-<subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntryArray">
-<subParameter classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntry">
-<subParameter classPath="java.lang.String" name="stationName">
-<value>mySink</value>
-</subParameter>
-<subParameter classPath="java.lang.Double" name="probability">
-<value>1.0</value>
-</subParameter>
-</subParameter>
-</subParameter>
-</subParameter>
+<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
 </parameter>
 </section>
 </node>

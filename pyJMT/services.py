@@ -1,8 +1,19 @@
 from enum import Enum
 import os
+
+
 class SchedStrategy(Enum):
     FCFS = "FCFS"
+    PS = "PS"
     # Add other scheduling strategies here as needed
+
+
+class RoutingStrategy(Enum):
+    RROBIN = "RROBIN"
+    RANDOM = "RANDOM"
+    PROBABILITIES = "PROBABILITIES"
+    # Add other routing strategies here as needed
+
 
 class Exp:
     def __init__(self, lambda_value):
