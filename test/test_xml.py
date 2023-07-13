@@ -166,5 +166,46 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("RRLB Ok")
+
+    # def test_ReentrantLine(self):
+    #     # Reentrant Line modelling example
+    #
+    #     # declare model
+    #     model = pj.Network('RL')
+    #
+    #     # declare nodes
+    #     queue = pj.Queue(model, 'Queue', pj.SchedStrategy.FCFS)
+    #
+    #     # declare and set classes
+    #     K = 3
+    #     N = [1, 0, 0]
+    #     jobclass = [None] * K  # Initialize list of job classes
+    #     for k in range(0, K):
+    #         jobclass[k] = pj.ClosedClass(model, 'Class' + str(k + 1), N[k], queue)
+    #         queue.setService(jobclass[k], pj.Erlang.fitMeanAndOrder(k + 1, 2))
+    #
+    #     # topology
+    #
+    #     P = model.init_routing_matrix()
+    #
+    #     # Assuming queue is an index, in Python we start indexing from 0
+    #     P[jobclass[0]][jobclass[1]][queue][queue] = 1.0
+    #     P[jobclass[1]][jobclass[2]][queue][queue] = 1.0
+    #     P[jobclass[2]][jobclass[0]][queue][queue] = 1.0
+    #
+    #     model.link(P)
+    #
+    #     # create solution file
+    #     model.generate_xml("testreentantline_solution.jsimg")
+    #
+    #     # Parse the generated file and the reference file
+    #     generated_tree = ET.parse('testreetrantline_solution.jsimg')
+    #     reference_tree = ET.parse('testreentantline_reference.jsimg')
+    #
+    #     # Compare the generated file with the reference file
+    #     self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+    #     print("ReentrantLine Ok")
+
+
 if __name__ == '__main__':
     unittest.main()

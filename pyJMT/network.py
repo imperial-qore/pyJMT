@@ -3,36 +3,55 @@ from .nodes import Source, Sink, Queue, Delay, Router
 from .classes import OpenClass, ClosedClass
 from .services import Exp, Erlang, Replayer, SchedStrategy, RoutingStrategy
 from .link import Link
+import os
+import subprocess
 
 
 class Network:
     def __init__(self, name):
         self.name = name
-        self.sources: [Source] = []
-        self.sinks: [Sink] = []
-        self.queues: [Queue] = []
-        self.delays: [Delay] = []
+
+        self.nodes = {}
+        self.nodes['sources']: [Source] = []
+        self.nodes['sinks']: [Sink] = []
+        self.nodes['queues']: [Queue] = []
+        self.nodes['delays']: [Delay] = []
+        self.nodes['routers']: [Router] = []
+
+
         self.links: [Link] = []
-        self.routers: [Router] = []
         self.classes = []
+
+    def get_number_of_nodes(self):
+        total_length = sum(len(v) for v in self.nodes.values())
+        return total_length
+
+    def get_number_of_classes(self):
+        return len(self.classes)
+
+    def get_nodes(self):
+        return [value for sublist in self.nodes.values() for value in sublist]
+
+    def get_classes(self):
+        return self.classes
 
     def add_class(self, jobclass):
         self.classes.append(jobclass)
 
     def add_source(self, source):
-        self.sources.append(source)
+        self.nodes['sources'].append(source)
 
     def add_sink(self, sink):
-        self.sinks.append(sink)
+        self.nodes['sinks'].append(sink)
 
     def add_queue(self, queue):
-        self.queues.append(queue)
+        self.nodes['queues'].append(queue)
 
     def add_delay(self, delay):
-        self.delays.append(delay)
+        self.nodes['delays'].append(delay)
 
     def add_router(self, router):
-        self.routers.append(router)
+        self.nodes['routers'].append(router)
 
     def add_link(self, link):
         self.links.append(link)
@@ -44,6 +63,20 @@ class Network:
     def addLinks(self, linkList):
         for source, target in linkList:
             self.link(source, target)
+
+
+    def jsimg_open(self, jmt_path, filename):
+        path = os.path.dirname(filename)
+        if not path:
+            filename = os.path.join(os.getcwd(), filename)
+        cmd = f'java -cp "{os.path.join(jmt_path, "JMT.jar")}" jmt.commandline.Jmt jsimg "{filename}"'
+        subprocess.run(cmd, shell=True)
+
+    def init_routing_matrix(self):
+        nodes = self.get_nodes()
+        classes = self.get_classes()
+        P = {c1: {c2: {n1: {n2: 0 for n2 in nodes} for n1 in nodes} for c2 in classes} for c1 in classes}
+        return P
 
     def generate_xml(self, fileName):
         ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
@@ -67,7 +100,7 @@ class Network:
 
         self.generate_classes(sim)
 
-        for source in self.sources:
+        for source in self.nodes['sources']:
             node = ET.SubElement(sim, "node", name=source.name)
 
             section = ET.SubElement(node, "section", className="RandomSource")
@@ -77,7 +110,7 @@ class Network:
 
             self.generate_router(source, node)
 
-        for router in self.routers:
+        for router in self.nodes['routers']:
             node = ET.SubElement(sim, "node", name=router.name)
 
             self.generate_queuesection(router, node)
@@ -86,7 +119,7 @@ class Network:
 
             self.generate_router(router, node)
 
-        for queue in self.queues:
+        for queue in self.nodes['queues']:
             node = ET.SubElement(sim, "node", name=queue.name)
 
             self.generate_queuesection(queue, node)
@@ -134,7 +167,7 @@ class Network:
 
             self.generate_router(queue, node)
 
-        for delay in self.delays:
+        for delay in self.nodes['delays']:
             node = ET.SubElement(sim, "node", name=delay.name)
 
             self.generate_queuesection(delay, node)
@@ -145,13 +178,13 @@ class Network:
 
             self.generate_router(delay, node)
 
-        for sink in self.sinks:
+        for sink in self.nodes['sinks']:
             node = ET.SubElement(sim, "node", name=sink.name)
             ET.SubElement(node, "section", className="JobSink")
 
         measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
         for measure in measuresQueue:
-            for queue in self.queues:
+            for queue in self.nodes['queues']:
                 for oclass in queue.services.keys():
                     ET.SubElement(sim, "measure", alpha="0.01", name=f"{queue.name}_{oclass}_{measure}", nodeType="station",
                                   precision="0.03", referenceNode=queue.name, referenceUserClass=f"{oclass}", type=measure,
@@ -159,7 +192,7 @@ class Network:
 
         measuresDelay = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
         for measure in measuresDelay:
-            for delay in self.delays:
+            for delay in self.nodes['delays']:
                 for jobclass in delay.services.keys():
                     ET.SubElement(sim, "measure", alpha="0.01", name=f"{delay.name}_{jobclass}_{measure}",
                                   nodeType="station",
@@ -169,7 +202,7 @@ class Network:
 
         measuresSource = ["Throughput", "Arrival Rate"]
         for measure in measuresSource:
-            for source in self.sources:
+            for source in self.nodes['sources']:
                 for oclass in source.services.keys():
                     ET.SubElement(sim, "measure", alpha="0.01", name=f"{source.name}_{oclass}_{measure}", nodeType="station",
                                   precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}", type=measure,
@@ -178,7 +211,7 @@ class Network:
         for link in self.links:
             ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
 
-        for delay in self.delays:
+        for delay in self.nodes['delays']:
             preload = ET.SubElement(sim, "preload")
             stationPopulations = ET.SubElement(preload, "stationPopulations", stationName=delay.name)
             for jobclass in delay.services.keys():

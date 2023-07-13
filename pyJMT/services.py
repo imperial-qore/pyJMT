@@ -31,6 +31,12 @@ class Erlang:
         alpha = r/mean
         return Erlang(alpha, r)
 
+    @staticmethod
+    def fitMeanAndOrder(mean, order):
+        r = order
+        alpha = order / mean
+        return Erlang(alpha, r)
+
 class Replayer:
     def __init__(self, fileName):
         self.fileName = os.getcwd() + "/" + fileName
