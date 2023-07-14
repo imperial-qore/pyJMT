@@ -50,3 +50,6 @@ coverage.xml
 docs/_build/
 
 .idea
+
+#Solutions to tests
+*_solution.jsimg

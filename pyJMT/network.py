@@ -1,7 +1,8 @@
 import xml.etree.ElementTree as ET
 from .nodes import Source, Sink, Queue, Delay, Router
 from .classes import OpenClass, ClosedClass
-from .services import Exp, Erlang, Replayer, SchedStrategy, RoutingStrategy
+from .services import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto,\
+    Replayer, Uniform, Weibull, SchedStrategy, RoutingStrategy
 from .link import Link
 import os
 import subprocess
@@ -279,12 +280,35 @@ class Network:
             subParameter = ET.SubElement(parameter, "subParameter",
                                          classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
                                          name="ServiceTimeStrategy")
-            if service is None:
-                if isinstance(node, Source):
-                    ET.SubElement(subParameter, "value").text="null"
-                else:
-                    print(f"for {node.name}, {jobclass.name} service distribution not found")
+            if isinstance(service, Cox):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.CoxianDistr",
+                              name="Coxian")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.CoxianPar",
+                                         name="distrPar")
+                lambda0 = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda0")
+                ET.SubElement(lambda0, "value").text = str(float(service.lambda0))
 
+                lambda1 = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda1")
+                ET.SubElement(lambda1, "value").text = str(float(service.lambda1))
+
+                phi0 = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="phi0")
+                ET.SubElement(phi0, "value").text = str(float(service.p0))
+            elif isinstance(service, Det):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.DeterministicDistr",
+                              name="Deterministic")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.DeterministicDistrPar",
+                                         name="distrPar")
+                t = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="t")
+                ET.SubElement(t, "value").text = str(float(service.k))
+            elif isinstance(service, Erlang):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Erlang",
+                              name="Erlang")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ErlangPar",
+                                         name="distrPar")
+                alphaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
+                ET.SubElement(alphaPar, "value").text = str(float(service.lambda_value))
+                rPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Long", name="r")
+                ET.SubElement(rPar, "value").text = str(int(service.k))
             elif isinstance(service, Exp):
                 ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Exponential",
                               name="Exponential")
@@ -292,15 +316,55 @@ class Network:
                                          name="distrPar")
                 lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda")
                 ET.SubElement(lambdaPar, "value").text = str(float(service.lambda_value))
-            elif isinstance(service, Erlang):
-                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Erlang",
-                              name="Erlang")
-                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ErlangPar",
+            elif isinstance(service, Gamma):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.GammaDistr",
+                              name="Gamma")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.GammaDistrPar",
                                          name="distrPar")
                 alphaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
                 ET.SubElement(alphaPar, "value").text = str(float(service.alpha))
-                rPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Long", name="r")
-                ET.SubElement(rPar, "value").text = str(int(service.r))
+                beta = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="beta")
+                ET.SubElement(beta, "value").text = str(float(service.theta))
+            elif isinstance(service, HyperExp):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.HyperExp",
+                              name="Hyperexponential")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.HyperExpPar",
+                                         name="distrPar")
+                p = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="p")
+                ET.SubElement(p, "value").text = str(float(service.p))
+
+                lambda1 = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda1")
+                ET.SubElement(lambda1, "value").text = str(float(service.lambda1))
+
+                lambda2 = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="lambda2")
+                ET.SubElement(lambda2, "value").text = str(float(service.lambda2))
+            elif isinstance(service, Lognormal):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Lognormal",
+                              name="Lognormal")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.LognormalPar",
+                                         name="distrPar")
+                alphaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="mu")
+                ET.SubElement(alphaPar, "value").text = str(float(service.mu))
+                beta = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="sigma")
+                ET.SubElement(beta, "value").text = str(float(service.sigma))
+            elif isinstance(service, Normal):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Normal",
+                              name="Normal")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.NormalPar",
+                                         name="distrPar")
+                mean = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="mean")
+                ET.SubElement(mean, "value").text = str(float(service.mean))
+                standardDeviation = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="standardDeviation")
+                ET.SubElement(standardDeviation, "value").text = str(float(service.standardDeviation))
+            elif isinstance(service, Pareto):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Pareto",
+                              name="Pareto")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.ParetoPar",
+                                         name="distrPar")
+                alpha = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
+                ET.SubElement(alpha, "value").text = str(float(service.alpha))
+                k = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="k")
+                ET.SubElement(k, "value").text = str(float(service.k))
             elif isinstance(service, Replayer):
                 ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Replayer",
                               name="Replayer")
@@ -308,6 +372,27 @@ class Network:
                                          name="distrPar")
                 lambdaPar = ET.SubElement(distrPar, "subParameter", classPath="java.lang.String", name="fileName")
                 ET.SubElement(lambdaPar, "value").text = service.fileName
+            elif isinstance(service, Uniform):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Uniform",
+                              name="Uniform")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.UniformPar",
+                                         name="distrPar")
+                min = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="min")
+                ET.SubElement(min, "value").text = str(float(service.min))
+                max = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="max")
+                ET.SubElement(max, "value").text = str(float(service.max))
+            elif isinstance(service, Weibull):
+                ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Weibull",
+                              name="Weibull")
+                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.WeibullPar",
+                                         name="distrPar")
+                alpha = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="alpha")
+                ET.SubElement(alpha, "value").text = str(float(service.lambda_value))
+                r = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="r")
+                ET.SubElement(r, "value").text = str(float(service.k))
+            else:
+                print(f"for {node.name}, {jobclass.name} service distribution not found")
+
 
     def generate_queuesection(self, node, parentTag):
 
@@ -320,9 +405,11 @@ class Network:
                                        name="dropStrategies")
 
         #TODO FIGURE OUT WHAT CAUSES DROP TYPE TO CHANGE
+        #TODO UPDATE SEEMS LIKE IT DOESNT MATTER WHEN CAPACITY IS INFINITE
         drop = "drop"
         if isinstance(node, Queue):
-            drop = "waiting queue"
+            #TODO DO THIS PROPERLY
+            drop = "drop"
 
         for jobclass in self.classes:
             ET.SubElement(dropStrategies, "refClass").text = jobclass.name

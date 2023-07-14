@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
 <archive
-	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="testmg1_reference.jsimg" timestamp="Wed Jul 12 11:49:22 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="test_mg1_reference.jsimg" timestamp="Wed Jul 12 11:49:22 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
 	<sim disableStatisticStop="true" logDecimalSeparator="." logDelimiter=";" logPath="C:\Users\James\JMT\" logReplaceMode="0" maxEvents="-1" maxSamples="10000" name="testmg1_reference.jsimg" polling="1.0" seed="891526" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
 		<userClass name="Class1" priority="0" referenceSource="Source" type="open"/>
 		<userClass name="Class2" priority="0" referenceSource="Source" type="open"/>
@@ -45,11 +45,11 @@
 				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
 					<refClass>Class1</refClass>
 					<subParameter classPath="java.lang.String" name="dropStrategy">
-						<value>waiting queue</value>
+						<value>drop</value>
 					</subParameter>
 					<refClass>Class2</refClass>
 					<subParameter classPath="java.lang.String" name="dropStrategy">
-						<value>waiting queue</value>
+						<value>drop</value>
 					</subParameter>
 				</parameter>
 				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>

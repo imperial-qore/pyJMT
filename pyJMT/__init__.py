@@ -2,5 +2,6 @@
 from .network import Network
 from .nodes import Source, Sink, Queue, Delay, Router
 from .classes import OpenClass, ClosedClass
-from .services import Exp, Erlang, Replayer, SchedStrategy, RoutingStrategy
+from .services import Cox, Det, Erlang, Exp, Gamma, HyperExp, Lognormal, Normal, Pareto, Replayer, \
+                      Uniform, Weibull, SchedStrategy, RoutingStrategy
 from .link import Link

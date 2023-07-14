@@ -1,5 +1,5 @@
 class Queue:
-    def __init__(self, model, name, strategy):
+    def __init__(self, model, name, strategy, capacity=-1):
         self.model = model
         self.name = name
         self.strategy = strategy
@@ -7,9 +7,10 @@ class Queue:
         self.routings = {}
         self.model.add_queue(self)
         self.numberOfServers = 1
+        self.capacity = capacity
 
-    def setService(self, jobclass, serviceDist):
-        self.services[jobclass.name] = serviceDist
+    def setService(self, jobclass, service_dist):
+        self.services[jobclass.name] = service_dist
 
     def setNumberOfServers(self, x):
         self.numberOfServers = x
@@ -36,8 +37,8 @@ class Source:
         self.services = {}
         self.model.add_source(self)
 
-    def setArrival(self, jobclass, arrivalDist):
-        self.services[jobclass.name] = arrivalDist
+    def setArrival(self, jobclass, arrival_dist):
+        self.services[jobclass.name] = arrival_dist
         jobclass.referenceSource = self.name
 
 
@@ -54,6 +55,6 @@ class Router:
         self.routings = {}
         self.model.add_router(self)
 
-    def setRouting(self, jobclass, routingStrategy):
-        self.routings[jobclass.name] = routingStrategy
+    def setRouting(self, jobclass, routing_strategy):
+        self.routings[jobclass.name] = routing_strategy
 
