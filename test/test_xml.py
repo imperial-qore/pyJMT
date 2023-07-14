@@ -228,9 +228,7 @@ class TestXML(unittest.TestCase):
         queue10 = pj.Queue(model, 'replayer(\'example_trace.txt\') Queue', pj.SchedStrategy.FCFS)
         queue11 = pj.Queue(model, 'U(0,1) Queue', pj.SchedStrategy.FCFS)
         queue12 = pj.Queue(model, 'weibull(0.445, 0.471) Queue', pj.SchedStrategy.FCFS)
-
         sink = pj.Sink(model, 'Sink')
-        pj.Erlang(1,2)
         # declare and set classes
         oclass = pj.OpenClass(model, 'Class1')
         source.setArrival(oclass, pj.Exp(1))
@@ -274,6 +272,81 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("Distributions Ok")
+
+    def test_RoutingStrategies_NPE_PE_PS_reference(self):
+
+        #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
+        # Lognormal, Normal, Pareto, Replayer, Uniform, Weibull
+
+        # Routing Strategies tested: Non-preemptive: FCFS, LCFS, RAND, SJF, LJF, SEPT, LEPT
+        # Preemptive: FCFS-PR, LCFS-PR, SRPT
+        # Processor Sharing: PS, DPS, GPS
+        model = pj.Network('test_RoutingStrategies_NPE_PE_PS')
+
+        # declare nodes
+        source = pj.Source(model, 'Exp(1) Source')
+        queue1 = pj.Queue(model, 'cox(1,0.125,0.875) FCFS Queue', pj.SchedStrategy.FCFS)
+        queue2 = pj.Queue(model, 'det(1) LCFS Queue', pj.SchedStrategy.LCFS)
+        queue3 = pj.Queue(model, 'erl(0.8,4) RAND Queue', pj.SchedStrategy.RAND)
+        queue4 = pj.Queue(model, 'exp(1) SJF Queue', pj.SchedStrategy.SJF)
+        queue5 = pj.Queue(model, 'gam(4,0.5) LJF Queue', pj.SchedStrategy.LJF)
+        queue6 = pj.Queue(model, 'hyp(0.2,0.1,0.4) SEPT Queue', pj.SchedStrategy.SEPT)
+        queue7 = pj.Queue(model, 'lognorm(-0.805, 1.269) LEPT Queue', pj.SchedStrategy.LEPT)
+        queue8 = pj.Queue(model, 'norm(2,1) FCFS-PR Queue', pj.SchedStrategy.FCFS_PR)
+        queue9 = pj.Queue(model, 'par(3,1) LCFS-PR Queue', pj.SchedStrategy.LCFS_PR)
+        queue10 = pj.Queue(model, 'replayer(\'example_trace.txt\') SRPT Queue', pj.SchedStrategy.SRPT)
+        queue11 = pj.Queue(model, 'U(0,1) PS Queue', pj.SchedStrategy.PS)
+        queue12 = pj.Queue(model, 'weibull(0.445, 0.471) DPS Queue', pj.SchedStrategy.DPS)
+        queue13 = pj.Queue(model, 'weibull(0.445, 0.471) GPS Queue', pj.SchedStrategy.GPS)
+        sink = pj.Sink(model, 'Sink')
+
+        # declare and set classes
+        oclass = pj.OpenClass(model, 'Class1')
+        source.setArrival(oclass, pj.Exp(1))
+        queue1.setService(oclass, pj.Cox(1, 0.125, 0.875))
+        queue2.setService(oclass, pj.Det(1))
+        queue3.setService(oclass, pj.Erlang(0.8, 4))
+        queue4.setService(oclass, pj.Exp(1))
+        queue5.setService(oclass, pj.Gamma(4, 0.5))
+        queue6.setService(oclass, pj.HyperExp(0.2, 0.1, 0.4))
+        queue7.setService(oclass, pj.Lognormal(-0.805, 1.269))
+        queue8.setService(oclass, pj.Normal(2, 1))
+        queue9.setService(oclass, pj.Pareto(3, 1))
+        queue10.setService(oclass, pj.Replayer('example_trace.txt'))
+        queue11.setService(oclass, pj.Uniform(0, 1))
+        queue12.setService(oclass, pj.Weibull(0.445, 0.471))
+        queue13.setService(oclass, pj.Weibull(0.445, 0.471))
+
+
+
+        # topology
+        #TODO CHECK HOW LINKING SHOULD WORK
+        model.addLinks([(source, queue1),
+                        (queue1, queue2),
+                        (queue2, queue3),
+                        (queue3, queue4),
+                        (queue4, queue5),
+                        (queue5, queue6),
+                        (queue6, queue7),
+                        (queue7, queue8),
+                        (queue8, queue9),
+                        (queue9, queue10),
+                        (queue10, queue11),
+                        (queue11, queue12),
+                        (queue12, queue13),
+                        (queue13, sink)])
+
+        # create solution file
+        model.generate_xml("test_RoutingStrategies_NPE_PE_PS_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse('test_RoutingStrategies_NPE_PE_PS_solution.jsimg')
+        reference_tree = ET.parse('test_RoutingStrategies_NPE_PE_PS_reference.jsimg')
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("RoutingStrategies NPE PE PS Ok")
+
 
 if __name__ == '__main__':
     unittest.main()

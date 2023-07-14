@@ -1,8 +1,10 @@
 import xml.etree.ElementTree as ET
 from .nodes import Source, Sink, Queue, Delay, Router
 from .classes import OpenClass, ClosedClass
-from .services import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto,\
-    Replayer, Uniform, Weibull, SchedStrategy, RoutingStrategy
+from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto,\
+    Replayer, Uniform, Weibull
+from .routing_strategies import RoutingStrategy
+from.scheduling_strategies import SchedStrategy
 from .link import Link
 import os
 import subprocess
@@ -18,8 +20,6 @@ class Network:
         self.nodes['queues']: [Queue] = []
         self.nodes['delays']: [Delay] = []
         self.nodes['routers']: [Router] = []
-
-
         self.links: [Link] = []
         self.classes = []
 
@@ -125,46 +125,7 @@ class Network:
 
             self.generate_queuesection(queue, node)
 
-            serverclassname = ""
-            if(queue.strategy == SchedStrategy.FCFS):
-                serverclassname = "Server"
-            elif(queue.strategy == SchedStrategy.PS):
-                serverclassname = "PSServer"
-            section = ET.SubElement(node, "section", className=serverclassname)
-            maxJobsPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxJobs")
-            ET.SubElement(maxJobsPar, "value").text = str(queue.numberOfServers)
-
-            if(queue.strategy == SchedStrategy.PS):
-                maxRunningPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxRunning")
-                ET.SubElement(maxRunningPar, "value").text = "-1"
-            parameter = ET.SubElement(section, "parameter", array="true", classPath="java.lang.Integer",
-                                      name="numberOfVisits")
-            for oclass in queue.services.keys():
-                ET.SubElement(parameter, "refClass").text = oclass
-                numberOfVisits = ET.SubElement(parameter, "subParameter", classPath="java.lang.Integer",
-                                               name="numberOfVisits")
-                ET.SubElement(numberOfVisits, "value").text = "1"
-
-            self.generate_servicestrategy(queue, section)
-
-
-            if(queue.strategy == SchedStrategy.PS):
-                parameter = ET.SubElement(section, "parameter", array="true",
-                                          classPath="jmt.engine.NetStrategies.PSStrategy", name="PSStrategy")
-                for oclass, service in queue.services.items():
-                    ET.SubElement(parameter, "refClass").text = oclass
-                    ET.SubElement(parameter, "subParameter",
-                                                 classPath="jmt.engine.NetStrategies.PSStrategies.EPSStrategy",
-                                                 name="EPSStrategy")
-
-                parameter = ET.SubElement(section, "parameter", array="true",
-                                          classPath="java.lang.Double", name="serviceWeights")
-                for oclass, service in queue.services.items():
-                    ET.SubElement(parameter, "refClass").text = oclass
-                    subParameter = ET.SubElement(parameter, "subParameter",
-                                  classPath="java.lang.Double",
-                                  name="serviceWeight")
-                    ET.SubElement(subParameter, "value").text = "1.0"
+            self.generate_serversection(queue, node)
 
             self.generate_router(queue, node)
 
@@ -274,7 +235,7 @@ class Network:
         parameter = ET.SubElement(parentTag, "parameter", array="true",
                                   classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
         for jobclass in self.classes:
-            service = node.services.get(jobclass.name)
+            service = node.services[jobclass.name]["service_strategy"]
 
             ET.SubElement(parameter, "refClass").text = jobclass.name
             subParameter = ET.SubElement(parameter, "subParameter",
@@ -393,7 +354,6 @@ class Network:
             else:
                 print(f"for {node.name}, {jobclass.name} service distribution not found")
 
-
     def generate_queuesection(self, node, parentTag):
 
         section = ET.SubElement(parentTag, "section", className="Queue")
@@ -417,6 +377,7 @@ class Network:
                                          name="dropStrategy")
             ET.SubElement(dropStrategy, "value").text = drop
 
+        #TODO CLARIFY IF QUEUEGETSTRATEGIES IS ALWAYS FCFS
         ET.SubElement(section, "parameter",
                       classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
         parameter = ET.SubElement(section, "parameter", array="true",
@@ -424,7 +385,68 @@ class Network:
                                   name="QueuePutStrategy")
 
         for jobclass in self.classes:
+            if isinstance(node, Queue):
+                ET.SubElement(parameter, "refClass").text = jobclass.name
+                ET.SubElement(parameter, "subParameter",
+                              classPath=f"jmt.engine.NetStrategies.QueuePutStrategies.{node.strategy.value[1]}",
+                              name=node.strategy.value[1])
+            else:
+                ET.SubElement(parameter, "refClass").text = jobclass.name
+                ET.SubElement(parameter, "subParameter",
+                              classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+    def generate_serversection(self, node: Queue, parentTag):
+        serverclassname = ""
+        if node.strategy.value[0] == "NP":
+            serverclassname = "Server"
+        elif node.strategy.value[0] == "PS":
+            serverclassname = "PSServer"
+        elif node.strategy.value[0] == "P":
+            serverclassname = "PreemptiveServer"
+        section = ET.SubElement(parentTag, "section", className=serverclassname)
+        maxJobsPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxJobs")
+        ET.SubElement(maxJobsPar, "value").text = str(node.numberOfServers)
+
+        if serverclassname == "PSServer":
+
+            maxRunningPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxRunning")
+            ET.SubElement(maxRunningPar, "value").text = "-1"
+
+        parameter = ET.SubElement(section, "parameter", array="true", classPath="java.lang.Integer",
+                                  name="numberOfVisits")
+
+        #TODO SEE IF THIS IS CONSTANT
+        for jobclass in self.classes:
             ET.SubElement(parameter, "refClass").text = jobclass.name
-            ET.SubElement(parameter, "subParameter",
-                          classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+            numberOfVisits = ET.SubElement(parameter, "subParameter", classPath="java.lang.Integer",
+                                           name="numberOfVisits")
+            ET.SubElement(numberOfVisits, "value").text = "1"
+
+        self.generate_servicestrategy(node, section)
+
+        if serverclassname == "PreemptiveServer":
+            parameter = ET.SubElement(section, "parameter", array="true",
+                                      classPath="jmt.engine.NetStrategies.QueuePutStrategy", name="PreemptiveStrategy")
+            for jobclass in self.classes:
+                ET.SubElement(parameter, "refClass").text = jobclass.name
+                ET.SubElement(parameter, "subParameter",
+                              classPath=f"jmt.engine.NetStrategies.QueuePutStrategies.{node.strategy.value[1]}",
+                              name=node.strategy.value[1])
+
+        if serverclassname == "PSServer":
+            parameter = ET.SubElement(section, "parameter", array="true",
+                                      classPath="jmt.engine.NetStrategies.PSStrategy", name="PSStrategy")
+            for jobclass in self.classes:
+                ET.SubElement(parameter, "refClass").text = jobclass.name
+                ET.SubElement(parameter, "subParameter",
+                              classPath=f"jmt.engine.NetStrategies.PSStrategies.{node.strategy.value[2]}",
+                              name=f"{node.strategy.value[2]}")
+
+            parameter = ET.SubElement(section, "parameter", array="true",
+                                      classPath="java.lang.Double", name="serviceWeights")
+            for jobclass in self.classes:
+                ET.SubElement(parameter, "refClass").text = jobclass.name
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="java.lang.Double",
+                                             name="serviceWeight")
+                ET.SubElement(subParameter, "value").text = str(node.services[jobclass.name]["weight"])
 

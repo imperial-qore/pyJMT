@@ -9,8 +9,10 @@ class Queue:
         self.numberOfServers = 1
         self.capacity = capacity
 
-    def setService(self, jobclass, service_dist):
-        self.services[jobclass.name] = service_dist
+    def setService(self, jobclass, service_dist, weight=1.0):
+        self.services[jobclass.name] = {}
+        self.services[jobclass.name]['service_strategy'] = service_dist
+        self.services[jobclass.name]['weight'] = weight
 
     def setNumberOfServers(self, x):
         self.numberOfServers = x
@@ -25,8 +27,10 @@ class Delay:
         self.model.add_delay(self)
         self.numMachines = 1
 
-    def setService(self, jobclass, service):
-        self.services[jobclass.name] = service
+    def setService(self, jobclass, service_dist, weight=1.0):
+        self.services[jobclass.name] = {}
+        self.services[jobclass.name]['service_strategy'] = service_dist
+        self.services[jobclass.name]['weight'] = weight
 
 
 class Source:
@@ -38,7 +42,8 @@ class Source:
         self.model.add_source(self)
 
     def setArrival(self, jobclass, arrival_dist):
-        self.services[jobclass.name] = arrival_dist
+        self.services[jobclass.name] = {}
+        self.services[jobclass.name]["service_strategy"] = arrival_dist
         jobclass.referenceSource = self.name
 
 
@@ -47,6 +52,7 @@ class Sink:
         self.model = model
         self.name = name
         self.model.add_sink(self)
+
 
 class Router:
     def __init__(self, model, name):
