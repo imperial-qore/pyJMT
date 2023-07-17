@@ -362,7 +362,10 @@ class Network:
         section = ET.SubElement(parentTag, "section", className="Queue")
         # TODO ADD DIFFERENT CAPACITIES BASED ON QUEUE
         sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
-        ET.SubElement(sizepar, "value").text = "-1"
+        if hasattr(node, 'capacity'):
+            ET.SubElement(sizepar, "value").text = str(node.capacity)
+        else:
+            ET.SubElement(sizepar, "value").text = "-1"
 
         dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
                                        name="dropStrategies")
