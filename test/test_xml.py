@@ -347,6 +347,69 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("RoutingStrategies NPE PE PS Ok")
 
+    def test_RoutingStrategies_Priority_NPE_PE_reference(self):
+
+        #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
+        # Lognormal, Normal, Pareto, Replayer
+
+        # Routing Strategies tested: Non-preemptive: FCFS_PRIORITY, LCFS_PRIORITY, RAND_PRIORITY,
+        # SJF_PRIORITY, LJF_PRIORITY, SEPT_PRIORITY, LEPT_PRIORITY
+        # Preemptive: FCFS-PR_PRIORITY, LCFS-PR_PRIORITY, SRPT_PRIORITY
+
+        model = pj.Network('test_RoutingStrategies_NPE_PE_PS')
+
+        # declare nodes
+        source = pj.Source(model, 'Exp(1) Source')
+        queue1 = pj.Queue(model, 'cox(1,0.125,0.875) FCFS Queue', pj.SchedStrategy.FCFS_PRIORITY)
+        queue2 = pj.Queue(model, 'det(1) LCFS Queue', pj.SchedStrategy.LCFS_PRIORITY)
+        queue3 = pj.Queue(model, 'erl(0.8,4) RAND Queue', pj.SchedStrategy.RAND_PRIORITY)
+        queue4 = pj.Queue(model, 'exp(1) SJF Queue', pj.SchedStrategy.SJF_PRIORITY)
+        queue5 = pj.Queue(model, 'gam(4,0.5) LJF Queue', pj.SchedStrategy.LJF_PRIORITY)
+        queue6 = pj.Queue(model, 'hyp(0.2,0.1,0.4) SEPT Queue', pj.SchedStrategy.SEPT_PRIORITY)
+        queue7 = pj.Queue(model, 'lognorm(-0.805, 1.269) LEPT Queue', pj.SchedStrategy.LEPT_PRIORITY)
+        queue8 = pj.Queue(model, 'norm(2,1) FCFS-PR Queue', pj.SchedStrategy.FCFS_PR_PRIORITY)
+        queue9 = pj.Queue(model, 'par(3,1) LCFS-PR Queue', pj.SchedStrategy.LCFS_PR_PRIORITY)
+        queue10 = pj.Queue(model, 'replayer(\'example_trace.txt\') SRPT Queue', pj.SchedStrategy.SRPT_PRIORITY)
+        sink = pj.Sink(model, 'Sink')
+
+        # declare and set classes
+        oclass = pj.OpenClass(model, 'Class1')
+        source.setArrival(oclass, pj.Exp(1))
+        queue1.setService(oclass, pj.Cox(1, 0.125, 0.875))
+        queue2.setService(oclass, pj.Det(1))
+        queue3.setService(oclass, pj.Erlang(0.8, 4))
+        queue4.setService(oclass, pj.Exp(1))
+        queue5.setService(oclass, pj.Gamma(4, 0.5))
+        queue6.setService(oclass, pj.HyperExp(0.2, 0.1, 0.4))
+        queue7.setService(oclass, pj.Lognormal(-0.805, 1.269))
+        queue8.setService(oclass, pj.Normal(2, 1))
+        queue9.setService(oclass, pj.Pareto(3, 1))
+        queue10.setService(oclass, pj.Replayer('example_trace.txt'))
+
+        # topology
+        #TODO CHECK HOW LINKING SHOULD WORK
+        model.addLinks([(source, queue1),
+                        (queue1, queue2),
+                        (queue2, queue3),
+                        (queue3, queue4),
+                        (queue4, queue5),
+                        (queue5, queue6),
+                        (queue6, queue7),
+                        (queue7, queue8),
+                        (queue8, queue9),
+                        (queue9, queue10),
+                        (queue10, sink)])
+
+        # create solution file
+        model.generate_xml("test_RoutingStrategies_Priority_NPE_PE_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse("test_RoutingStrategies_Priority_NPE_PE_solution.jsimg")
+        reference_tree = ET.parse("test_RoutingStrategies_Priority_NPE_PE_reference.jsimg")
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("RoutingStrategies Priority NPE PE Ok")
 
 if __name__ == '__main__':
     unittest.main()

@@ -224,11 +224,11 @@ class Network:
     def generate_classes(self, simTag):
         for jobclass in self.classes:
             if isinstance(jobclass, OpenClass):
-                ET.SubElement(simTag, "userClass", name=jobclass.name, priority="0",
+                ET.SubElement(simTag, "userClass", name=jobclass.name, priority=str(jobclass.priority),
                               referenceSource=jobclass.referenceSource, type="open")
 
             elif isinstance(jobclass, ClosedClass):
-                ET.SubElement(simTag, "userClass", customers=str(jobclass.numMachines), name=jobclass.name, priority="0",
+                ET.SubElement(simTag, "userClass", customers=str(jobclass.numMachines), name=jobclass.name, priority=str(jobclass.priority),
                               referenceSource=jobclass.referenceSource, type="closed")
 
     def generate_servicestrategy(self, node,  parentTag):
