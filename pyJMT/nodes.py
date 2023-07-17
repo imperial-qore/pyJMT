@@ -1,6 +1,5 @@
-import pyJMT
-
 from pyJMT.routing_strategies import RoutingStrategy
+from itertools import product
 
 
 class Node:
@@ -41,11 +40,27 @@ class RoutingSection:
         self.routings[jobclass.name]['probabilities'] = {}
 
 
+class ClassSwitchSection:
+    def __init__(self, model):
+        self.p = {}
+        classes = model.get_classes()
+        for jclass in classes:
+            self.p[jclass.name] = {}
+        for c1, c2 in product(classes, repeat=2):
+            if c1 == c2:
+                self.p[c1.name][c2.name] = 1.0
+            else:
+                self.p[c1.name][c2.name] = 0.0
+
+    def setClassSwitchProb(self, class1, class2, p):
+        self.p[class1.name][class2.name] = p
+
+
 class Queue(Node, QueueSection, ServiceSection, RoutingSection):
     def __init__(self, model, name, strategy, capacity=-1):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
-        ServiceSection.__init__(self,)
+        ServiceSection.__init__(self, )
         QueueSection.__init__(self, strategy, capacity)
         self.model.add_queue(self)
 
@@ -84,3 +99,12 @@ class Router(Node, RoutingSection):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
         self.model.add_router(self)
+
+
+class ClassSwitch(Node, RoutingSection, ClassSwitchSection):
+    def __init__(self, model, name):
+        Node.__init__(self, model, name)
+        RoutingSection.__init__(self)
+        ClassSwitchSection.__init__(self, model)
+        self.model.nodes["classswitches"].append(self)
+

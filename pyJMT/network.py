@@ -8,18 +8,14 @@ from .scheduling_strategies import SchedStrategy
 from .link import Link
 import os
 import subprocess
+from itertools import product
 
 
 class Network:
     def __init__(self, name):
         self.name = name
-
-        self.nodes = {}
-        self.nodes['sources']: [Source] = []
-        self.nodes['sinks']: [Sink] = []
-        self.nodes['queues']: [Queue] = []
-        self.nodes['delays']: [Delay] = []
-        self.nodes['routers']: [Router] = []
+        self.nodes = {'sources': [], 'sinks': [], 'queues': [], 'delays': [],
+                      'routers': [], 'classswitches': []}
         self.links: [Link] = []
         self.classes = []
 
@@ -73,9 +69,21 @@ class Network:
         subprocess.run(cmd, shell=True)
 
     def init_routing_matrix(self):
+        #TODO see if this is ok - pretty memory inefficient but simple to use
         nodes = self.get_nodes()
         classes = self.get_classes()
-        P = {c1: {c2: {n1: {n2: 0 for n2 in nodes} for n1 in nodes} for c2 in classes} for c1 in classes}
+
+        P = {}
+        # For P[class_name][node_name][node_name]
+        for c in classes:
+            for n1, n2 in product(nodes, repeat=2):
+                P[(c, n1, n2)] = 0
+
+        # For P[class_name][class_name][node_name][node_name]
+        for c1, c2 in product(classes, repeat=2):
+            for n1, n2 in product(nodes, repeat=2):
+                P[(c1, c2, n1, n2)] = 0
+
         return P
 
     def generate_xml(self, fileName):
@@ -139,6 +147,14 @@ class Network:
 
             self.generate_router(delay, node)
 
+        for classswitch in self.nodes['classswitches']:
+            node = ET.SubElement(sim, "node", name=classswitch.name)
+            self.generate_queuesection(classswitch, node)
+
+            self.generate_classswitchsection(classswitch, node)
+
+            self.generate_router(classswitch, node)
+
         for sink in self.nodes['sinks']:
             node = ET.SubElement(sim, "node", name=sink.name)
             ET.SubElement(node, "section", className="JobSink")
@@ -194,13 +210,17 @@ class Network:
         parameter = ET.SubElement(section, "parameter", array="true",
                                   classPath="jmt.engine.NetStrategies.RoutingStrategy", name="RoutingStrategy")
         for jobclass in self.classes:
-            routing = node.routings[jobclass.name]
+            routing = node.routings.get(jobclass.name)
             refClass = ET.SubElement(parameter, "refClass")
             refClass.text = jobclass.name
-            if routing["routing_strat"].value[0] == "Static":
-                    subParameter = ET.SubElement(parameter, "subParameter",
-                                                 classPath=f"jmt.engine.NetStrategies.RoutingStrategies.{routing['routing_strat'].value[2]}",
-                                                 name=routing["routing_strat"].value[1])
+            if routing is None:
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy",
+                                             name="Random")
+            elif routing["routing_strat"].value[0] == "Static":
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath=f"jmt.engine.NetStrategies.RoutingStrategies.{routing['routing_strat'].value[2]}",
+                                             name=routing["routing_strat"].value[1])
 
             elif routing.value[0] == "Variable":  # TODO IMPLEMENT THIS PROPERLY
                 subParameter = ET.SubElement(parameter, "subParameter",
@@ -236,7 +256,8 @@ class Network:
         parameter = ET.SubElement(parentTag, "parameter", array="true",
                                   classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
         for jobclass in self.classes:
-            service = node.services[jobclass.name]["service_strategy"]
+            serviceDict = node.services.get(jobclass.name, {})
+            service = serviceDict.get("service_strategy")
 
             ET.SubElement(parameter, "refClass").text = jobclass.name
             subParameter = ET.SubElement(parameter, "subParameter",
@@ -355,7 +376,7 @@ class Network:
                 r = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="r")
                 ET.SubElement(r, "value").text = str(float(service.k))
             else:
-                print(f"for {node.name}, {jobclass.name} service distribution not found")
+                ET.SubElement(subParameter, "value").text = "null"
 
     def generate_queuesection(self, node, parentTag):
 
@@ -455,3 +476,14 @@ class Network:
                                              classPath="java.lang.Double",
                                              name="serviceWeight")
                 ET.SubElement(subParameter, "value").text = str(node.services[jobclass.name]["weight"])
+
+    def generate_classswitchsection(self, node, parentTag):
+        section = ET.SubElement(parentTag, "section", className="ClassSwitch")
+        parameter = ET.SubElement(section, "parameter", classPath="java.lang.Object", array="true", name="matrix")
+        for class1 in node.p.keys():
+            ET.SubElement(parameter, "refClass").text = str(class1)
+            subParameter = ET.SubElement(parameter, "subParameter", classPath="java.lang.Float", array="true", name="row")
+            for class2 in node.p[class1]:
+                ET.SubElement(subParameter, "refClass").text = str(class2)
+                subParameter2 = ET.SubElement(subParameter, "subParameter", classPath="java.lang.Float", name="cell")
+                ET.SubElement(subParameter2, "value").text = str(float(node.p[class1][class2]))

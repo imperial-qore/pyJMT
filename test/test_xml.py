@@ -3,6 +3,7 @@ import unittest
 import pyJMT as pj
 import xml.etree.ElementTree as ET
 
+
 def elements_equal(e1, e2, path=''):
     if e1.tag != e2.tag:
         print(f"Different tag at {path}: {e1.tag} != {e2.tag}")
@@ -27,7 +28,8 @@ def elements_equal(e1, e2, path=''):
             e2children.append(child.tag)
         print(f"Different number of children at {path}, solution has {e1children}, reference has {e2children}")
         return False
-    return all(elements_equal(c1, c2, path=f"{path}/{c1.tag}") for c1, c2 in zip(sorted(e1, key=ET.tostring), sorted(e2, key=ET.tostring)))
+    return all(elements_equal(c1, c2, path=f"{path}/{c1.tag}") for c1, c2 in
+               zip(sorted(e1, key=ET.tostring), sorted(e2, key=ET.tostring)))
 
 
 class TestXML(unittest.TestCase):
@@ -76,7 +78,7 @@ class TestXML(unittest.TestCase):
         source.setArrival(jobclass1, pj.Exp(0.5))
         source.setArrival(jobclass2, pj.Exp(0.5))
 
-        queue.setService(jobclass1, pj.Erlang.fitMeanAndSCV(1, 1/3))
+        queue.setService(jobclass1, pj.Erlang.fitMeanAndSCV(1, 1 / 3))
         queue.setService(jobclass2, pj.Replayer('example_trace.txt'))
 
         # topology
@@ -113,7 +115,7 @@ class TestXML(unittest.TestCase):
         queue.setService(cclass, pj.Exp(4.0))
 
         # topology
-        #TODO CHECK HOW LINKING SHOULD WORK
+        # TODO CHECK HOW LINKING SHOULD WORK
         model.link(delay, queue)
         model.link(queue, delay)
 
@@ -147,7 +149,7 @@ class TestXML(unittest.TestCase):
         queue2.setService(oclass, pj.Exp(2))
 
         # topology
-        #TODO CHECK HOW LINKING SHOULD WORK
+        # TODO CHECK HOW LINKING SHOULD WORK
         model.addLinks([(source, lb),
                         (lb, queue1),
                         (lb, queue2),
@@ -166,6 +168,71 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("RRLB Ok")
+
+    def test_classSwitch(self):
+        # Routing Strategies tested: Random, Round Robin, JSQ, Shortest response time,
+        # least utilization, fastest service time, disabled
+
+        model = pj.Network('test_classSwitch')
+
+        # declare nodes
+        source1 = pj.Source(model, 'Source 1')
+        source2 = pj.Source(model, 'Source 2')
+
+        queue1 = pj.Queue(model, 'Queue 1', pj.SchedStrategy.FCFS)
+        queue2 = pj.Queue(model, 'Queue 2', pj.SchedStrategy.FCFS)
+
+        sink = pj.Sink(model, 'Sink 1')
+
+        # declare and set classes
+        class1 = pj.OpenClass(model, 'Class1')
+        class2 = pj.OpenClass(model, 'Class2')
+
+        #Create classswitches
+        classswitch1 = pj.ClassSwitch(model, "ClassSwitch 1")
+        classswitch2 = pj.ClassSwitch(model, "ClassSwitch 2")
+
+        source1.setArrival(class1, pj.Exp(0.5))
+        source2.setArrival(class2, pj.Exp(1))
+
+        queue1.setService(class1, pj.Exp(1))
+        queue1.setService(class2, pj.Exp(1))
+        queue2.setService(class1, pj.Exp(1))
+        queue2.setService(class2, pj.Exp(1))
+
+        #Set some classswitch probabilites by hand
+
+        classswitch1.setClassSwitchProb(class1, class1, 0.4)
+        classswitch1.setClassSwitchProb(class1, class2, 0.6)
+        classswitch1.setClassSwitchProb(class2, class1, 0.6)
+        classswitch1.setClassSwitchProb(class2, class2, 0.4)
+
+        classswitch2.setClassSwitchProb(class1, class1, 0.5)
+        classswitch2.setClassSwitchProb(class1, class2, 0.5)
+        classswitch2.setClassSwitchProb(class2, class1, 0.5)
+        classswitch2.setClassSwitchProb(class2, class2, 0.5)
+
+
+        # topology
+        # TODO CHECK HOW LINKING SHOULD WORK
+        model.addLinks([(source1, queue1),
+                        (source1, queue2),
+                        (source2, queue1),
+                        (source2, queue2),
+                        (queue1, classswitch1),
+                        (queue2, classswitch1),
+                        (classswitch1, sink)])
+
+        # create solution file
+        model.generate_xml("test_classSwitch_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse("test_classSwitch_solution.jsimg")
+        reference_tree = ET.parse("test_classSwitch_reference.jsimg")
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("Classswitch Ok")
 
 
     # def test_ReentrantLine(self):
@@ -208,8 +275,7 @@ class TestXML(unittest.TestCase):
     #     print("ReentrantLine Ok")
 
     def test_DistributionsLoadIndependent(self):
-
-        #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
+        # Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
         # Lognormal, Normal, Pareto, Replayer, Uniform, Weibull
 
         model = pj.Network('DistributionsLoadIndepdent')
@@ -245,9 +311,8 @@ class TestXML(unittest.TestCase):
         queue11.setService(oclass, pj.Uniform(0, 1))
         queue12.setService(oclass, pj.Weibull(0.445, 0.471))
 
-
         # topology
-        #TODO CHECK HOW LINKING SHOULD WORK
+        # TODO CHECK HOW LINKING SHOULD WORK
         model.addLinks([(source, queue1),
                         (queue1, queue2),
                         (queue2, queue3),
@@ -274,8 +339,7 @@ class TestXML(unittest.TestCase):
         print("Distributions Ok")
 
     def test_SchedulingStrategies_NPE_PE_PS(self):
-
-        #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
+        # Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
         # Lognormal, Normal, Pareto, Replayer, Uniform, Weibull
 
         # Scheduling Strategies tested: Non-preemptive: FCFS, LCFS, RAND, SJF, LJF, SEPT, LEPT
@@ -317,10 +381,8 @@ class TestXML(unittest.TestCase):
         queue12.setService(oclass, pj.Weibull(0.445, 0.471))
         queue13.setService(oclass, pj.Weibull(0.445, 0.471))
 
-
-
         # topology
-        #TODO CHECK HOW LINKING SHOULD WORK
+        # TODO CHECK HOW LINKING SHOULD WORK
         model.addLinks([(source, queue1),
                         (queue1, queue2),
                         (queue2, queue3),
@@ -348,8 +410,7 @@ class TestXML(unittest.TestCase):
         print("SchedulingStrategies NPE PE PS Ok")
 
     def test_SchedulingStrategies_Priority_NPE_PE(self):
-
-        #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
+        # Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
         # Lognormal, Normal, Pareto, Replayer
 
         # Scheduling Strategies tested: Non-preemptive: FCFS_PRIORITY, LCFS_PRIORITY, RAND_PRIORITY,
@@ -387,7 +448,7 @@ class TestXML(unittest.TestCase):
         queue10.setService(oclass, pj.Replayer('example_trace.txt'))
 
         # topology
-        #TODO CHECK HOW LINKING SHOULD WORK
+        # TODO CHECK HOW LINKING SHOULD WORK
         model.addLinks([(source, queue1),
                         (queue1, queue2),
                         (queue2, queue3),
@@ -411,13 +472,11 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("SchedulingStrategies Priority NPE PE Ok")
 
-
     def test_RoutingStrategies_Static(self):
-
         # Routing Strategies tested: Random, Round Robin, JSQ, Shortest response time,
         # least utilization, fastest service time, disabled
 
-        model = pj.Network('test_SchedulingStrategies_NPE_PE_PS')
+        model = pj.Network('test_RoutingStrategies_Static')
 
         # declare nodes
         source = pj.Source(model, 'Random Source')
@@ -448,7 +507,7 @@ class TestXML(unittest.TestCase):
         queue6.setRouting(oclass, pj.RoutingStrategy.DISABLED)
 
         # topology
-        #TODO CHECK HOW LINKING SHOULD WORK
+        # TODO CHECK HOW LINKING SHOULD WORK
         model.addLinks([(source, queue1),
                         (queue1, queue2),
                         (queue2, queue3),
@@ -467,6 +526,61 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("Routing Strategies Static Ok")
+
+    # def test_RoutingStrategies_Probabilites(self):
+    #     # Routing Strategies tested: Random, Round Robin, JSQ, Shortest response time,
+    #     # least utilization, fastest service time, disabled
+    #
+    #     model = pj.Network('test_RoutingStrategies_Probabilites')
+    #
+    #     # declare nodes
+    #     source = pj.Source(model, 'Random Source')
+    #     queue1 = pj.Queue(model, 'Round Robin Queue', pj.SchedStrategy.FCFS)
+    #     queue2 = pj.Queue(model, 'JSQ Queue', pj.SchedStrategy.FCFS)
+    #     queue3 = pj.Queue(model, 'Shortest response time Queue', pj.SchedStrategy.FCFS)
+    #     queue4 = pj.Queue(model, 'Least Utilization Queue', pj.SchedStrategy.FCFS)
+    #     queue5 = pj.Queue(model, 'Fastest Service Queue', pj.SchedStrategy.FCFS)
+    #     queue6 = pj.Queue(model, 'Disabled Queue', pj.SchedStrategy.FCFS)
+    #     sink = pj.Sink(model, 'Sink')
+    #
+    #     # declare and set classes
+    #     oclass = pj.OpenClass(model, 'Class1')
+    #     source.setArrival(oclass, pj.Exp(0.5))
+    #     queue1.setService(oclass, pj.Exp(1))
+    #     queue2.setService(oclass, pj.Exp(1))
+    #     queue3.setService(oclass, pj.Exp(1))
+    #     queue4.setService(oclass, pj.Exp(1))
+    #     queue5.setService(oclass, pj.Exp(1))
+    #
+    #     source.setRouting(oclass, pj.RoutingStrategy.RANDOM)
+    #     queue1.setRouting(oclass, pj.RoutingStrategy.RROBIN)
+    #     queue2.setRouting(oclass, pj.RoutingStrategy.JSQ)
+    #     queue3.setRouting(oclass, pj.RoutingStrategy.SHORTEST_RESPONSE_TIME)
+    #     queue4.setRouting(oclass, pj.RoutingStrategy.LEAST_UTILIZATION)
+    #     queue5.setRouting(oclass, pj.RoutingStrategy.FASTEST_SERVICE)
+    #     queue6.setRouting(oclass, pj.RoutingStrategy.DISABLED)
+    #
+    #     # topology
+    #     # TODO CHECK HOW LINKING SHOULD WORK
+    #     model.addLinks([(source, queue1),
+    #                     (queue1, queue2),
+    #                     (queue2, queue3),
+    #                     (queue3, queue4),
+    #                     (queue4, queue5),
+    #                     (queue5, queue6),
+    #                     (queue6, sink)])
+    #
+    #     # create solution file
+    #     model.generate_xml("test_RoutingStrategies_Probabilites_solution.jsimg")
+    #
+    #     # Parse the generated file and the reference file
+    #     generated_tree = ET.parse("test_RoutingStrategies_Probabilites_solution.jsimg")
+    #     reference_tree = ET.parse("test_RoutingStrategies_Probabilites_reference.jsimg")
+    #
+    #     # Compare the generated file with the reference file
+    #     self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+    #     print("Routing Strategies Probabilities Ok")
+
 
 if __name__ == '__main__':
     unittest.main()
