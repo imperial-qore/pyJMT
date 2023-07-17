@@ -273,7 +273,7 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("Distributions Ok")
 
-    def test_SchedulingStrategies_NPE_PE_PS_reference(self):
+    def test_SchedulingStrategies_NPE_PE_PS(self):
 
         #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
         # Lognormal, Normal, Pareto, Replayer, Uniform, Weibull
@@ -347,7 +347,7 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("SchedulingStrategies NPE PE PS Ok")
 
-    def test_SchedulingStrategies_Priority_NPE_PE_reference(self):
+    def test_SchedulingStrategies_Priority_NPE_PE(self):
 
         #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
         # Lognormal, Normal, Pareto, Replayer
@@ -410,6 +410,63 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("SchedulingStrategies Priority NPE PE Ok")
+
+
+    def test_RoutingStrategies_Static(self):
+
+        # Routing Strategies tested: Random, Round Robin, JSQ, Shortest response time,
+        # least utilization, fastest service time, disabled
+
+        model = pj.Network('test_SchedulingStrategies_NPE_PE_PS')
+
+        # declare nodes
+        source = pj.Source(model, 'Random Source')
+        queue1 = pj.Queue(model, 'Round Robin Queue', pj.SchedStrategy.FCFS)
+        queue2 = pj.Queue(model, 'JSQ Queue', pj.SchedStrategy.FCFS)
+        queue3 = pj.Queue(model, 'Shortest response time Queue', pj.SchedStrategy.FCFS)
+        queue4 = pj.Queue(model, 'Least Utilization Queue', pj.SchedStrategy.FCFS)
+        queue5 = pj.Queue(model, 'Fastest Service Queue', pj.SchedStrategy.FCFS)
+        queue6 = pj.Queue(model, 'Disabled Queue', pj.SchedStrategy.FCFS)
+        sink = pj.Sink(model, 'Sink')
+
+        # declare and set classes
+        oclass = pj.OpenClass(model, 'Class1')
+        source.setArrival(oclass, pj.Exp(0.5))
+        queue1.setService(oclass, pj.Exp(1))
+        queue2.setService(oclass, pj.Exp(1))
+        queue3.setService(oclass, pj.Exp(1))
+        queue4.setService(oclass, pj.Exp(1))
+        queue5.setService(oclass, pj.Exp(1))
+        queue6.setService(oclass, pj.Exp(1))
+
+        source.setRouting(oclass, pj.RoutingStrategy.RANDOM)
+        queue1.setRouting(oclass, pj.RoutingStrategy.RROBIN)
+        queue2.setRouting(oclass, pj.RoutingStrategy.JSQ)
+        queue3.setRouting(oclass, pj.RoutingStrategy.SHORTEST_RESPONSE_TIME)
+        queue4.setRouting(oclass, pj.RoutingStrategy.LEAST_UTILIZATION)
+        queue5.setRouting(oclass, pj.RoutingStrategy.FASTEST_SERVICE)
+        queue6.setRouting(oclass, pj.RoutingStrategy.DISABLED)
+
+        # topology
+        #TODO CHECK HOW LINKING SHOULD WORK
+        model.addLinks([(source, queue1),
+                        (queue1, queue2),
+                        (queue2, queue3),
+                        (queue3, queue4),
+                        (queue4, queue5),
+                        (queue5, queue6),
+                        (queue6, sink)])
+
+        # create solution file
+        model.generate_xml("test_RoutingStrategies_Static_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse("test_RoutingStrategies_Static_solution.jsimg")
+        reference_tree = ET.parse("test_RoutingStrategies_Static_reference.jsimg")
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("Routing Strategies Static Ok")
 
 if __name__ == '__main__':
     unittest.main()

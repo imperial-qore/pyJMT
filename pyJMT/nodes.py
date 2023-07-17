@@ -1,3 +1,6 @@
+import pyJMT
+
+from pyJMT.routing_strategies import RoutingStrategy
 class Queue:
     def __init__(self, model, name, strategy, capacity=-1):
         self.model = model
@@ -13,6 +16,13 @@ class Queue:
         self.services[jobclass.name] = {}
         self.services[jobclass.name]['service_strategy'] = service_dist
         self.services[jobclass.name]['weight'] = weight
+        if jobclass.name not in self.routings:
+            self.setRouting(jobclass, RoutingStrategy.RANDOM)
+
+    def setRouting(self, jobclass, routing_strat):
+        self.routings[jobclass.name] = {}
+        self.routings[jobclass.name]['routing_strat'] = routing_strat
+        self.routings[jobclass.name]['probabilities'] = {}
 
     def setNumberOfServers(self, x):
         self.numberOfServers = x
@@ -31,7 +41,13 @@ class Delay:
         self.services[jobclass.name] = {}
         self.services[jobclass.name]['service_strategy'] = service_dist
         self.services[jobclass.name]['weight'] = weight
+        if jobclass.name not in self.routings:
+            self.setRouting(jobclass, RoutingStrategy.RANDOM)
 
+    def setRouting(self, jobclass, routing_strat):
+        self.routings[jobclass.name] = {}
+        self.routings[jobclass.name]['routing_strat'] = routing_strat
+        self.routings[jobclass.name]['probabilities'] = {}
 
 class Source:
     def __init__(self, model, name):
@@ -45,6 +61,13 @@ class Source:
         self.services[jobclass.name] = {}
         self.services[jobclass.name]["service_strategy"] = arrival_dist
         jobclass.referenceSource = self.name
+        if jobclass.name not in self.routings:
+            self.setRouting(jobclass, RoutingStrategy.RANDOM)
+
+    def setRouting(self, jobclass, routing_strat):
+        self.routings[jobclass.name] = {}
+        self.routings[jobclass.name]['routing_strat'] = routing_strat
+        self.routings[jobclass.name]['probabilities'] = {}
 
 
 class Sink:
@@ -61,6 +84,8 @@ class Router:
         self.routings = {}
         self.model.add_router(self)
 
-    def setRouting(self, jobclass, routing_strategy):
-        self.routings[jobclass.name] = routing_strategy
+    def setRouting(self, jobclass, routing_strat):
+        self.routings[jobclass.name] = {}
+        self.routings[jobclass.name]['routing_strat'] = routing_strat
+        self.routings[jobclass.name]['probabilities'] = {}
 

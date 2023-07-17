@@ -1,0 +1,347 @@
+<?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
+<archive
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="test_RoutingStrategies_Static_reference.jsimg" timestamp="Mon Jul 17 10:18:03 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
+	<sim disableStatisticStop="false" logDecimalSeparator="." logDelimiter="," logPath="C:\Users\James\JMT\" logReplaceMode="0" maxEvents="-1" maxSamples="1000000" name="test_RoutingStrategies_Static_reference.jsimg" polling="1.0" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
+		<userClass name="Class1" priority="0" referenceSource="Random Source" type="open"/>
+		<node name="Random Source">
+			<section className="RandomSource">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>0.5</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="ServiceTunnel"/>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy" name="Random"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="Round Robin Queue">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>drop</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Server">
+				<parameter classPath="java.lang.Integer" name="maxJobs">
+					<value>1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.Integer" name="numberOfVisits">
+						<value>1</value>
+					</subParameter>
+				</parameter>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>1.0</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.RoundRobinStrategy" name="Round Robin"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="JSQ Queue">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>drop</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Server">
+				<parameter classPath="java.lang.Integer" name="maxJobs">
+					<value>1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.Integer" name="numberOfVisits">
+						<value>1</value>
+					</subParameter>
+				</parameter>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>1.0</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.ShortestQueueLengthRoutingStrategy" name="Join the Shortest Queue (JSQ)"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="Shortest response time Queue">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>drop</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Server">
+				<parameter classPath="java.lang.Integer" name="maxJobs">
+					<value>1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.Integer" name="numberOfVisits">
+						<value>1</value>
+					</subParameter>
+				</parameter>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>1.0</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.ShortestResponseTimeRoutingStrategy" name="Shortest Response Time"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="Least Utilization Queue">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>drop</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Server">
+				<parameter classPath="java.lang.Integer" name="maxJobs">
+					<value>1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.Integer" name="numberOfVisits">
+						<value>1</value>
+					</subParameter>
+				</parameter>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>1.0</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.LeastUtilizationRoutingStrategy" name="Least Utilization"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="Fastest Service Queue">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>drop</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Server">
+				<parameter classPath="java.lang.Integer" name="maxJobs">
+					<value>1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.Integer" name="numberOfVisits">
+						<value>1</value>
+					</subParameter>
+				</parameter>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>1.0</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.FastestServiceRoutingStrategy" name="Fastest Service"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="Disabled Queue">
+			<section className="Queue">
+				<parameter classPath="java.lang.Integer" name="size">
+					<value>-1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.String" name="dropStrategies">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.String" name="dropStrategy">
+						<value>drop</value>
+					</subParameter>
+				</parameter>
+				<parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+				</parameter>
+			</section>
+			<section className="Server">
+				<parameter classPath="java.lang.Integer" name="maxJobs">
+					<value>1</value>
+				</parameter>
+				<parameter array="true" classPath="java.lang.Integer" name="numberOfVisits">
+					<refClass>Class1</refClass>
+					<subParameter classPath="java.lang.Integer" name="numberOfVisits">
+						<value>1</value>
+					</subParameter>
+				</parameter>
+				<parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+						<subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
+						<subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
+							<subParameter classPath="java.lang.Double" name="lambda">
+								<value>1.0</value>
+							</subParameter>
+						</subParameter>
+					</subParameter>
+				</parameter>
+			</section>
+			<section className="Router">
+				<parameter array="true" classPath="jmt.engine.NetStrategies.RoutingStrategy" name="RoutingStrategy">
+					<refClass>Class1</refClass>
+					<subParameter classPath="jmt.engine.NetStrategies.RoutingStrategies.DisabledRoutingStrategy" name="Disabled"/>
+				</parameter>
+			</section>
+		</node>
+		<node name="Sink">
+			<section className="JobSink"/>
+		</node>
+		<measure alpha="0.01" name="Round Robin Queue_Class1_Number of Customers" nodeType="station" precision="0.03" referenceNode="Round Robin Queue" referenceUserClass="Class1" type="Number of Customers" verbose="false" />
+		<measure alpha="0.01" name="JSQ Queue_Class1_Number of Customers" nodeType="station" precision="0.03" referenceNode="JSQ Queue" referenceUserClass="Class1" type="Number of Customers" verbose="false" />
+		<measure alpha="0.01" name="Shortest response time Queue_Class1_Number of Customers" nodeType="station" precision="0.03" referenceNode="Shortest response time Queue" referenceUserClass="Class1" type="Number of Customers" verbose="false" />
+		<measure alpha="0.01" name="Least Utilization Queue_Class1_Number of Customers" nodeType="station" precision="0.03" referenceNode="Least Utilization Queue" referenceUserClass="Class1" type="Number of Customers" verbose="false" />
+		<measure alpha="0.01" name="Fastest Service Queue_Class1_Number of Customers" nodeType="station" precision="0.03" referenceNode="Fastest Service Queue" referenceUserClass="Class1" type="Number of Customers" verbose="false" />
+		<measure alpha="0.01" name="Disabled Queue_Class1_Number of Customers" nodeType="station" precision="0.03" referenceNode="Disabled Queue" referenceUserClass="Class1" type="Number of Customers" verbose="false" />
+		<measure alpha="0.01" name="Round Robin Queue_Class1_Utilization" nodeType="station" precision="0.03" referenceNode="Round Robin Queue" referenceUserClass="Class1" type="Utilization" verbose="false" />
+		<measure alpha="0.01" name="JSQ Queue_Class1_Utilization" nodeType="station" precision="0.03" referenceNode="JSQ Queue" referenceUserClass="Class1" type="Utilization" verbose="false" />
+		<measure alpha="0.01" name="Shortest response time Queue_Class1_Utilization" nodeType="station" precision="0.03" referenceNode="Shortest response time Queue" referenceUserClass="Class1" type="Utilization" verbose="false" />
+		<measure alpha="0.01" name="Least Utilization Queue_Class1_Utilization" nodeType="station" precision="0.03" referenceNode="Least Utilization Queue" referenceUserClass="Class1" type="Utilization" verbose="false" />
+		<measure alpha="0.01" name="Fastest Service Queue_Class1_Utilization" nodeType="station" precision="0.03" referenceNode="Fastest Service Queue" referenceUserClass="Class1" type="Utilization" verbose="false" />
+		<measure alpha="0.01" name="Disabled Queue_Class1_Utilization" nodeType="station" precision="0.03" referenceNode="Disabled Queue" referenceUserClass="Class1" type="Utilization" verbose="false" />
+		<measure alpha="0.01" name="Round Robin Queue_Class1_Response Time" nodeType="station" precision="0.03" referenceNode="Round Robin Queue" referenceUserClass="Class1" type="Response Time" verbose="false" />
+		<measure alpha="0.01" name="JSQ Queue_Class1_Response Time" nodeType="station" precision="0.03" referenceNode="JSQ Queue" referenceUserClass="Class1" type="Response Time" verbose="false" />
+		<measure alpha="0.01" name="Shortest response time Queue_Class1_Response Time" nodeType="station" precision="0.03" referenceNode="Shortest response time Queue" referenceUserClass="Class1" type="Response Time" verbose="false" />
+		<measure alpha="0.01" name="Least Utilization Queue_Class1_Response Time" nodeType="station" precision="0.03" referenceNode="Least Utilization Queue" referenceUserClass="Class1" type="Response Time" verbose="false" />
+		<measure alpha="0.01" name="Fastest Service Queue_Class1_Response Time" nodeType="station" precision="0.03" referenceNode="Fastest Service Queue" referenceUserClass="Class1" type="Response Time" verbose="false" />
+		<measure alpha="0.01" name="Disabled Queue_Class1_Response Time" nodeType="station" precision="0.03" referenceNode="Disabled Queue" referenceUserClass="Class1" type="Response Time" verbose="false" />
+		<measure alpha="0.01" name="Round Robin Queue_Class1_Throughput" nodeType="station" precision="0.03" referenceNode="Round Robin Queue" referenceUserClass="Class1" type="Throughput" verbose="false" />
+		<measure alpha="0.01" name="JSQ Queue_Class1_Throughput" nodeType="station" precision="0.03" referenceNode="JSQ Queue" referenceUserClass="Class1" type="Throughput" verbose="false" />
+		<measure alpha="0.01" name="Shortest response time Queue_Class1_Throughput" nodeType="station" precision="0.03" referenceNode="Shortest response time Queue" referenceUserClass="Class1" type="Throughput" verbose="false" />
+		<measure alpha="0.01" name="Least Utilization Queue_Class1_Throughput" nodeType="station" precision="0.03" referenceNode="Least Utilization Queue" referenceUserClass="Class1" type="Throughput" verbose="false" />
+		<measure alpha="0.01" name="Fastest Service Queue_Class1_Throughput" nodeType="station" precision="0.03" referenceNode="Fastest Service Queue" referenceUserClass="Class1" type="Throughput" verbose="false" />
+		<measure alpha="0.01" name="Disabled Queue_Class1_Throughput" nodeType="station" precision="0.03" referenceNode="Disabled Queue" referenceUserClass="Class1" type="Throughput" verbose="false" />
+		<measure alpha="0.01" name="Round Robin Queue_Class1_Arrival Rate" nodeType="station" precision="0.03" referenceNode="Round Robin Queue" referenceUserClass="Class1" type="Arrival Rate" verbose="false" />
+		<measure alpha="0.01" name="JSQ Queue_Class1_Arrival Rate" nodeType="station" precision="0.03" referenceNode="JSQ Queue" referenceUserClass="Class1" type="Arrival Rate" verbose="false" />
+		<measure alpha="0.01" name="Shortest response time Queue_Class1_Arrival Rate" nodeType="station" precision="0.03" referenceNode="Shortest response time Queue" referenceUserClass="Class1" type="Arrival Rate" verbose="false" />
+		<measure alpha="0.01" name="Least Utilization Queue_Class1_Arrival Rate" nodeType="station" precision="0.03" referenceNode="Least Utilization Queue" referenceUserClass="Class1" type="Arrival Rate" verbose="false" />
+		<measure alpha="0.01" name="Fastest Service Queue_Class1_Arrival Rate" nodeType="station" precision="0.03" referenceNode="Fastest Service Queue" referenceUserClass="Class1" type="Arrival Rate" verbose="false" />
+		<measure alpha="0.01" name="Disabled Queue_Class1_Arrival Rate" nodeType="station" precision="0.03" referenceNode="Disabled Queue" referenceUserClass="Class1" type="Arrival Rate" verbose="false" />
+		<measure alpha="0.01" name="Random Source_Class1_Throughput" nodeType="station" precision="0.03" referenceNode="Random Source" referenceUserClass="Class1" type="Throughput" verbose="false" />
+		<measure alpha="0.01" name="Random Source_Class1_Arrival Rate" nodeType="station" precision="0.03" referenceNode="Random Source" referenceUserClass="Class1" type="Arrival Rate" verbose="false" />
+		<connection source="Random Source" target="Round Robin Queue"/>
+		<connection source="Round Robin Queue" target="JSQ Queue"/>
+		<connection source="JSQ Queue" target="Shortest response time Queue"/>
+		<connection source="Shortest response time Queue" target="Least Utilization Queue"/>
+		<connection source="Least Utilization Queue" target="Fastest Service Queue"/>
+		<connection source="Fastest Service Queue" target="Disabled Queue"/>
+		<connection source="Disabled Queue" target="Sink"/>
+	</sim>
+</archive>

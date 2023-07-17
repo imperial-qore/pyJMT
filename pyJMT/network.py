@@ -1,10 +1,10 @@
 import xml.etree.ElementTree as ET
 from .nodes import Source, Sink, Queue, Delay, Router
 from .classes import OpenClass, ClosedClass
-from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto,\
+from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto, \
     Replayer, Uniform, Weibull
 from .routing_strategies import RoutingStrategy
-from.scheduling_strategies import SchedStrategy
+from .scheduling_strategies import SchedStrategy
 from .link import Link
 import os
 import subprocess
@@ -64,7 +64,6 @@ class Network:
     def addLinks(self, linkList):
         for source, target in linkList:
             self.link(source, target)
-
 
     def jsimg_open(self, jmt_path, filename):
         path = os.path.dirname(filename)
@@ -148,8 +147,10 @@ class Network:
         for measure in measuresQueue:
             for queue in self.nodes['queues']:
                 for oclass in queue.services.keys():
-                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{queue.name}_{oclass}_{measure}", nodeType="station",
-                                  precision="0.03", referenceNode=queue.name, referenceUserClass=f"{oclass}", type=measure,
+                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{queue.name}_{oclass}_{measure}",
+                                  nodeType="station",
+                                  precision="0.03", referenceNode=queue.name, referenceUserClass=f"{oclass}",
+                                  type=measure,
                                   verbose="false")
 
         measuresDelay = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
@@ -166,8 +167,10 @@ class Network:
         for measure in measuresSource:
             for source in self.nodes['sources']:
                 for oclass in source.services.keys():
-                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{source.name}_{oclass}_{measure}", nodeType="station",
-                                  precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}", type=measure,
+                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{source.name}_{oclass}_{measure}",
+                                  nodeType="station",
+                                  precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}",
+                                  type=measure,
                                   verbose="false")
 
         for link in self.links:
@@ -191,18 +194,15 @@ class Network:
         parameter = ET.SubElement(section, "parameter", array="true",
                                   classPath="jmt.engine.NetStrategies.RoutingStrategy", name="RoutingStrategy")
         for jobclass in self.classes:
-            routing = node.routings.get(jobclass.name)
+            routing = node.routings[jobclass.name]
             refClass = ET.SubElement(parameter, "refClass")
             refClass.text = jobclass.name
-            if routing == RoutingStrategy.RANDOM or routing is None:
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.RandomStrategy",
-                                             name="Random")
-            elif routing == RoutingStrategy.RROBIN:
-                subParameter = ET.SubElement(parameter, "subParameter",
-                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.RoundRobinStrategy",
-                                             name="Round Robin")
-            elif routing == RoutingStrategy.PROBABILITIES: #TODO IMPLEMENT THIS PROPERLY
+            if routing["routing_strat"].value[0] == "Static":
+                    subParameter = ET.SubElement(parameter, "subParameter",
+                                                 classPath=f"jmt.engine.NetStrategies.RoutingStrategies.{routing['routing_strat'].value[2]}",
+                                                 name=routing["routing_strat"].value[1])
+
+            elif routing.value[0] == "Variable":  # TODO IMPLEMENT THIS PROPERLY
                 subParameter = ET.SubElement(parameter, "subParameter",
                                              classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
                                              name="Probabilities")
@@ -228,10 +228,11 @@ class Network:
                               referenceSource=jobclass.referenceSource, type="open")
 
             elif isinstance(jobclass, ClosedClass):
-                ET.SubElement(simTag, "userClass", customers=str(jobclass.numMachines), name=jobclass.name, priority=str(jobclass.priority),
+                ET.SubElement(simTag, "userClass", customers=str(jobclass.numMachines), name=jobclass.name,
+                              priority=str(jobclass.priority),
                               referenceSource=jobclass.referenceSource, type="closed")
 
-    def generate_servicestrategy(self, node,  parentTag):
+    def generate_servicestrategy(self, node, parentTag):
         parameter = ET.SubElement(parentTag, "parameter", array="true",
                                   classPath="jmt.engine.NetStrategies.ServiceStrategy", name="ServiceStrategy")
         for jobclass in self.classes:
@@ -257,7 +258,8 @@ class Network:
             elif isinstance(service, Det):
                 ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.DeterministicDistr",
                               name="Deterministic")
-                distrPar = ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.DeterministicDistrPar",
+                distrPar = ET.SubElement(subParameter, "subParameter",
+                                         classPath="jmt.engine.random.DeterministicDistrPar",
                                          name="distrPar")
                 t = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="t")
                 ET.SubElement(t, "value").text = str(float(service.k))
@@ -315,7 +317,8 @@ class Network:
                                          name="distrPar")
                 mean = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="mean")
                 ET.SubElement(mean, "value").text = str(float(service.mean))
-                standardDeviation = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="standardDeviation")
+                standardDeviation = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double",
+                                                  name="standardDeviation")
                 ET.SubElement(standardDeviation, "value").text = str(float(service.standardDeviation))
             elif isinstance(service, Pareto):
                 ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.Pareto",
@@ -357,18 +360,18 @@ class Network:
     def generate_queuesection(self, node, parentTag):
 
         section = ET.SubElement(parentTag, "section", className="Queue")
-        #TODO ADD DIFFERENT CAPACITIES BASED ON QUEUE
+        # TODO ADD DIFFERENT CAPACITIES BASED ON QUEUE
         sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
         ET.SubElement(sizepar, "value").text = "-1"
 
         dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
                                        name="dropStrategies")
 
-        #TODO FIGURE OUT WHAT CAUSES DROP TYPE TO CHANGE
-        #TODO UPDATE SEEMS LIKE IT DOESNT MATTER WHEN CAPACITY IS INFINITE
+        # TODO FIGURE OUT WHAT CAUSES DROP TYPE TO CHANGE
+        # TODO UPDATE SEEMS LIKE IT DOESNT MATTER WHEN CAPACITY IS INFINITE
         drop = "drop"
         if isinstance(node, Queue):
-            #TODO DO THIS PROPERLY
+            # TODO DO THIS PROPERLY
             drop = "drop"
 
         for jobclass in self.classes:
@@ -377,7 +380,7 @@ class Network:
                                          name="dropStrategy")
             ET.SubElement(dropStrategy, "value").text = drop
 
-        #TODO CLARIFY IF QUEUEGETSTRATEGIES IS ALWAYS FCFS
+        # TODO CLARIFY IF QUEUEGETSTRATEGIES IS ALWAYS FCFS
         ET.SubElement(section, "parameter",
                       classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
         parameter = ET.SubElement(section, "parameter", array="true",
@@ -394,6 +397,7 @@ class Network:
                 ET.SubElement(parameter, "refClass").text = jobclass.name
                 ET.SubElement(parameter, "subParameter",
                               classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy", name="TailStrategy")
+
     def generate_serversection(self, node: Queue, parentTag):
         serverclassname = ""
         if node.strategy.value[0] == "NP":
@@ -407,14 +411,13 @@ class Network:
         ET.SubElement(maxJobsPar, "value").text = str(node.numberOfServers)
 
         if serverclassname == "PSServer":
-
             maxRunningPar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="maxRunning")
             ET.SubElement(maxRunningPar, "value").text = "-1"
 
         parameter = ET.SubElement(section, "parameter", array="true", classPath="java.lang.Integer",
                                   name="numberOfVisits")
 
-        #TODO SEE IF THIS IS CONSTANT
+        # TODO SEE IF THIS IS CONSTANT
         for jobclass in self.classes:
             ET.SubElement(parameter, "refClass").text = jobclass.name
             numberOfVisits = ET.SubElement(parameter, "subParameter", classPath="java.lang.Integer",
@@ -449,4 +452,3 @@ class Network:
                                              classPath="java.lang.Double",
                                              name="serviceWeight")
                 ET.SubElement(subParameter, "value").text = str(node.services[jobclass.name]["weight"])
-
