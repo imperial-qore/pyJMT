@@ -273,15 +273,15 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("Distributions Ok")
 
-    def test_RoutingStrategies_NPE_PE_PS_reference(self):
+    def test_SchedulingStrategies_NPE_PE_PS_reference(self):
 
         #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
         # Lognormal, Normal, Pareto, Replayer, Uniform, Weibull
 
-        # Routing Strategies tested: Non-preemptive: FCFS, LCFS, RAND, SJF, LJF, SEPT, LEPT
+        # Scheduling Strategies tested: Non-preemptive: FCFS, LCFS, RAND, SJF, LJF, SEPT, LEPT
         # Preemptive: FCFS-PR, LCFS-PR, SRPT
         # Processor Sharing: PS, DPS, GPS
-        model = pj.Network('test_RoutingStrategies_NPE_PE_PS')
+        model = pj.Network('test_SchedulingStrategies_NPE_PE_PS')
 
         # declare nodes
         source = pj.Source(model, 'Exp(1) Source')
@@ -337,26 +337,26 @@ class TestXML(unittest.TestCase):
                         (queue13, sink)])
 
         # create solution file
-        model.generate_xml("test_RoutingStrategies_NPE_PE_PS_solution.jsimg")
+        model.generate_xml("test_SchedulingStrategies_NPE_PE_PS_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_RoutingStrategies_NPE_PE_PS_solution.jsimg')
-        reference_tree = ET.parse('test_RoutingStrategies_NPE_PE_PS_reference.jsimg')
+        generated_tree = ET.parse('test_SchedulingStrategies_NPE_PE_PS_solution.jsimg')
+        reference_tree = ET.parse('test_SchedulingStrategies_NPE_PE_PS_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
-        print("RoutingStrategies NPE PE PS Ok")
+        print("SchedulingStrategies NPE PE PS Ok")
 
-    def test_RoutingStrategies_Priority_NPE_PE_reference(self):
+    def test_SchedulingStrategies_Priority_NPE_PE_reference(self):
 
         #Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
         # Lognormal, Normal, Pareto, Replayer
 
-        # Routing Strategies tested: Non-preemptive: FCFS_PRIORITY, LCFS_PRIORITY, RAND_PRIORITY,
+        # Scheduling Strategies tested: Non-preemptive: FCFS_PRIORITY, LCFS_PRIORITY, RAND_PRIORITY,
         # SJF_PRIORITY, LJF_PRIORITY, SEPT_PRIORITY, LEPT_PRIORITY
         # Preemptive: FCFS-PR_PRIORITY, LCFS-PR_PRIORITY, SRPT_PRIORITY
 
-        model = pj.Network('test_RoutingStrategies_NPE_PE_PS')
+        model = pj.Network('test_SchedulingStrategies_NPE_PE_PS')
 
         # declare nodes
         source = pj.Source(model, 'Exp(1) Source')
@@ -401,15 +401,15 @@ class TestXML(unittest.TestCase):
                         (queue10, sink)])
 
         # create solution file
-        model.generate_xml("test_RoutingStrategies_Priority_NPE_PE_solution.jsimg")
+        model.generate_xml("test_SchedulingStrategies_Priority_NPE_PE_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_RoutingStrategies_Priority_NPE_PE_solution.jsimg")
-        reference_tree = ET.parse("test_RoutingStrategies_Priority_NPE_PE_reference.jsimg")
+        generated_tree = ET.parse("test_SchedulingStrategies_Priority_NPE_PE_solution.jsimg")
+        reference_tree = ET.parse("test_SchedulingStrategies_Priority_NPE_PE_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
-        print("RoutingStrategies Priority NPE PE Ok")
+        print("SchedulingStrategies Priority NPE PE Ok")
 
 if __name__ == '__main__':
     unittest.main()
