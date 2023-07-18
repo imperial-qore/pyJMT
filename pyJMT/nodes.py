@@ -1,3 +1,4 @@
+from pyJMT.scheduling_strategies import SchedStrategy
 from pyJMT.routing_strategies import RoutingStrategy
 from itertools import product
 
@@ -65,7 +66,7 @@ class Queue(Node, QueueSection, ServiceSection, RoutingSection):
         RoutingSection.__init__(self)
         ServiceSection.__init__(self, )
         QueueSection.__init__(self, strategy, capacity)
-        self.model.add_queue(self)
+        self.model.nodes["queues"].append(self)
 
 
 class Delay(Node, RoutingSection, ServiceSection):
@@ -73,7 +74,8 @@ class Delay(Node, RoutingSection, ServiceSection):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
         ServiceSection.__init__(self)
-        self.model.add_delay(self)
+        self.model.nodes["delays"].append(self)
+
 
 
 class Source(Node, RoutingSection):
@@ -81,7 +83,8 @@ class Source(Node, RoutingSection):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
         self.services = {}
-        self.model.add_source(self)
+        self.model.nodes["sources"].append(self)
+
 
     def setArrival(self, jobclass, arrival_dist):
         self.services[jobclass.name] = {}
@@ -94,14 +97,14 @@ class Source(Node, RoutingSection):
 class Sink(Node):
     def __init__(self, model, name):
         Node.__init__(self, model, name)
-        self.model.add_sink(self)
+        self.model.nodes["sinks"].append(self)
 
 
 class Router(Node, RoutingSection):
     def __init__(self, model, name):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
-        self.model.add_router(self)
+        self.model.nodes["routers"].append(self)
 
 
 class ClassSwitch(Node, RoutingSection, ClassSwitchSection):
@@ -111,3 +114,20 @@ class ClassSwitch(Node, RoutingSection, ClassSwitchSection):
         ClassSwitchSection.__init__(self, model)
         self.model.nodes["classswitches"].append(self)
 
+class Fork(Node, RoutingSection, QueueSection):
+    def __init__(self, model, name):
+        Node.__init__(self, model, name)
+        RoutingSection.__init__(self)
+        QueueSection.__init__(self, SchedStrategy.FCFS)
+        self.model.nodes["forks"].append(self)
+        self.num_tasks = 1
+        self.links = []
+
+    def setTasksPerLink(self, num_tasks):
+        self.num_tasks = num_tasks
+
+class Join(Node, RoutingSection):
+    def __init__(self, model, name):
+        Node.__init__(self, model, name)
+        RoutingSection.__init__(self)
+        self.model.nodes["joins"].append(self)

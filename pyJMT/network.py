@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-from .nodes import Source, Sink, Queue, Delay, Router
+from .nodes import Source, Sink, Queue, Delay, Router, Fork, Join
 from .classes import OpenClass, ClosedClass
 from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto, \
     Replayer, Uniform, Weibull
@@ -15,7 +15,7 @@ class Network:
     def __init__(self, name):
         self.name = name
         self.nodes = {'sources': [], 'sinks': [], 'queues': [], 'delays': [],
-                      'routers': [], 'classswitches': []}
+                      'routers': [], 'classswitches': [], 'forks': [], 'joins': []}
         self.links: [Link] = []
         self.classes = []
 
@@ -32,25 +32,12 @@ class Network:
     def get_classes(self):
         return self.classes
 
-    def add_class(self, jobclass):
-        self.classes.append(jobclass)
-
-    def add_source(self, source):
-        self.nodes['sources'].append(source)
-
-    def add_sink(self, sink):
-        self.nodes['sinks'].append(sink)
-
-    def add_queue(self, queue):
-        self.nodes['queues'].append(queue)
-
-    def add_delay(self, delay):
-        self.nodes['delays'].append(delay)
-
-    def add_router(self, router):
-        self.nodes['routers'].append(router)
-
     def add_link(self, source, target):
+        # Adds links onto fork object to avoid having to search through
+        # the links later, this problem only occurs when generating xml
+        # for forks
+        if isinstance(source, Fork):
+            source.links.append(target.name)
         link = Link(source, target)
         self.links.append(link)
 
@@ -167,6 +154,72 @@ class Network:
 
             self.generate_router(classswitch, node)
 
+        for fork in self.nodes['forks']:
+            node = ET.SubElement(sim, "node", name=fork.name)
+
+            self.generate_queuesection(fork, node)
+
+            ET.SubElement(node, "section", className="ServiceTunnel")
+
+            # generate fork section
+
+            forkSection = ET.SubElement(node, "section", className="Fork")
+
+            jobsParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", Name="jobsPerLink")
+            ET.SubElement(jobsParm, "value").text = str(fork.num_tasks)
+
+            blockParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", Name="block")
+            ET.SubElement(blockParm, "value").text = "-1"
+
+            simplifiedParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", Name="isSimplifiedFork")
+            ET.SubElement(simplifiedParm, "value").text = "true"
+
+            forkstrategyParm = ET.SubElement(forkSection, "parameter", array="true", classPath="jmt.engine.NetStrategies.ForkStrategy", name="ForkStrategy")
+            for jobclass in self.classes:
+                ET.SubElement(forkstrategyParm, "refClass").text = jobclass.name
+                branchsubParm = ET.SubElement(forkstrategyParm, "subParameter", classPath="jmt.engine.NetStrategies.ForkStrategies.ProbabilitiesFork", name="Branch Probabilities")
+                empiricalentryarrayParm = ET.SubElement(branchsubParm, "subParameter", array="true", classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath", name="EmpiricalEntryArray")
+                for target in fork.links:
+                    outpathentryParm = ET.SubElement(empiricalentryarrayParm, "subParameter", classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath", name="OutPathEntry")
+
+                    outunitprobabilityParm = ET.SubElement(outpathentryParm, "subParameter", classPath="jmt.engine.random.EmpiricalEntry", name="outUnitProbability")
+                    staionnameParm = ET.SubElement(outunitprobabilityParm, "subParameter", classPath="java.lang.String", name="stationName")
+                    ET.SubElement(staionnameParm, "value").text = target
+                    probabilityParm = ET.SubElement(outunitprobabilityParm, "subParameter", classPath="java.lang.Double",
+                                                   name="probability")
+                    ET.SubElement(staionnameParm, "value").text = "1.0"
+
+
+                    jobsperlinkParm = ET.SubElement(outpathentryParm, "subParameter", array="true", classPath="jmt.engine.random.EmpiricalEntry", name="JobsPerLinkDis")
+                    empiricalEntryParm = ET.SubElement(jobsperlinkParm, "subParameter", classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
+
+                    numbersParm = ET.SubElement(empiricalEntryParm, "subParameter", classPath="java.lang.Double",
+                                                    name="numbers")
+                    ET.SubElement(numbersParm, "value").text = "1"
+
+                    probabilityParm = ET.SubElement(empiricalEntryParm, "subParameter", classPath="java.lang.Double",
+                                                   name="probability")
+                    ET.SubElement(probabilityParm, "value").text = "1.0"
+
+        for join in self.nodes['joins']:
+            node = ET.SubElement(sim, "node", name=join.name)
+
+            ET.SubElement(node, "section", className="ServiceTunnel")
+
+            # generate join section
+            joinSection = ET.SubElement(node, "section", className="Join")
+            parm = ET.SubElement(joinSection, "parameter", array="true", classPath="jmt.engine.NetStrategies.JoinStrategy", name="JoinStrategy")
+            for jobclass in self.classes:
+                ET.SubElement(parm, "refClass").text = jobclass.name
+                outersubparm = ET.SubElement(parm, "subParameter", classPath="jmt.engine.NetStrategies.JoinStrategies.NormalJoin", name="Standard Join")
+                innersubparm = ET.SubElement(outersubparm, "subParameter", classPath="java.lang.Integer", name="numRequired")
+                ET.SubElement(innersubparm, "value").text = "-1"
+
+
+            self.generate_router(join, node)
+
+
+
         for sink in self.nodes['sinks']:
             node = ET.SubElement(sim, "node", name=sink.name)
             ET.SubElement(node, "section", className="JobSink")
@@ -204,12 +257,15 @@ class Network:
         for link in self.links:
             ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
 
-        for delay in self.nodes['delays']:
-            preload = ET.SubElement(sim, "preload")
-            stationPopulations = ET.SubElement(preload, "stationPopulations", stationName=delay.name)
-            for jobclass in delay.services.keys():
-                ET.SubElement(stationPopulations, "classPopulation", population=str(delay.numMachines),
-                              refClass=jobclass)
+        openedPreloadTag = False
+        for jobclass in self.classes:
+            if isinstance(jobclass, ClosedClass):
+                if not openedPreloadTag:
+                    preload = ET.SubElement(sim, "preload")
+                    openedPreloadTag = True
+                stationPopulations = ET.SubElement(preload, "stationPopulations", stationName=jobclass.referenceSource)
+                ET.SubElement(stationPopulations, "classPopulation", population=str(jobclass.population),
+                                  refClass=jobclass.name)
 
         tree = ET.ElementTree(root)
         with open(fileName, 'wb') as f:
@@ -259,7 +315,7 @@ class Network:
                               referenceSource=jobclass.referenceSource, type="open")
 
             elif isinstance(jobclass, ClosedClass):
-                ET.SubElement(simTag, "userClass", customers=str(jobclass.numMachines), name=jobclass.name,
+                ET.SubElement(simTag, "userClass", customers=str(jobclass.population), name=jobclass.name,
                               priority=str(jobclass.priority),
                               referenceSource=jobclass.referenceSource, type="closed")
 

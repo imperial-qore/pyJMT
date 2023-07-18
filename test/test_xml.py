@@ -244,6 +244,56 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("Classswitch Ok")
 
+    def test_fork_join(self):
+
+        model = pj.Network('test_fork_join')
+
+        # declare nodes
+        source1 = pj.Source(model, 'Source 1')
+
+        fork = pj.Fork(model, 'Fork 1')
+        fork.setTasksPerLink(2)
+
+
+        queue1 = pj.Queue(model, 'Queue 1', pj.SchedStrategy.FCFS)
+        queue2 = pj.Queue(model, 'Queue 2', pj.SchedStrategy.FCFS)
+        delay1 = pj.Delay(model, 'Delay 1')
+
+        join = pj.Join(model, "Join 1")
+
+        sink = pj.Sink(model, 'Sink 1')
+
+        # declare and set classes
+        class1 = pj.OpenClass(model, 'Class1')
+
+        source1.setArrival(class1, pj.Exp(0.5))
+
+        queue1.setService(class1, pj.Exp(1))
+        queue2.setService(class1, pj.Exp(1))
+        delay1.setService(class1, pj.Exp(1))
+
+        # topology
+        # TODO CHECK HOW LINKING SHOULD WORK
+        model.add_links([(source1, fork),
+                         (fork, queue1),
+                         (fork, delay1),
+                         (delay1, queue2),
+                         (queue1, join),
+                         (queue2, join),
+                         (join, sink)])
+
+        # create solution file
+        model.generate_xml("test_fork_join_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse("test_fork_join_solution.jsimg")
+        reference_tree = ET.parse("test_fork_join_reference.jsimg")
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("fork and join Ok")
+
+
 
     # def test_ReentrantLine(self):
     #     # Reentrant Line modelling example
@@ -542,6 +592,8 @@ class TestXML(unittest.TestCase):
 
         model = pj.Network('test_RoutingStrategies_Probabilites')
 
+
+        pj.SchedStrategy
         # declare nodes
         source = pj.Source(model, 'Source Q1 0.2 Q2 0.4 Q3 0.4')
         queue1 = pj.Queue(model, 'Queue 1 Random', pj.SchedStrategy.FCFS)
@@ -574,6 +626,8 @@ class TestXML(unittest.TestCase):
         queue2.setProbRouting(oclass, queue5, 0.4)
         queue5.setProbRouting(oclass, queue5, 0.7)
         queue5.setProbRouting(oclass, sink, 0.3)
+
+
 
 
         # topology
