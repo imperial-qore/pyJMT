@@ -50,16 +50,31 @@ class Network:
     def add_router(self, router):
         self.nodes['routers'].append(router)
 
-    def add_link(self, link):
+    def add_link(self, source, target):
+        link = Link(source, target)
         self.links.append(link)
 
-    def link(self, source, target):
-        link = Link(source, target)
-        self.add_link(link)
-
-    def addLinks(self, linkList):
+    def add_links(self, linkList):
         for source, target in linkList:
-            self.link(source, target)
+            self.add_link(source, target)
+
+    def link(self, p):
+        for linkClass, classDict in p:
+            if linkClass is tuple:
+                #generate classswitch
+                c1, c2 = linkClass
+
+            else:
+                for (n1, n2) in classDict:
+                    containsAlready = False
+                    for link in self.links:
+                        if link.source == n1 and link.target == n2:
+                            containsAlready = True
+                            break
+                    if containsAlready:
+                        break
+                    else:
+                        self.add_link(n1, n2)
 
     def jsimg_open(self, jmt_path, filename):
         path = os.path.dirname(filename)
@@ -69,20 +84,17 @@ class Network:
         subprocess.run(cmd, shell=True)
 
     def init_routing_matrix(self):
-        #TODO see if this is ok - pretty memory inefficient but simple to use
-        nodes = self.get_nodes()
+        #TODO see if this is ok
         classes = self.get_classes()
 
         P = {}
         # For P[class_name][node_name][node_name]
         for c in classes:
-            for n1, n2 in product(nodes, repeat=2):
-                P[(c, n1, n2)] = 0
+                P[c] = {}
 
         # For P[class_name][class_name][node_name][node_name]
         for c1, c2 in product(classes, repeat=2):
-            for n1, n2 in product(nodes, repeat=2):
-                P[(c1, c2, n1, n2)] = 0
+            P[(c1, c2)] = {}
 
         return P
 
@@ -222,24 +234,23 @@ class Network:
                                              classPath=f"jmt.engine.NetStrategies.RoutingStrategies.{routing['routing_strat'].value[2]}",
                                              name=routing["routing_strat"].value[1])
 
-            elif routing.value[0] == "Variable":  # TODO IMPLEMENT THIS PROPERLY
+            elif routing["routing_strat"].value[0] == "Variable":  # TODO IMPLEMENT THIS PROPERLY
                 subParameter = ET.SubElement(parameter, "subParameter",
                                              classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
                                              name="Probabilities")
                 empiricalEntryArray = ET.SubElement(subParameter, "subParameter", array="true",
                                                     classPath="jmt.engine.random.EmpiricalEntry",
                                                     name="EmpiricalEntryArray")
-                empiricalEntry = ET.SubElement(empiricalEntryArray, "subParameter",
-                                               classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
-                stationName = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.String",
-                                            name="stationName")
-                for link in self.links:
-                    if link.source.name == node.name:
-                        target = link.target.name
-                        ET.SubElement(stationName, "value").text = target
-                        probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
-                                                    name="probability")
-                        ET.SubElement(probability, "value").text = "1.0"
+
+                for (target, val) in routing['probabilities']:
+                    empiricalEntry = ET.SubElement(empiricalEntryArray, "subParameter",
+                                                   classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
+                    stationName = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.String",
+                                                name="stationName")
+                    ET.SubElement(stationName, "value").text = target
+                    probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
+                                            name="probability")
+                    ET.SubElement(probability, "value").text = str(float(val))
 
     def generate_classes(self, simTag):
         for jobclass in self.classes:

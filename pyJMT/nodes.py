@@ -37,7 +37,10 @@ class RoutingSection:
     def setRouting(self, jobclass, routing_strat):
         self.routings[jobclass.name] = {}
         self.routings[jobclass.name]['routing_strat'] = routing_strat
-        self.routings[jobclass.name]['probabilities'] = {}
+        self.routings[jobclass.name]['probabilities'] = []
+
+    def setProbRouting(self, jobclass, target, val):
+        self.routings[jobclass.name]['probabilities'].append((target.name, val))
 
 
 class ClassSwitchSection:

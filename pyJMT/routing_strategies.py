@@ -15,4 +15,4 @@ class RoutingStrategy(Enum):
     FASTEST_SERVICE = ["Static", "Fastest Service", "FastestServiceRoutingStrategy"]
     DISABLED = ["Static", "Disabled", "DisabledRoutingStrategy"]
     #incomplete
-    PROBABILITIES = ["Variable", "Random", "RandomStrategy"]
+    PROB = ["Variable", "Random", "RandomStrategy"]
