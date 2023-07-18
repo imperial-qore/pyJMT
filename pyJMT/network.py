@@ -165,13 +165,13 @@ class Network:
 
             forkSection = ET.SubElement(node, "section", className="Fork")
 
-            jobsParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", Name="jobsPerLink")
+            jobsParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", name="jobsPerLink")
             ET.SubElement(jobsParm, "value").text = str(fork.num_tasks)
 
-            blockParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", Name="block")
+            blockParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", name="block")
             ET.SubElement(blockParm, "value").text = "-1"
 
-            simplifiedParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", Name="isSimplifiedFork")
+            simplifiedParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Boolean", name="isSimplifiedFork")
             ET.SubElement(simplifiedParm, "value").text = "true"
 
             forkstrategyParm = ET.SubElement(forkSection, "parameter", array="true", classPath="jmt.engine.NetStrategies.ForkStrategy", name="ForkStrategy")
@@ -187,13 +187,13 @@ class Network:
                     ET.SubElement(staionnameParm, "value").text = target
                     probabilityParm = ET.SubElement(outunitprobabilityParm, "subParameter", classPath="java.lang.Double",
                                                    name="probability")
-                    ET.SubElement(staionnameParm, "value").text = "1.0"
+                    ET.SubElement(probabilityParm, "value").text = "1.0"
 
 
                     jobsperlinkParm = ET.SubElement(outpathentryParm, "subParameter", array="true", classPath="jmt.engine.random.EmpiricalEntry", name="JobsPerLinkDis")
                     empiricalEntryParm = ET.SubElement(jobsperlinkParm, "subParameter", classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
 
-                    numbersParm = ET.SubElement(empiricalEntryParm, "subParameter", classPath="java.lang.Double",
+                    numbersParm = ET.SubElement(empiricalEntryParm, "subParameter", classPath="java.lang.String",
                                                     name="numbers")
                     ET.SubElement(numbersParm, "value").text = "1"
 

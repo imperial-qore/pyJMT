@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="ISO-8859-1" standalone="no"?>
-<archive xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="test_fork_join_reference.jsimg" timestamp="Tue Jul 18 12:36:27 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
-    <sim disableStatisticStop="false" logDecimalSeparator="." logDelimiter="," logPath="/home/james/JMT/" logReplaceMode="0" maxEvents="-1" maxSamples="1000000" name="test_fork_join_reference.jsimg" polling="1.0" xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
+<archive xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" name="test_fork_join_reference.jsimg"
+         timestamp="Tue Jul 18 12:36:27 BST 2023" xsi:noNamespaceSchemaLocation="Archive.xsd">
+    <sim disableStatisticStop="false" logDecimalSeparator="." logDelimiter="," logPath="/home/james/JMT/"
+         logReplaceMode="0" maxEvents="-1" maxSamples="1000000" name="test_fork_join_reference.jsimg" polling="1.0"
+         xsi:noNamespaceSchemaLocation="SIMmodeldefinition.xsd">
         <userClass name="Class1" priority="0" referenceSource="Source 1" type="open"/>
         <node name="Source 1">
             <section className="RandomSource">
                 <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy"
+                                  name="ServiceTimeStrategy">
                         <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
                         <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
                             <subParameter classPath="java.lang.Double" name="lambda">
@@ -38,7 +42,8 @@
                 <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
                 <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy"
+                                  name="TailStrategy"/>
                 </parameter>
             </section>
             <section className="ServiceTunnel"/>
@@ -54,9 +59,12 @@
                 </parameter>
                 <parameter array="true" classPath="jmt.engine.NetStrategies.ForkStrategy" name="ForkStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.ProbabilitiesFork" name="Branch Probabilities">
-                        <subParameter array="true" classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath" name="EmpiricalEntryArray">
-                            <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath" name="OutPathEntry">
+                    <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.ProbabilitiesFork"
+                                  name="Branch Probabilities">
+                        <subParameter array="true" classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath"
+                                      name="EmpiricalEntryArray">
+                            <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath"
+                                          name="OutPathEntry">
                                 <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="outUnitProbability">
                                     <subParameter classPath="java.lang.String" name="stationName">
                                         <value>Queue 1</value>
@@ -65,7 +73,8 @@
                                         <value>1.0</value>
                                     </subParameter>
                                 </subParameter>
-                                <subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry" name="JobsPerLinkDis">
+                                <subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry"
+                                              name="JobsPerLinkDis">
                                     <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntry">
                                         <subParameter classPath="java.lang.String" name="numbers">
                                             <value>1</value>
@@ -76,7 +85,8 @@
                                     </subParameter>
                                 </subParameter>
                             </subParameter>
-                            <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath" name="OutPathEntry">
+                            <subParameter classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath"
+                                          name="OutPathEntry">
                                 <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="outUnitProbability">
                                     <subParameter classPath="java.lang.String" name="stationName">
                                         <value>Delay 1</value>
@@ -85,7 +95,8 @@
                                         <value>1.0</value>
                                     </subParameter>
                                 </subParameter>
-                                <subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry" name="JobsPerLinkDis">
+                                <subParameter array="true" classPath="jmt.engine.random.EmpiricalEntry"
+                                              name="JobsPerLinkDis">
                                     <subParameter classPath="jmt.engine.random.EmpiricalEntry" name="EmpiricalEntry">
                                         <subParameter classPath="java.lang.String" name="numbers">
                                             <value>1</value>
@@ -115,7 +126,8 @@
                 <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
                 <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy"
+                                  name="TailStrategy"/>
                 </parameter>
             </section>
             <section className="Server">
@@ -130,7 +142,8 @@
                 </parameter>
                 <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy"
+                                  name="ServiceTimeStrategy">
                         <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
                         <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
                             <subParameter classPath="java.lang.Double" name="lambda">
@@ -161,13 +174,15 @@
                 <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
                 <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy"
+                                  name="TailStrategy"/>
                 </parameter>
             </section>
             <section className="Delay">
                 <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy"
+                                  name="ServiceTimeStrategy">
                         <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
                         <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
                             <subParameter classPath="java.lang.Double" name="lambda">
@@ -198,7 +213,8 @@
                 <parameter classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy" name="FCFSstrategy"/>
                 <parameter array="true" classPath="jmt.engine.NetStrategies.QueuePutStrategy" name="QueuePutStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy" name="TailStrategy"/>
+                    <subParameter classPath="jmt.engine.NetStrategies.QueuePutStrategies.TailStrategy"
+                                  name="TailStrategy"/>
                 </parameter>
             </section>
             <section className="Server">
@@ -213,7 +229,8 @@
                 </parameter>
                 <parameter array="true" classPath="jmt.engine.NetStrategies.ServiceStrategy" name="ServiceStrategy">
                     <refClass>Class1</refClass>
-                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy" name="ServiceTimeStrategy">
+                    <subParameter classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy"
+                                  name="ServiceTimeStrategy">
                         <subParameter classPath="jmt.engine.random.Exponential" name="Exponential"/>
                         <subParameter classPath="jmt.engine.random.ExponentialPar" name="distrPar">
                             <subParameter classPath="java.lang.Double" name="lambda">
@@ -252,7 +269,7 @@
                 </parameter>
             </section>
         </node>
-                <measure alpha="0.01" name="Queue 1_Class1_Number of Customers" nodeType="station" precision="0.03"
+        <measure alpha="0.01" name="Queue 1_Class1_Number of Customers" nodeType="station" precision="0.03"
                  referenceNode="Queue 1" referenceUserClass="Class1" type="Number of Customers" verbose="false"/>
         <measure alpha="0.01" name="Queue 2_Class1_Number of Customers" nodeType="station" precision="0.03"
                  referenceNode="Queue 2" referenceUserClass="Class1" type="Number of Customers" verbose="false"/>
