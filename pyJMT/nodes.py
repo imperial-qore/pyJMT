@@ -1,6 +1,7 @@
 from pyJMT.scheduling_strategies import SchedStrategy
 from pyJMT.routing_strategies import RoutingStrategy
 from itertools import product
+from pyJMT.drop_strategies import DropStrategy
 
 
 class Node:
@@ -10,9 +11,10 @@ class Node:
 
 
 class QueueSection:
-    def __init__(self, strategy, capacity=-1):
+    def __init__(self, strategy, capacity=-1, dropRule=DropStrategy.DROP):
         self.strategy = strategy
         self.capacity = capacity
+        self.dropRule = dropRule
 
 
 class ServiceSection:
@@ -39,9 +41,13 @@ class RoutingSection:
         self.routings[jobclass.name] = {}
         self.routings[jobclass.name]['routing_strat'] = routing_strat
         self.routings[jobclass.name]['probabilities'] = []
+        self.routings[jobclass.name]['classswitchprobs'] = {}
 
     def setProbRouting(self, jobclass, target, val):
         self.routings[jobclass.name]['probabilities'].append((target.name, val))
+
+    def setClassSwitchRouting(self, sourcejobclass, targetjobclass, target, val):
+        self.routings[sourcejobclass.name]['classswitchprobs'][target.name] = (targetjobclass, val)
 
 
 class ClassSwitchSection:
@@ -61,11 +67,11 @@ class ClassSwitchSection:
 
 
 class Queue(Node, QueueSection, ServiceSection, RoutingSection):
-    def __init__(self, model, name, strategy, capacity=-1):
+    def __init__(self, model, name, strategy, capacity=-1, dropRule=DropStrategy.DROP):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
         ServiceSection.__init__(self, )
-        QueueSection.__init__(self, strategy, capacity)
+        QueueSection.__init__(self, strategy, capacity, dropRule)
         self.model.nodes["queues"].append(self)
 
 

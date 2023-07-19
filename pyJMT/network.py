@@ -1,8 +1,9 @@
 import xml.etree.ElementTree as ET
-from .nodes import Source, Sink, Queue, Delay, Router, Fork, Join
+from .nodes import Source, Sink, Queue, Delay, Router, Fork, Join, RoutingSection
 from .classes import OpenClass, ClosedClass
 from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto, \
     Replayer, Uniform, Weibull
+from .routing_strategies import RoutingStrategy
 from .link import Link
 import os
 import subprocess
@@ -49,10 +50,12 @@ class Network:
             self.add_link(source, target)
 
     def link(self, p):
-        for linkClass, classDict in p:
+        for linkClass, classDict in p.items():
             if linkClass is tuple:
                 #generate classswitch
                 c1, c2 = linkClass
+                source, target = classDict
+                source.setClassSwitchRouting(c1, c2, source, target)
 
             else:
                 for (n1, n2) in classDict:
@@ -313,7 +316,7 @@ class Network:
             elif routing["routing_strat"].value[0] == "Variable":
                 subParameter = ET.SubElement(parameter, "subParameter",
                                              classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
-                                             name="Probabilities")
+                                             name=routing["routing_strat"].value[1])
                 empiricalEntryArray = ET.SubElement(subParameter, "subParameter", array="true",
                                                     classPath="jmt.engine.random.EmpiricalEntry",
                                                     name="EmpiricalEntryArray")
@@ -482,7 +485,7 @@ class Network:
         drop = "drop"
         if isinstance(node, Queue):
             # TODO DO THIS PROPERLY
-            drop = "drop"
+            drop = node.dropRule.value
 
         for jobclass in self.classes:
             ET.SubElement(dropStrategies, "refClass").text = jobclass.name

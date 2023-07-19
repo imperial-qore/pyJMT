@@ -177,10 +177,49 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("RRLB Ok")
 
-    def test_classSwitch(self):
-        # Routing Strategies tested: Random, Round Robin, JSQ, Shortest response time,
-        # least utilization, fastest service time, disabled
+    def test_ReentrantLine(self):
+        # Reentrant Line modelling example
 
+        # declare model
+        model = pj.Network('test_reentantline_classswitch_routing')
+
+        # declare nodes
+        queue = pj.Queue(model, 'Queue_1', pj.SchedStrategy.FCFS, 3)
+
+        # declare and set classes
+        K = 3
+        N = [1, 0, 0]
+        jobclass = [None] * K  # Initialize list of job classes
+        for k in range(0, K):
+            jobclass[k] = pj.ClosedClass(model, 'Class' + str(k + 1), N[k], queue)
+            queue.setService(jobclass[k], pj.Erlang.fitMeanAndOrder(k + 1, 2))
+
+        # topology
+        queue.setRouting(jobclass[0], pj.RoutingStrategy.CLASSSWITCH)
+        queue.setRouting(jobclass[1], pj.RoutingStrategy.CLASSSWITCH)
+        queue.setRouting(jobclass[2], pj.RoutingStrategy.CLASSSWITCH)
+
+        P = model.init_routing_matrix()
+
+        # Assuming queue is an index, in Python we start indexing from 0
+        P[(jobclass[0], jobclass[1])][(queue, queue)] = 1.0
+        P[(jobclass[1], jobclass[2])][(queue, queue)] = 1.0
+        P[(jobclass[2], jobclass[0])][(queue, queue)] = 1.0
+
+        model.link(P)
+
+        # create solution file
+        model.generate_xml("test_reentantline_classswitch_routing_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse('test_reentantline_classswitch_routing_solution.jsimg')
+        reference_tree = ET.parse('test_reentantline_classswitch_routing_reference.jsimg')
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("ReentrantLine with classswitch routing Ok")
+
+    def test_classSwitch(self):
         model = pj.Network('test_classSwitch')
 
         # declare nodes
@@ -359,46 +398,6 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("adding metrics Ok")
-
-
-    # def test_ReentrantLine(self):
-    #     # Reentrant Line modelling example
-    #
-    #     # declare model
-    #     model = pj.Network('RL')
-    #
-    #     # declare nodes
-    #     queue = pj.Queue(model, 'Queue', pj.SchedStrategy.FCFS)
-    #
-    #     # declare and set classes
-    #     K = 3
-    #     N = [1, 0, 0]
-    #     jobclass = [None] * K  # Initialize list of job classes
-    #     for k in range(0, K):
-    #         jobclass[k] = pj.ClosedClass(model, 'Class' + str(k + 1), N[k], queue)
-    #         queue.setService(jobclass[k], pj.Erlang.fitMeanAndOrder(k + 1, 2))
-    #
-    #     # topology
-    #
-    #     P = model.init_routing_matrix()
-    #
-    #     # Assuming queue is an index, in Python we start indexing from 0
-    #     P[(jobclass[0], jobclass[1])][(queue, queue)] = 1.0
-    #     P[(jobclass[1], jobclass[2])][(queue, queue)] = 1.0
-    #     P[(jobclass[2], jobclass[0])][(queue, queue)] = 1.0
-    #
-    #     model.link(P)
-    #
-    #     # create solution file
-    #     model.generate_xml("test_reentantline_solution.jsimg")
-    #
-    #     # Parse the generated file and the reference file
-    #     generated_tree = ET.parse('test_reetrantline_solution.jsimg')
-    #     reference_tree = ET.parse('test_reentantline_reference.jsimg')
-    #
-    #     # Compare the generated file with the reference file
-    #     self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
-    #     print("ReentrantLine Ok")
 
     def test_DistributionsLoadIndependent(self):
         # Distributions tested: Coxian, Deterministic, Erlang, Exponential, Gamma, Hyperexponential,
