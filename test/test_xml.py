@@ -125,7 +125,6 @@ class TestXML(unittest.TestCase):
         queue.setService(cclass, pj.Exp(4.0))
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_link(delay, queue)
         model.add_link(queue, delay)
 
@@ -159,7 +158,6 @@ class TestXML(unittest.TestCase):
         queue2.setService(oclass, pj.Exp(2))
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source, lb),
                          (lb, queue1),
                          (lb, queue2),
@@ -224,7 +222,6 @@ class TestXML(unittest.TestCase):
 
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source1, queue1),
                          (source1, queue2),
                          (source2, queue1),
@@ -273,7 +270,6 @@ class TestXML(unittest.TestCase):
         delay1.setService(class1, pj.Exp(1))
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source1, fork),
                          (fork, queue1),
                          (fork, delay1),
@@ -293,6 +289,76 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("fork and join Ok")
 
+    def test_add_metrics(self):
+
+        model = pj.Network('test_add_metric')
+
+        # declare nodes
+        source1 = pj.Source(model, 'Source 1')
+
+        fork = pj.Fork(model, 'Fork 1')
+        fork.setTasksPerLink(2)
+
+        queue1 = pj.Queue(model, 'Queue 1', pj.SchedStrategy.FCFS)
+        queue2 = pj.Queue(model, 'Queue 2', pj.SchedStrategy.FCFS)
+        delay1 = pj.Delay(model, 'Delay 1')
+
+        join = pj.Join(model, "Join 1")
+
+        sink = pj.Sink(model, 'Sink 1')
+
+        # declare and set classes
+        class1 = pj.OpenClass(model, 'Class1')
+
+        source1.setArrival(class1, pj.Exp(0.5))
+
+        queue1.setService(class1, pj.Exp(1))
+        queue2.setService(class1, pj.Exp(1))
+        delay1.setService(class1, pj.Exp(1))
+
+        # topology
+        model.add_links([(source1, fork),
+                         (fork, queue1),
+                         (fork, delay1),
+                         (delay1, queue2),
+                         (queue1, join),
+                         (queue2, join),
+                         (join, sink)])
+
+        model.useDefaultMetrics = False
+        model.add_metric(class1, model, pj.Metrics.NUM_CUSTOMERS)
+        model.add_metric(class1, queue1, pj.Metrics.QUEUE_TIME)
+        model.add_metric(class1, queue2, pj.Metrics.RESPONSE_TIME)
+        model.add_metric(class1, delay1, pj.Metrics.RESIDENCE_TIME)
+        model.add_metric(class1, fork, pj.Metrics.ARRIVAL_RATE)
+        model.add_metric(class1, join, pj.Metrics.THROUGHPUT)
+        model.add_metric(class1, queue2, pj.Metrics.UTILIZATION)
+        model.add_metric(class1, queue1, pj.Metrics.EFFECTIVE_UTILIZATION)
+        model.add_metric(class1, queue2, pj.Metrics.DROP_RATE)
+        model.add_metric(class1, queue1, pj.Metrics.BALKING_RATE)
+        model.add_metric(class1, queue2, pj.Metrics.RENEGING_RATE)
+        model.add_metric(class1, queue1, pj.Metrics.RETRIAL_RATE)
+        model.add_metric(class1, queue2, pj.Metrics.RETRIAL_ORBIT_SIZE)
+        model.add_metric(class1, queue1, pj.Metrics.RETRIAL_ORBIT_RESIDENCE_TIME)
+        model.add_metric(class1, model, pj.Metrics.POWER)
+        model.add_metric(class1, sink, pj.Metrics.RESPONSE_TIME_PER_SINK)
+        model.add_metric(class1, sink, pj.Metrics.THROUGHPUT_PER_SINK)
+        model.add_metric(class1, fork, pj.Metrics.FORK_JOIN_NUM_CUSTOMERS)
+        model.add_metric(class1, fork, pj.Metrics.FORK_JOIN_RESPONSE_TIME)
+
+
+
+
+        # create solution file
+        model.generate_xml("test_add_metrics_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse("test_add_metrics_solution.jsimg")
+        reference_tree = ET.parse("test_add_metrics_reference.jsimg")
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("adding metrics Ok")
 
 
     # def test_ReentrantLine(self):
@@ -372,7 +438,6 @@ class TestXML(unittest.TestCase):
         queue12.setService(oclass, pj.Weibull(0.445, 0.471))
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source, queue1),
                          (queue1, queue2),
                          (queue2, queue3),
@@ -442,7 +507,6 @@ class TestXML(unittest.TestCase):
         queue13.setService(oclass, pj.Weibull(0.445, 0.471))
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source, queue1),
                          (queue1, queue2),
                          (queue2, queue3),
@@ -508,7 +572,6 @@ class TestXML(unittest.TestCase):
         queue10.setService(oclass, pj.Replayer('example_trace.txt'))
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source, queue1),
                          (queue1, queue2),
                          (queue2, queue3),
@@ -567,7 +630,6 @@ class TestXML(unittest.TestCase):
         queue6.setRouting(oclass, pj.RoutingStrategy.DISABLED)
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source, queue1),
                          (queue1, queue2),
                          (queue2, queue3),
@@ -631,7 +693,6 @@ class TestXML(unittest.TestCase):
 
 
         # topology
-        # TODO CHECK HOW LINKING SHOULD WORK
         model.add_links([(source, queue1),
                         (source, queue2),
                         (source, queue3),

@@ -3,8 +3,6 @@ from .nodes import Source, Sink, Queue, Delay, Router, Fork, Join
 from .classes import OpenClass, ClosedClass
 from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto, \
     Replayer, Uniform, Weibull
-from .routing_strategies import RoutingStrategy
-from .scheduling_strategies import SchedStrategy
 from .link import Link
 import os
 import subprocess
@@ -18,6 +16,8 @@ class Network:
                       'routers': [], 'classswitches': [], 'forks': [], 'joins': []}
         self.links: [Link] = []
         self.classes = []
+        self.useDefaultMetrics = True
+        self.additionalMetrics = []
 
     def get_number_of_nodes(self):
         total_length = sum(len(v) for v in self.nodes.values())
@@ -31,6 +31,9 @@ class Network:
 
     def get_classes(self):
         return self.classes
+
+    def add_metric(self, jobclass, node, metric):
+        self.additionalMetrics.append((jobclass, node, metric))
 
     def add_link(self, source, target):
         # Adds links onto fork object to avoid having to search through
@@ -218,44 +221,14 @@ class Network:
 
             self.generate_router(join, node)
 
-
-
         for sink in self.nodes['sinks']:
             node = ET.SubElement(sim, "node", name=sink.name)
             ET.SubElement(node, "section", className="JobSink")
 
-        measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
-        for measure in measuresQueue:
-            for queue in self.nodes['queues']:
-                for oclass in queue.services.keys():
-                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{queue.name}_{oclass}_{measure}",
-                                  nodeType="station",
-                                  precision="0.03", referenceNode=queue.name, referenceUserClass=f"{oclass}",
-                                  type=measure,
-                                  verbose="false")
-
-        measuresDelay = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
-        for measure in measuresDelay:
-            for delay in self.nodes['delays']:
-                for jobclass in delay.services.keys():
-                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{delay.name}_{jobclass}_{measure}",
-                                  nodeType="station",
-                                  precision="0.03", referenceNode=delay.name, referenceUserClass=f"{jobclass}",
-                                  type=measure,
-                                  verbose="false")
-
-        measuresSource = ["Throughput", "Arrival Rate"]
-        for measure in measuresSource:
-            for source in self.nodes['sources']:
-                for oclass in source.services.keys():
-                    ET.SubElement(sim, "measure", alpha="0.01", name=f"{source.name}_{oclass}_{measure}",
-                                  nodeType="station",
-                                  precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}",
-                                  type=measure,
-                                  verbose="false")
-
         for link in self.links:
             ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
+
+        self.generate_metrics(sim)
 
         openedPreloadTag = False
         for jobclass in self.classes:
@@ -272,6 +245,53 @@ class Network:
             tree.write(f, encoding='ISO-8859-1', xml_declaration=True)
 
         tree.write(fileName)
+
+    def generate_metrics(self, sim):
+        if self.useDefaultMetrics:
+            #TODO CHECK WHAT DEFAULTS SHOULD BE EXACTLY
+            measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
+            for measure in measuresQueue:
+                for queue in self.nodes['queues']:
+                    for oclass in queue.services.keys():
+                        ET.SubElement(sim, "measure", alpha="0.01", name=f"{queue.name}_{oclass}_{measure}",
+                                      nodeType="station",
+                                      precision="0.03", referenceNode=queue.name, referenceUserClass=f"{oclass}",
+                                      type=measure,
+                                      verbose="false")
+
+            measuresDelay = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
+            for measure in measuresDelay:
+                for delay in self.nodes['delays']:
+                    for jobclass in delay.services.keys():
+                        ET.SubElement(sim, "measure", alpha="0.01", name=f"{delay.name}_{jobclass}_{measure}",
+                                      nodeType="station",
+                                      precision="0.03", referenceNode=delay.name, referenceUserClass=f"{jobclass}",
+                                      type=measure,
+                                      verbose="false")
+
+            measuresSource = ["Throughput", "Arrival Rate"]
+            for measure in measuresSource:
+                for source in self.nodes['sources']:
+                    for oclass in source.services.keys():
+                        ET.SubElement(sim, "measure", alpha="0.01", name=f"{source.name}_{oclass}_{measure}",
+                                      nodeType="station",
+                                      precision="0.03", referenceNode=source.name, referenceUserClass=f"{oclass}",
+                                      type=measure,
+                                      verbose="false")
+
+        for (jobclass, node, metric) in self.additionalMetrics:
+            if isinstance(node, Network):
+                ET.SubElement(sim, "measure", alpha="0.01", name=f"{jobclass.name}_System {metric.value}",
+                              nodeType="",
+                              precision="0.03", referenceNode="", referenceUserClass=jobclass.name,
+                              type=f"System {metric.value}",
+                              verbose="false")
+            else:
+                ET.SubElement(sim, "measure", alpha="0.01", name=f"{node.name}_{jobclass.name}_{metric.value}",
+                              nodeType="station",
+                              precision="0.03", referenceNode=node.name, referenceUserClass=jobclass.name,
+                              type=metric.value,
+                              verbose="false")
 
     def generate_router(self, node, nodeTag):
         section = ET.SubElement(nodeTag, "section", className="Router")
@@ -290,7 +310,7 @@ class Network:
                                              classPath=f"jmt.engine.NetStrategies.RoutingStrategies.{routing['routing_strat'].value[2]}",
                                              name=routing["routing_strat"].value[1])
 
-            elif routing["routing_strat"].value[0] == "Variable":  # TODO IMPLEMENT THIS PROPERLY
+            elif routing["routing_strat"].value[0] == "Variable":
                 subParameter = ET.SubElement(parameter, "subParameter",
                                              classPath="jmt.engine.NetStrategies.RoutingStrategies.EmpiricalStrategy",
                                              name="Probabilities")
@@ -448,7 +468,6 @@ class Network:
     def generate_queuesection(self, node, parentTag):
 
         section = ET.SubElement(parentTag, "section", className="Queue")
-        # TODO ADD DIFFERENT CAPACITIES BASED ON QUEUE
         sizepar = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="size")
         if hasattr(node, 'capacity'):
             ET.SubElement(sizepar, "value").text = str(node.capacity)
@@ -471,7 +490,6 @@ class Network:
                                          name="dropStrategy")
             ET.SubElement(dropStrategy, "value").text = drop
 
-        # TODO CLARIFY IF QUEUEGETSTRATEGIES IS ALWAYS FCFS
         ET.SubElement(section, "parameter",
                       classPath="jmt.engine.NetStrategies.QueueGetStrategies.FCFSstrategy", name="FCFSstrategy")
         parameter = ET.SubElement(section, "parameter", array="true",
