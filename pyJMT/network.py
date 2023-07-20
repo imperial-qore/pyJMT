@@ -8,10 +8,12 @@ from .link import Link
 import os
 import subprocess
 from itertools import product
+import tempfile
+from datetime import datetime
 
 
 class Network:
-    def __init__(self, name):
+    def __init__(self, name, JMTPath="C:\\Users\\James\\Documents\\Computing\\Java Modelling Tools"):
         self.name = name
         self.nodes = {'sources': [], 'sinks': [], 'queues': [], 'delays': [],
                       'routers': [], 'classswitches': [], 'forks': [], 'joins': [],
@@ -20,6 +22,11 @@ class Network:
         self.classes = []
         self.useDefaultMetrics = True
         self.additionalMetrics = []
+        self.JMTPath = JMTPath
+        self.maxSamples = 1000000
+
+    def setMaxSamples(self, numSamples):
+        self.maxSamples = numSamples
 
     def get_number_of_nodes(self):
         total_length = sum(len(v) for v in self.nodes.values())
@@ -72,12 +79,32 @@ class Network:
                     else:
                         self.add_link(n1, n2)
 
-    def jsimg_open(self, jmt_path, filename):
-        path = os.path.dirname(filename)
-        if not path:
-            filename = os.path.join(os.getcwd(), filename)
-        cmd = f'java -cp "{os.path.join(jmt_path, "JMT.jar")}" jmt.commandline.Jmt jsimg "{filename}"'
-        subprocess.run(cmd, shell=True)
+    def jsimg_open(self):
+
+        dir_path = os.path.join(os.getcwd(), "output_files")
+        os.makedirs(dir_path, exist_ok=True)
+
+        # Create a temporary file in the specific directory
+        with tempfile.NamedTemporaryFile(dir=dir_path, delete=False) as temp:
+            self.generate_xml(temp.name)
+            cmd = f'java -cp "{os.path.join(self.JMTPath, "JMT.jar")}" jmt.commandline.Jmt jsimg "{os.path.join(dir_path, temp.name)}"'
+            subprocess.run(cmd, shell=True)
+
+        os.unlink(os.path.join(dir_path, temp.name))
+
+    def saveNamed(self, fileName):
+        dir_path = os.path.join(os.getcwd(), "output_files")
+        os.makedirs(dir_path, exist_ok=True)
+        self.generate_xml(os.path.join(dir_path, f"{fileName}.jsimg"))
+
+    def saveTemp(self):
+        dir_path = os.path.join(os.getcwd(), "output_files")
+        os.makedirs(dir_path, exist_ok=True)
+
+        # Create a temporary file in the specific directory
+        with tempfile.NamedTemporaryFile(dir=dir_path, delete=False) as temp:
+            self.generate_xml(temp.name)
+
 
     def init_routing_matrix(self):
         #TODO see if this is ok
@@ -99,7 +126,7 @@ class Network:
 
         root = ET.Element("archive",
                           attrib={"name": fileName,
-                                  "timestamp": "Fri Jul 07 14:27:52 BST 2023",
+                                  "timestamp": datetime.now().strftime("%a %b %d %H:%M:%S %Z %Y"),
                                   "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "Archive.xsd"})
 
         sim = ET.SubElement(root, "sim",
@@ -109,7 +136,7 @@ class Network:
                                     "logPath": "/home/james/JMT/",
                                     "logReplaceMode": "0",
                                     "maxEvents": "-1",
-                                    "maxSamples": "1000000",
+                                    "maxSamples": str(self.maxSamples),
                                     "name": fileName,
                                     "polling": "1.0",
                                     "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "SIMmodeldefinition.xsd"})

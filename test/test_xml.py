@@ -46,6 +46,30 @@ def elements_equal(e1, e2, path=''):
 
 class TestXML(unittest.TestCase):
 
+    # def test_Saving(self):
+    #     # declare model
+    #     model = pj.Network("M/M/1")
+    #
+    #     # declare nodes
+    #     source = pj.Source(model, "mySource")
+    #     queue = pj.Queue(model, "myQueue", pj.SchedStrategy.FCFS)
+    #     sink = pj.Sink(model, "mySink")
+    #
+    #     # declare and set classes
+    #     oclass = pj.OpenClass(model, "myClass")
+    #     source.setArrival(oclass, pj.Exp(1))
+    #     queue.setService(oclass, pj.Exp(2))
+    #
+    #     # topology
+    #     model.add_link(source, queue)
+    #     model.add_link(queue, sink)
+    #
+    #     # create solution file and open
+    #     model.jsimg_open()
+    #     model.saveNamed("saved")
+    #
+    #     print("Opened ok")
+
     def test_MM1(self):
         # declare model
         model = pj.Network("M/M/1")
@@ -378,9 +402,6 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("logger and fcr Ok")
-
-
-
 
     def test_add_metrics(self):
 
