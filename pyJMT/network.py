@@ -14,7 +14,8 @@ class Network:
     def __init__(self, name):
         self.name = name
         self.nodes = {'sources': [], 'sinks': [], 'queues': [], 'delays': [],
-                      'routers': [], 'classswitches': [], 'forks': [], 'joins': []}
+                      'routers': [], 'classswitches': [], 'forks': [], 'joins': [],
+                      'loggers': [], 'fcrs': []}
         self.links: [Link] = []
         self.classes = []
         self.useDefaultMetrics = True
@@ -226,12 +227,67 @@ class Network:
 
             self.generate_router(join, node)
 
+        for logger in self.nodes['loggers']:
+            node = ET.SubElement(sim, "node", name=logger.name)
+
+            self.generate_queuesection(logger, node)
+
+            section = ET.SubElement(node, "section", className="LogTunnel")
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.String", name="logfileName")
+            ET.SubElement(parm, "value").text = logger.logfileName
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.String", name="logfilePath")
+            ET.SubElement(parm, "value").text = logger.logfilePath
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Boolean", name="logExecTimestamp")
+            ET.SubElement(parm, "value").text = str(logger.startTime).lower()
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Boolean", name="logLoggerName")
+            ET.SubElement(parm, "value").text = str(logger.logLoggerName).lower()
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Boolean", name="logTimeStamp")
+            ET.SubElement(parm, "value").text = str(logger.timestamp).lower()
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Boolean", name="logJobID")
+            ET.SubElement(parm, "value").text = str(logger.jobID).lower()
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Boolean", name="logJobClass")
+            ET.SubElement(parm, "value").text = str(logger.jobclass).lower()
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Boolean", name="logTimeSameClass")
+            ET.SubElement(parm, "value").text = str(logger.timeSameClass).lower()
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Boolean", name="logTimeAnyClass")
+            ET.SubElement(parm, "value").text = str(logger.timeAnyClass).lower()
+
+            parm = ET.SubElement(section, "parameter", classPath="java.lang.Integer", name="numClasses")
+            ET.SubElement(parm, "value").text = str(len(self.classes))
+
+            self.generate_router(logger, node)
+
         for sink in self.nodes['sinks']:
             node = ET.SubElement(sim, "node", name=sink.name)
             ET.SubElement(node, "section", className="JobSink")
 
         for link in self.links:
             ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
+
+        for fcr in self.nodes['fcrs']:
+            blockingRegion = ET.SubElement(sim, "blockingRegion", name=fcr.name, type="default")
+            ET.SubElement(blockingRegion, "regionNode", nodeName=fcr.nodeName)
+            ET.SubElement(blockingRegion, "globalConstraint", maxJobs=str(fcr.maxCapacity))
+            ET.SubElement(blockingRegion, "globalMemoryConstraint", maxMemory=str(fcr.maxMemory))
+
+            for jobclass in self.classes:
+                ET.SubElement(blockingRegion, "classConstraint", jobClass=jobclass.name, maxJobsPerClass=str(fcr.classMaxCapacities.get(jobclass.name, -1)))
+            for jobclass in self.classes:
+                ET.SubElement(blockingRegion, "classMemoryConstraint", jobClass=jobclass.name, maxMemoryPerClass=str(fcr.classMaxMemories.get(jobclass.name, -1)))
+            for jobclass in self.classes:
+                ET.SubElement(blockingRegion, "dropRules", dropThisClass=str(fcr.dropRules.get(jobclass.name, False)).lower(), jobClass=jobclass.name)
+            for jobclass in self.classes:
+                ET.SubElement(blockingRegion, "classWeight", jobClass=jobclass.name, weight=str(fcr.classWeights.get(jobclass.name, 1)))
+            for jobclass in self.classes:
+                ET.SubElement(blockingRegion, "classSize", jobClass=jobclass.name, size=str(fcr.classSizes.get(jobclass.name, 1)))
 
         self.generate_metrics(sim)
 

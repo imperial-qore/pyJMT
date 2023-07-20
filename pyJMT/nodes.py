@@ -1,3 +1,5 @@
+import os
+
 from pyJMT.scheduling_strategies import SchedStrategy
 from pyJMT.routing_strategies import RoutingStrategy
 from itertools import product
@@ -49,7 +51,8 @@ class RoutingSection:
     def setClassSwitchRouting(self, sourcejobclass, targetjobclass, target, routeprob, classchangeprob):
         if self.routings[sourcejobclass.name]['classswitchprobs'].get((target.name, routeprob), None) is None:
             self.routings[sourcejobclass.name]['classswitchprobs'][(target.name, routeprob)] = {}
-        self.routings[sourcejobclass.name]['classswitchprobs'][(target.name, routeprob)][targetjobclass] = classchangeprob
+        self.routings[sourcejobclass.name]['classswitchprobs'][(target.name, routeprob)][
+            targetjobclass] = classchangeprob
 
 
 class ClassSwitchSection:
@@ -85,14 +88,12 @@ class Delay(Node, RoutingSection, ServiceSection):
         self.model.nodes["delays"].append(self)
 
 
-
 class Source(Node, RoutingSection):
     def __init__(self, model, name):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
         self.services = {}
         self.model.nodes["sources"].append(self)
-
 
     def setArrival(self, jobclass, arrival_dist):
         self.services[jobclass.name] = {}
@@ -122,6 +123,7 @@ class ClassSwitch(Node, RoutingSection, ClassSwitchSection):
         ClassSwitchSection.__init__(self, model)
         self.model.nodes["classswitches"].append(self)
 
+
 class Fork(Node, RoutingSection, QueueSection):
     def __init__(self, model, name):
         Node.__init__(self, model, name)
@@ -134,8 +136,82 @@ class Fork(Node, RoutingSection, QueueSection):
     def setTasksPerLink(self, num_tasks):
         self.num_tasks = num_tasks
 
+
 class Join(Node, RoutingSection):
     def __init__(self, model, name):
         Node.__init__(self, model, name)
         RoutingSection.__init__(self)
         self.model.nodes["joins"].append(self)
+
+
+class Logger(Node, RoutingSection):
+    #TODO CHANGE DEFAULT PATH TO JMT PATH
+    def __init__(self, model, name, logfileName="global.csv", logfilePath=os.getcwd()):
+        Node.__init__(self, model, name)
+        RoutingSection.__init__(self)
+        self.logfileName = logfileName
+        self.logfilePath = logfilePath
+        self.timestamp = True
+        self.logLoggerName = True
+        self.startTime = False
+        self.jobID = True
+        self.jobclass = False
+        self.timeSameClass = False
+        self.timeAnyClass = False
+        self.model.nodes["loggers"].append(self)
+
+    def setLogLoggerName(self, bool):
+        self.logLoggerName = bool
+
+    def setStartTime(self, bool):
+        self.startTime = bool
+
+    def setJobID(self, bool):
+        self.jobID = bool
+
+    def setJobClass(self, bool):
+        self.jobclass = bool
+
+    def setTimestamp(self, bool):
+        self.timestamp = bool
+
+    def setTimeSameClass(self, bool):
+        self.timeSameClass = bool
+
+    def setTimeAnyClass(self, bool):
+        self.timeAnyClass = bool
+
+class FiniteCapacityRegion(Node):
+    def __init__(self, model, name, node, maxCapacity=-1, maxMemory=-1):
+        Node.__init__(self, model, name)
+        self.nodeName = node.name
+        self.maxCapacity = maxCapacity
+        self.maxMemory = maxMemory
+        self.classMaxCapacities = {}
+        self.classMaxMemories = {}
+        self.dropRules = {}
+        self.classWeights = {}
+        self.classSizes = {}
+        self.model.nodes["fcrs"].append(self)
+
+
+    def setMaxCapacity(self, maxCapacity):
+        self.maxCapacity = maxCapacity
+
+    def setMaxMemory(self, maxMemory):
+        self.maxMemory = maxMemory
+
+    def setClassMaxCapacity(self, jobclass, maxCapacity):
+        self.classMaxCapacities[jobclass.name] = maxCapacity
+
+    def setClassMaxMemory(self, jobclass, maxMemory):
+        self.classMaxMemories[jobclass.name] = maxMemory#
+
+    def setDropRule(self, jobclass, drop):
+        self.dropRules[jobclass.name] = drop
+
+    def setClassWeight(self, jobclass, weight):
+        self.classWeights[jobclass.name] = weight
+
+    def setClassSize(self, jobclass, size):
+        self.classSizes[jobclass.name] = size

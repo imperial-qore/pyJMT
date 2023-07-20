@@ -20,8 +20,10 @@ def elements_equal(e1, e2, path=''):
         e2_filename = get_filename_from_path(e2.text.strip())
 
         if e1_filename != e2_filename:
-            print(f'Different text at {path}: {e1.text} != {e2.text}')
-            return False
+            # ignore if its a directory name - mainly for logger
+            if not os.path.isdir(e1.text):
+                print(f'Different text at {path}: {e1.text} != {e2.text}')
+                return False
 
     if (e1.tail or '').strip() != (e2.tail or '').strip():
         print(f"Different tail at {path}: {e1.tail} != {e2.tail}")
@@ -326,6 +328,59 @@ class TestXML(unittest.TestCase):
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("fork and join Ok")
+
+    def test_logger_fcr(self):
+
+        model = pj.Network('test_logger_fcr')
+
+        # declare nodes
+        source1 = pj.Source(model, 'mySource')
+
+        myQueue = pj.Queue(model, 'myQueue', pj.SchedStrategy.FCFS)
+        queue2 = pj.Queue(model, 'Queue 2', pj.SchedStrategy.FCFS)
+        logger1 = pj.Logger(model, "Logger 1")
+
+        sink = pj.Sink(model, 'mySink')
+
+        # declare and set classes
+        myClass = pj.OpenClass(model, 'myClass')
+        class2 = pj.OpenClass(model, 'Class2')
+
+        source1.setArrival(myClass, pj.Exp(1))
+        source1.setArrival(class2, pj.Exp(0.5))
+
+        myQueue.setService(myClass, pj.Exp(2))
+        myQueue.setService(class2, pj.Exp(1))
+        queue2.setService(myClass, pj.Exp(1))
+        queue2.setService(class2, pj.Exp(1))
+
+        fcr1 = pj.FiniteCapacityRegion(model, "FCRegion1", queue2)
+        fcr2 = pj.FiniteCapacityRegion(model, "FCRegion2", myQueue)
+        fcr1.setMaxCapacity(20)
+
+        # topology
+        model.add_links([(source1, logger1),
+                         (source1, myQueue),
+                         (logger1, queue2),
+                         (logger1, sink),
+                         (myQueue, queue2),
+                         (myQueue, sink),
+                         (queue2, sink)])
+
+        model.useDefaultMetrics = False
+        # create solution file
+        model.generate_xml("test_logger_fcr_solution.jsimg")
+
+        # Parse the generated file and the reference file
+        generated_tree = ET.parse("test_logger_fcr_solution.jsimg")
+        reference_tree = ET.parse("test_logger_fcr_reference.jsimg")
+
+        # Compare the generated file with the reference file
+        self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
+        print("logger and fcr Ok")
+
+
+
 
     def test_add_metrics(self):
 
