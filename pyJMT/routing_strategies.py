@@ -14,5 +14,5 @@ class RoutingStrategy(Enum):
     LEAST_UTILIZATION = ["Static", "Least Utilization", "LeastUtilizationRoutingStrategy"]
     FASTEST_SERVICE = ["Static", "Fastest Service", "FastestServiceRoutingStrategy"]
     DISABLED = ["Static", "Disabled", "DisabledRoutingStrategy"]
-    PROB = ["Variable", "Probabilities", "RandomStrategy"]
-    CLASSSWITCH = ["Variable", "Class Switch", "ClassSwitchRoutingStrategy" ]
+    PROB = ["Prob", "Probabilities", "RandomStrategy"]
+    CLASSSWITCH = ["ClassSwitch", "Class Switch", "ClassSwitchRoutingStrategy" ]

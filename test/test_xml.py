@@ -184,7 +184,7 @@ class TestXML(unittest.TestCase):
         model = pj.Network('test_reentantline_classswitch_routing')
 
         # declare nodes
-        queue = pj.Queue(model, 'Queue_1', pj.SchedStrategy.FCFS, 3)
+        queue = pj.Queue(model, 'Queue_1', pj.SchedStrategy.FCFS, 3, pj.DropStrategy.WAITING_QUEUE)
 
         # declare and set classes
         K = 3
@@ -201,7 +201,6 @@ class TestXML(unittest.TestCase):
 
         P = model.init_routing_matrix()
 
-        # Assuming queue is an index, in Python we start indexing from 0
         P[(jobclass[0], jobclass[1])][(queue, queue)] = 1.0
         P[(jobclass[1], jobclass[2])][(queue, queue)] = 1.0
         P[(jobclass[2], jobclass[0])][(queue, queue)] = 1.0

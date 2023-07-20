@@ -46,8 +46,10 @@ class RoutingSection:
     def setProbRouting(self, jobclass, target, val):
         self.routings[jobclass.name]['probabilities'].append((target.name, val))
 
-    def setClassSwitchRouting(self, sourcejobclass, targetjobclass, target, val):
-        self.routings[sourcejobclass.name]['classswitchprobs'][target.name] = (targetjobclass, val)
+    def setClassSwitchRouting(self, sourcejobclass, targetjobclass, target, routeprob, classchangeprob):
+        if self.routings[sourcejobclass.name]['classswitchprobs'].get((target.name, routeprob), None) is None:
+            self.routings[sourcejobclass.name]['classswitchprobs'][(target.name, routeprob)] = {}
+        self.routings[sourcejobclass.name]['classswitchprobs'][(target.name, routeprob)][targetjobclass] = classchangeprob
 
 
 class ClassSwitchSection:
