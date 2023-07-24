@@ -23,6 +23,13 @@ def init(file_path, maxTime=600, maxSamples=1000000):
     global _maxSamples
     _maxSamples = maxSamples
 
+def add_extension_if_none(filename, extension):
+    base_name, ext = os.path.splitext(filename)
+    if not ext:
+        return f"{filename}.{extension}"
+    else:
+        return filename
+
 
 class Network:
     def __init__(self, name):
@@ -129,36 +136,39 @@ class Network:
     def saveNamed(self, fileName):
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
-        self.generate_xml(os.path.join(dir_path, f"{fileName}"))
+        self.generate_xml(os.path.join(dir_path, add_extension_if_none(fileName, "jsimg")))
 
     def saveTemp(self):
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
 
         # Create a temporary file in the specific directory
-        with tempfile.NamedTemporaryFile(dir=dir_path, delete=False) as temp:
-            self.generate_xml(os.path.join(dir_path, f"{temp.name}"))
+        with tempfile.NamedTemporaryFile(dir=dir_path, suffix=".jsimg", delete=False) as temp:
+            self.generate_xml(os.path.join(dir_path, add_extension_if_none(temp.name, "jsimg")))
 
-        return f"{temp.name}.jsimg"
+        return add_extension_if_none(temp.name, "jsimg")
 
     def generateResultsFileNamed(self, fileName, seed=None):
+        self.saveNamed(fileName)
+        self.generateResultsFromJsimg(fileName, seed)
+
+    def generateResultsFromJsimg(self, fileName, seed=None):
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
-
-        self.generate_xml(os.path.join(dir_path, f"{fileName}"))
         adds = " "
         if not seed is None:
             adds += f"-seed {seed} "
         if not self.maxTime is None:
             adds += f"-maxtime {self.maxTime} "
 
-        cmd = f'java -cp "{os.path.join(self.JMTPath, "JMT.jar")}" jmt.commandline.Jmt sim "{os.path.join(dir_path, f"{fileName}")}" {adds}'
+        cmd = f'java -cp "{os.path.join(self.JMTPath, "JMT.jar")}" jmt.commandline.Jmt sim "{os.path.join(dir_path, add_extension_if_none(fileName, "jsimg"))}" {adds}'
         print(cmd)
         subprocess.run(cmd, shell=True)
 
     def printResultsFromFile(self, fileName):
         dir_path = os.path.join(os.getcwd(), "output_files")
-        tree = ET.parse(f'{os.path.join(dir_path, f"{fileName}-result.jsim")}')
+        filewithext = add_extension_if_none(fileName, 'jsimg')
+        tree = ET.parse(f'{os.path.join(dir_path, f"{filewithext}-result.jsim")}')
         root = tree.getroot()
 
         # Extract the model name from the root element
@@ -199,6 +209,15 @@ class Network:
                 if attr not in ['station', 'class']:
                     print(f"{measure.get(attr, 'N/A'):<{col_widths[attr]}}", end=" ")
             print()
+
+    def printResults(self, seed=None):
+        tempfileName = self.saveTemp()
+        self.generateResultsFileNamed(tempfileName, seed)
+        self.printResultsFromFile(tempfileName)
+        dir = os.path.join(os.getcwd(), "output_files")
+        os.unlink(os.path.join(dir, add_extension_if_none(tempfileName, "jsimg")))
+        os.unlink(os.path.join(dir, f'{add_extension_if_none(tempfileName, "jsimg")}-result.jsim'))
+
 
     def init_routing_matrix(self):
         #TODO see if this is ok

@@ -47,6 +47,38 @@ def elements_equal(e1, e2, path=''):
 
 class TestXML(unittest.TestCase):
 
+    def test_multi(self):
+        model = pj.Network("Variable")
+
+        source = pj.Source(model, "source")
+
+        queue = pj.Queue(model, "queue", pj.SchedStrategy.FCFS)
+
+        sink = pj.Sink(model, "sink")
+
+        jclass = pj.OpenClass(model, "class")
+
+        source.setArrival(jclass, pj.Exp(0.5))
+
+        queue.setService(jclass, pj.Exp(0.5))
+
+        model.add_link(source, queue)
+
+        model.add_link(queue, sink)
+
+        model.printResults()
+
+        queue2 = pj.Queue(model, "queue2", pj.SchedStrategy.FCFS)
+
+        queue2.setService(jclass, pj.Erlang.fitMeanAndOrder(1, 2))
+
+        queue.setService(jclass, pj.Exp(1))
+
+        model.add_link(queue, queue2)
+
+        model.add_link(queue2, sink)
+
+        model.printResults()
     def test_Saving(self):
         # declare model
         model = pj.Network("M/M/1")
