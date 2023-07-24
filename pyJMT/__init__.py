@@ -7,5 +7,4 @@ from .service_distributions import Cox, Det, Erlang, Exp, Gamma, HyperExp, Logno
 from .metrics import Metrics
 from .scheduling_strategies import SchedStrategy
 from .routing_strategies import RoutingStrategy
-from .link import Link
 from .drop_strategies import DropStrategy

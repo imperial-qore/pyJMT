@@ -46,8 +46,13 @@ coverage.xml
 *.log
 *.pot
 
-# Sphinx documentation
-docs/_build/
+_static
+_build
+_templates
+docs/.doctrees
+docs/_sources
+docs/_static
+docs/docs
 
 .idea
 
@@ -56,3 +61,5 @@ docs/_build/
 
 */output_files
 */output_files/
+
+*.html

@@ -16,12 +16,23 @@ _maxSamples = 1000000
 
 
 def init(file_path, maxTime=600, maxSamples=1000000):
+    """
+    Initialize the globals needed for later functions/classes.
+
+    :param file_path: Path for the file.
+    :type file_path: str
+    :param maxTime: Maximum time for the task. Defaults to 600.
+    :type maxTime: int, optional
+    :param maxSamples: Maximum number of samples. Defaults to 1000000.
+    :type maxSamples: int, optional
+    """
     global _file_path
     _file_path = file_path
     global _maxTime
     _maxTime = maxTime
     global _maxSamples
     _maxSamples = maxSamples
+
 
 def add_extension_if_none(filename, extension):
     base_name, ext = os.path.splitext(filename)
@@ -32,7 +43,25 @@ def add_extension_if_none(filename, extension):
 
 
 class Network:
+    """
+    A class to represent a network.
+
+    ...
+
+    Attributes
+    ----------
+    name : str
+        name of the network
+    """
+
     def __init__(self, name):
+        """
+             Constructs all the necessary attributes for the network object.
+
+             :param name: Name of the network.
+             :type name: str
+             :raises ValueError: If file path is not set before creating a network.
+             """
         if _file_path is None:
             raise ValueError("File path is not set. Call 'init()' first to set the file path.")
         self.name = name
@@ -49,11 +78,25 @@ class Network:
         self.logDelimiter = ";"
 
     def removeNode(self, node):
+        """
+           Removes a node from the network
+
+           :param node: The node to remove from this Network.
+           :type node: Node
+        """
         for i in range(len(self.nodes)):
             for j in range(len(self.nodes[i])):
                 if self.nodes[i][j] == node:
                     self.nodes[i].remove(node)
 
+    def useDefaultMetrics(self, trueorfalse):
+        """
+           Set whether to use the default metrics. True by default.
+
+           :param trueorfalse: The bool to set this parameter to
+           :type trueorfalse: bool
+        """
+        self.defaultMetrics(trueorfalse)
 
     def get_number_of_nodes(self):
         total_length = sum(len(v) for v in self.nodes.values())
@@ -69,9 +112,26 @@ class Network:
         return self.classes
 
     def add_metric(self, jobclass, node, metric):
+        """
+             Adds a metric to a node and jobclass combination
+
+             :param jobclass: The jobclass to add this parameter to
+             :type jobclass: JobClass
+             :param node: The node to add this metric to
+             :type node: Node
+             :param metric: The metric to add
+             :type metric: Metrics
+        """
         self.additionalMetrics.append((jobclass, node, metric))
 
     def add_link(self, source, target):
+        """
+            Adds a link between two nodes
+            :param source: The start node of the link
+            :type source: Node
+            :param target: The end node of the link
+            :type target: Node
+        """
         # Adds links onto fork object to avoid having to search through
         # the links later, this problem only occurs when generating xml
         # for forks
@@ -81,19 +141,30 @@ class Network:
         self.links.append(link)
 
     def add_links(self, linkList):
+        """
+            Adds many links between nodes, takes in a list of pairs of nodes.
+            :param linkList: The list of pairs of nodes to add links for.
+            :type linkList: [(Node, Node)]
+        """
         for source, target in linkList:
             self.add_link(source, target)
 
     def link(self, p):
+        """
+              Adds many between links nodes, takes in a routing matrix.
+            :param p: The routing matrix.
+            :type p: Routing Matrix
+        """
         for linkClass, classDict in p.items():
             if len(classDict) == 0:
                 continue
             else:
                 if isinstance(linkClass, tuple):
-                    #generate classswitch
+                    # generate classswitch
                     c1, c2 = linkClass
                     for source, target in classDict:
-                        source.setClassSwitchRouting(c1, c2, target, p[c1].get((source, target), 1.0), p[(c1, c2)][(source, target)])
+                        source.setClassSwitchRouting(c1, c2, target, p[c1].get((source, target), 1.0),
+                                                     p[(c1, c2)][(source, target)])
 
                 for (n1, n2) in classDict:
                     containsAlready = False
@@ -106,8 +177,14 @@ class Network:
                     else:
                         self.add_link(n1, n2)
 
-
     def remove_link(self, source, target):
+        """
+           Removes a link between two nodes.
+           :param source: The start node of the link.
+           :type source: Node
+           :param target: The end node of the link.
+           :type target: Node
+        """
         # Adds links onto fork object to avoid having to search through
         # the links later, this problem only occurs when generating xml
         # for forks
@@ -117,11 +194,18 @@ class Network:
         self.links.remove(link[0])
 
     def remove_links(self, linkList):
+        """
+             Removes many links between nodes, takes in a list of pairs of nodes.
+            :param linkList: The list of pairs of nodes to remove links for.
+            :type linkList: [(Node, Node)]
+        """
         for source, target in linkList:
             self.remove_link(source, target)
 
     def jsimg_open(self):
-
+        """
+            Opens the Network in JMT, very useful for debugging
+        """
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
 
@@ -134,11 +218,20 @@ class Network:
         os.unlink(os.path.join(dir_path, f"{temp.name}"))
 
     def saveNamed(self, fileName):
+        """
+             Saves the current network to a file in output_files with a given name.
+             :param fileName: The name of the file.
+                     :type fileName: str
+         """
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
         self.generate_xml(os.path.join(dir_path, add_extension_if_none(fileName, "jsimg")))
 
     def saveTemp(self):
+        """
+                   Saves the current network to a file in output_files with a temporary name and returns the name.
+                   :returns temporary file name
+               """
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
 
@@ -149,10 +242,24 @@ class Network:
         return add_extension_if_none(temp.name, "jsimg")
 
     def generateResultsFileNamed(self, fileName, seed=None):
+        """
+            Runs a simulation and generates a JMT results file with the given fileName from this Network as well as a Jsimg file
+             :param fileName: The file name for the results file to be given.
+           :type fileName: str
+           :param seed: The seed for the simulation.
+           :type seed: int, optional
+        """
         self.saveNamed(fileName)
         self.generateResultsFromJsimg(fileName, seed)
 
     def generateResultsFromJsimg(self, fileName, seed=None):
+        """
+            Runs a simulation and generates a JMT results file with the given fileName from this Network
+             :param fileName: The file name for the results file to be given.
+       :type fileName: str
+       :param seed: The seed for the simulation.
+       :type seed: int, optional
+        """
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
         adds = " "
@@ -166,6 +273,10 @@ class Network:
         subprocess.run(cmd, shell=True)
 
     def printResultsFromFile(self, fileName):
+        """
+            Prints results to console from a JMT results file
+
+        """
         dir_path = os.path.join(os.getcwd(), "output_files")
         filewithext = add_extension_if_none(fileName, 'jsimg')
         tree = ET.parse(f'{os.path.join(dir_path, f"{filewithext}-result.jsim")}')
@@ -211,6 +322,11 @@ class Network:
             print()
 
     def printResults(self, seed=None):
+        """
+               Prints results to console without saving anything
+                :param seed: The seed for the simulation.
+                :type seed: int, optional
+           """
         tempfileName = self.saveTemp()
         self.generateResultsFileNamed(tempfileName, seed)
         self.printResultsFromFile(tempfileName)
@@ -218,15 +334,18 @@ class Network:
         os.unlink(os.path.join(dir, add_extension_if_none(tempfileName, "jsimg")))
         os.unlink(os.path.join(dir, f'{add_extension_if_none(tempfileName, "jsimg")}-result.jsim'))
 
-
     def init_routing_matrix(self):
-        #TODO see if this is ok
+        """
+               Creates and returns a routing matrix for use with Network.link
+                :returns p : Routing Matrix
+           """
+        # TODO see if this is ok
         classes = self.get_classes()
 
         P = {}
         # For P[class_name][node_name][node_name]
         for c in classes:
-                P[c] = {}
+            P[c] = {}
 
         # For P[class_name][class_name][node_name][node_name]
         for c1, c2 in product(classes, repeat=2):
@@ -234,7 +353,7 @@ class Network:
 
         return P
 
-    def generate_xml(self, fileName, seed=1234 ,maxTime=None):
+    def generate_xml(self, fileName, seed=1234, maxTime=None):
         ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
 
         root = ET.Element("archive",
@@ -325,34 +444,48 @@ class Network:
             blockParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Integer", name="block")
             ET.SubElement(blockParm, "value").text = "-1"
 
-            simplifiedParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Boolean", name="isSimplifiedFork")
+            simplifiedParm = ET.SubElement(forkSection, "parameter", classPath="java.lang.Boolean",
+                                           name="isSimplifiedFork")
             ET.SubElement(simplifiedParm, "value").text = "true"
 
-            forkstrategyParm = ET.SubElement(forkSection, "parameter", array="true", classPath="jmt.engine.NetStrategies.ForkStrategy", name="ForkStrategy")
+            forkstrategyParm = ET.SubElement(forkSection, "parameter", array="true",
+                                             classPath="jmt.engine.NetStrategies.ForkStrategy", name="ForkStrategy")
             for jobclass in self.classes:
                 ET.SubElement(forkstrategyParm, "refClass").text = jobclass.name
-                branchsubParm = ET.SubElement(forkstrategyParm, "subParameter", classPath="jmt.engine.NetStrategies.ForkStrategies.ProbabilitiesFork", name="Branch Probabilities")
-                empiricalentryarrayParm = ET.SubElement(branchsubParm, "subParameter", array="true", classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath", name="EmpiricalEntryArray")
+                branchsubParm = ET.SubElement(forkstrategyParm, "subParameter",
+                                              classPath="jmt.engine.NetStrategies.ForkStrategies.ProbabilitiesFork",
+                                              name="Branch Probabilities")
+                empiricalentryarrayParm = ET.SubElement(branchsubParm, "subParameter", array="true",
+                                                        classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath",
+                                                        name="EmpiricalEntryArray")
                 for target in fork.links:
-                    outpathentryParm = ET.SubElement(empiricalentryarrayParm, "subParameter", classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath", name="OutPathEntry")
+                    outpathentryParm = ET.SubElement(empiricalentryarrayParm, "subParameter",
+                                                     classPath="jmt.engine.NetStrategies.ForkStrategies.OutPath",
+                                                     name="OutPathEntry")
 
-                    outunitprobabilityParm = ET.SubElement(outpathentryParm, "subParameter", classPath="jmt.engine.random.EmpiricalEntry", name="outUnitProbability")
-                    staionnameParm = ET.SubElement(outunitprobabilityParm, "subParameter", classPath="java.lang.String", name="stationName")
+                    outunitprobabilityParm = ET.SubElement(outpathentryParm, "subParameter",
+                                                           classPath="jmt.engine.random.EmpiricalEntry",
+                                                           name="outUnitProbability")
+                    staionnameParm = ET.SubElement(outunitprobabilityParm, "subParameter", classPath="java.lang.String",
+                                                   name="stationName")
                     ET.SubElement(staionnameParm, "value").text = target
-                    probabilityParm = ET.SubElement(outunitprobabilityParm, "subParameter", classPath="java.lang.Double",
-                                                   name="probability")
+                    probabilityParm = ET.SubElement(outunitprobabilityParm, "subParameter",
+                                                    classPath="java.lang.Double",
+                                                    name="probability")
                     ET.SubElement(probabilityParm, "value").text = "1.0"
 
-
-                    jobsperlinkParm = ET.SubElement(outpathentryParm, "subParameter", array="true", classPath="jmt.engine.random.EmpiricalEntry", name="JobsPerLinkDis")
-                    empiricalEntryParm = ET.SubElement(jobsperlinkParm, "subParameter", classPath="jmt.engine.random.EmpiricalEntry", name="EmpiricalEntry")
+                    jobsperlinkParm = ET.SubElement(outpathentryParm, "subParameter", array="true",
+                                                    classPath="jmt.engine.random.EmpiricalEntry", name="JobsPerLinkDis")
+                    empiricalEntryParm = ET.SubElement(jobsperlinkParm, "subParameter",
+                                                       classPath="jmt.engine.random.EmpiricalEntry",
+                                                       name="EmpiricalEntry")
 
                     numbersParm = ET.SubElement(empiricalEntryParm, "subParameter", classPath="java.lang.String",
-                                                    name="numbers")
+                                                name="numbers")
                     ET.SubElement(numbersParm, "value").text = "1"
 
                     probabilityParm = ET.SubElement(empiricalEntryParm, "subParameter", classPath="java.lang.Double",
-                                                   name="probability")
+                                                    name="probability")
                     ET.SubElement(probabilityParm, "value").text = "1.0"
 
         for join in self.nodes['joins']:
@@ -362,13 +495,16 @@ class Network:
 
             # generate join section
             joinSection = ET.SubElement(node, "section", className="Join")
-            parm = ET.SubElement(joinSection, "parameter", array="true", classPath="jmt.engine.NetStrategies.JoinStrategy", name="JoinStrategy")
+            parm = ET.SubElement(joinSection, "parameter", array="true",
+                                 classPath="jmt.engine.NetStrategies.JoinStrategy", name="JoinStrategy")
             for jobclass in self.classes:
                 ET.SubElement(parm, "refClass").text = jobclass.name
-                outersubparm = ET.SubElement(parm, "subParameter", classPath="jmt.engine.NetStrategies.JoinStrategies.NormalJoin", name="Standard Join")
-                innersubparm = ET.SubElement(outersubparm, "subParameter", classPath="java.lang.Integer", name="numRequired")
+                outersubparm = ET.SubElement(parm, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.JoinStrategies.NormalJoin",
+                                             name="Standard Join")
+                innersubparm = ET.SubElement(outersubparm, "subParameter", classPath="java.lang.Integer",
+                                             name="numRequired")
                 ET.SubElement(innersubparm, "value").text = "-1"
-
 
             self.generate_router(join, node)
 
@@ -421,15 +557,21 @@ class Network:
             ET.SubElement(blockingRegion, "globalMemoryConstraint", maxMemory=str(fcr.maxMemory))
 
             for jobclass in self.classes:
-                ET.SubElement(blockingRegion, "classConstraint", jobClass=jobclass.name, maxJobsPerClass=str(fcr.classMaxCapacities.get(jobclass.name, -1)))
+                ET.SubElement(blockingRegion, "classConstraint", jobClass=jobclass.name,
+                              maxJobsPerClass=str(fcr.classMaxCapacities.get(jobclass.name, -1)))
             for jobclass in self.classes:
-                ET.SubElement(blockingRegion, "classMemoryConstraint", jobClass=jobclass.name, maxMemoryPerClass=str(fcr.classMaxMemories.get(jobclass.name, -1)))
+                ET.SubElement(blockingRegion, "classMemoryConstraint", jobClass=jobclass.name,
+                              maxMemoryPerClass=str(fcr.classMaxMemories.get(jobclass.name, -1)))
             for jobclass in self.classes:
-                ET.SubElement(blockingRegion, "dropRules", dropThisClass=str(fcr.dropRules.get(jobclass.name, False)).lower(), jobClass=jobclass.name)
+                ET.SubElement(blockingRegion, "dropRules",
+                              dropThisClass=str(fcr.dropRules.get(jobclass.name, False)).lower(),
+                              jobClass=jobclass.name)
             for jobclass in self.classes:
-                ET.SubElement(blockingRegion, "classWeight", jobClass=jobclass.name, weight=str(fcr.classWeights.get(jobclass.name, 1)))
+                ET.SubElement(blockingRegion, "classWeight", jobClass=jobclass.name,
+                              weight=str(fcr.classWeights.get(jobclass.name, 1)))
             for jobclass in self.classes:
-                ET.SubElement(blockingRegion, "classSize", jobClass=jobclass.name, size=str(fcr.classSizes.get(jobclass.name, 1)))
+                ET.SubElement(blockingRegion, "classSize", jobClass=jobclass.name,
+                              size=str(fcr.classSizes.get(jobclass.name, 1)))
 
         self.generate_metrics(sim)
 
@@ -444,7 +586,7 @@ class Network:
                     openedPreloadTag = True
                 stationPopulations = ET.SubElement(preload, "stationPopulations", stationName=jobclass.referenceSource)
                 ET.SubElement(stationPopulations, "classPopulation", population=str(jobclass.population),
-                                  refClass=jobclass.name)
+                              refClass=jobclass.name)
 
         tree = ET.ElementTree(root)
         with open(fileName, 'wb') as f:
@@ -453,8 +595,8 @@ class Network:
         tree.write(fileName)
 
     def generate_metrics(self, sim):
-        if self.useDefaultMetrics:
-            #TODO CHECK WHAT DEFAULTS SHOULD BE EXACTLY
+        if self.defaultMetrics:
+            # TODO CHECK WHAT DEFAULTS SHOULD BE EXACTLY
             measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
             for measure in measuresQueue:
                 for queue in self.nodes['queues']:
@@ -531,7 +673,7 @@ class Network:
                                                 name="stationName")
                     ET.SubElement(stationName, "value").text = target
                     probability = ET.SubElement(empiricalEntry, "subParameter", classPath="java.lang.Double",
-                                            name="probability")
+                                                name="probability")
                     ET.SubElement(probability, "value").text = str(float(val))
 
             elif routing["routing_strat"].value[0] == "ClassSwitch":
@@ -539,18 +681,19 @@ class Network:
                                              classPath=f"jmt.engine.NetStrategies.RoutingStrategies.{routing['routing_strat'].value[2]}",
                                              name=routing["routing_strat"].value[1])
                 routingParameterArray = ET.SubElement(subParameter, "subParameter", array="true",
-                                             classPath="jmt.engine.NetStrategies.RoutingStrategies.ClassSwitchRoutingParameter",
-                                             name="ClassSwitchRoutingParameterArray")
+                                                      classPath="jmt.engine.NetStrategies.RoutingStrategies.ClassSwitchRoutingParameter",
+                                                      name="ClassSwitchRoutingParameterArray")
                 routingParameter = ET.SubElement(routingParameterArray, "subParameter",
-                                                    classPath="jmt.engine.NetStrategies.RoutingStrategies.ClassSwitchRoutingParameter",
-                                                    name="ClassSwitchRoutingParameter")
+                                                 classPath="jmt.engine.NetStrategies.RoutingStrategies.ClassSwitchRoutingParameter",
+                                                 name="ClassSwitchRoutingParameter")
                 for (target, routeprob) in routing['classswitchprobs'].keys():
 
-                    stationNameParameter = ET.SubElement(routingParameter, "subParameter", classPath="java.lang.String", name="stationName")
+                    stationNameParameter = ET.SubElement(routingParameter, "subParameter", classPath="java.lang.String",
+                                                         name="stationName")
                     ET.SubElement(stationNameParameter, "value").text = target
 
                     probParameter = ET.SubElement(routingParameter, "subParameter", classPath="java.lang.Double",
-                                                         name="probability")
+                                                  name="probability")
                     ET.SubElement(probParameter, "value").text = str(self.roundedFraction(routeprob))
 
                     empiricalEntryArray = ET.SubElement(routingParameter, "subParameter", array="true",
@@ -811,7 +954,8 @@ class Network:
         parameter = ET.SubElement(section, "parameter", classPath="java.lang.Object", array="true", name="matrix")
         for class1 in node.p.keys():
             ET.SubElement(parameter, "refClass").text = str(class1)
-            subParameter = ET.SubElement(parameter, "subParameter", classPath="java.lang.Float", array="true", name="row")
+            subParameter = ET.SubElement(parameter, "subParameter", classPath="java.lang.Float", array="true",
+                                         name="row")
             for class2 in node.p[class1]:
                 ET.SubElement(subParameter, "refClass").text = str(class2)
                 subParameter2 = ET.SubElement(subParameter, "subParameter", classPath="java.lang.Float", name="cell")
