@@ -18,6 +18,15 @@ class QueueSection:
         self.capacity = capacity
         self.dropRule = dropRule
 
+    def setStrategy(self, strategy):
+        self.strategy = strategy
+
+    def setCapacity(self, capacity):
+        self.capacity = capacity
+
+    def setDropRule(self, dropRule):
+        self.dropRule = dropRule
+
 
 class ServiceSection:
     def __init__(self, numberOfServers=1):
@@ -59,6 +68,7 @@ class ClassSwitchSection:
     def __init__(self, model):
         self.p = {}
         classes = model.get_classes()
+        #TODO THIS WILL LIKELY NOT WORK AS INTENDED WHEN REASSIGNED
         for jclass in classes:
             self.p[jclass.name] = {}
         for c1, c2 in product(classes, repeat=2):
@@ -159,6 +169,9 @@ class Logger(Node, RoutingSection):
         self.timeSameClass = False
         self.timeAnyClass = False
         self.model.nodes["loggers"].append(self)
+
+    def setDelimiter(self, delimiter):
+        self.model.logDelimiter = delimiter
 
     def setLogLoggerName(self, bool):
         self.logLoggerName = bool

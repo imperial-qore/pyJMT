@@ -3,6 +3,7 @@ import unittest
 import pyJMT as pj
 import xml.etree.ElementTree as ET
 
+pj.init("C:/Users/James/Documents/Computing/Java Modelling Tools")
 
 def elements_equal(e1, e2, path=''):
     if e1.tag != e2.tag:
@@ -46,29 +47,32 @@ def elements_equal(e1, e2, path=''):
 
 class TestXML(unittest.TestCase):
 
-    # def test_Saving(self):
-    #     # declare model
-    #     model = pj.Network("M/M/1")
-    #
-    #     # declare nodes
-    #     source = pj.Source(model, "mySource")
-    #     queue = pj.Queue(model, "myQueue", pj.SchedStrategy.FCFS)
-    #     sink = pj.Sink(model, "mySink")
-    #
-    #     # declare and set classes
-    #     oclass = pj.OpenClass(model, "myClass")
-    #     source.setArrival(oclass, pj.Exp(1))
-    #     queue.setService(oclass, pj.Exp(2))
-    #
-    #     # topology
-    #     model.add_link(source, queue)
-    #     model.add_link(queue, sink)
-    #
-    #     # create solution file and open
-    #     model.jsimg_open()
-    #     model.saveNamed("saved")
-    #
-    #     print("Opened ok")
+    def test_Saving(self):
+        # declare model
+        model = pj.Network("M/M/1")
+
+        # declare nodes
+        source = pj.Source(model, "mySource")
+        queue = pj.Queue(model, "myQueue", pj.SchedStrategy.FCFS)
+        sink = pj.Sink(model, "mySink")
+
+        # declare and set classes
+        oclass = pj.OpenClass(model, "myClass")
+        source.setArrival(oclass, pj.Exp(1))
+        queue.setService(oclass, pj.Exp(2))
+
+        # topology
+        model.add_link(source, queue)
+        model.add_link(queue, sink)
+
+        # create solution file and open
+        # model.jsimg_open()
+        # model.saveTemp()
+        model.generateResultsFileNamed("heyo", 1234)
+        model.printResultsFromFile('heyo')
+
+
+        print("Opened ok")
 
     def test_MM1(self):
         # declare model
@@ -460,8 +464,8 @@ class TestXML(unittest.TestCase):
         model.add_metric(class1, fork, pj.Metrics.FORK_JOIN_NUM_CUSTOMERS)
         model.add_metric(class1, fork, pj.Metrics.FORK_JOIN_RESPONSE_TIME)
 
-
-
+        # model.generateResultsFileNamed("heyo", 1234)
+        # model.printResultsFromFile('heyo')
 
         # create solution file
         model.generate_xml("test_add_metrics_solution.jsimg")

@@ -3,7 +3,6 @@ from .nodes import Source, Sink, Queue, Delay, Router, Fork, Join, RoutingSectio
 from .classes import OpenClass, ClosedClass
 from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto, \
     Replayer, Uniform, Weibull
-from .routing_strategies import RoutingStrategy
 from .link import Link
 import os
 import subprocess
@@ -11,9 +10,24 @@ from itertools import product
 import tempfile
 from datetime import datetime
 
+_file_path = None  # Initialize the global variable to store the file path
+_maxTime = None
+_maxSamples = 1000000
+
+
+def init(file_path, maxTime=600, maxSamples=1000000):
+    global _file_path
+    _file_path = file_path
+    global _maxTime
+    _maxTime = maxTime
+    global _maxSamples
+    _maxSamples = maxSamples
+
 
 class Network:
-    def __init__(self, name, JMTPath="C:\\Users\\James\\Documents\\Computing\\Java Modelling Tools"):
+    def __init__(self, name):
+        if _file_path is None:
+            raise ValueError("File path is not set. Call 'init()' first to set the file path.")
         self.name = name
         self.nodes = {'sources': [], 'sinks': [], 'queues': [], 'delays': [],
                       'routers': [], 'classswitches': [], 'forks': [], 'joins': [],
@@ -22,11 +36,17 @@ class Network:
         self.classes = []
         self.useDefaultMetrics = True
         self.additionalMetrics = []
-        self.JMTPath = JMTPath
-        self.maxSamples = 1000000
+        self.JMTPath = _file_path
+        self.maxSamples = _maxSamples
+        self.maxTime = _maxTime
+        self.logDelimiter = ";"
 
-    def setMaxSamples(self, numSamples):
-        self.maxSamples = numSamples
+    def removeNode(self, node):
+        for i in range(len(self.nodes)):
+            for j in range(len(self.nodes[i])):
+                if self.nodes[i][j] == node:
+                    self.nodes[i].remove(node)
+
 
     def get_number_of_nodes(self):
         total_length = sum(len(v) for v in self.nodes.values())
@@ -79,6 +99,20 @@ class Network:
                     else:
                         self.add_link(n1, n2)
 
+
+    def remove_link(self, source, target):
+        # Adds links onto fork object to avoid having to search through
+        # the links later, this problem only occurs when generating xml
+        # for forks
+        if isinstance(source, Fork):
+            source.links.remove(target.name)
+        link = [x for x in self.links if x.source == source and x.target == target]
+        self.links.remove(link[0])
+
+    def remove_links(self, linkList):
+        for source, target in linkList:
+            self.remove_link(source, target)
+
     def jsimg_open(self):
 
         dir_path = os.path.join(os.getcwd(), "output_files")
@@ -86,16 +120,16 @@ class Network:
 
         # Create a temporary file in the specific directory
         with tempfile.NamedTemporaryFile(dir=dir_path, delete=False) as temp:
-            self.generate_xml(temp.name)
-            cmd = f'java -cp "{os.path.join(self.JMTPath, "JMT.jar")}" jmt.commandline.Jmt jsimg "{os.path.join(dir_path, temp.name)}"'
+            self.generate_xml(os.path.join(dir_path, f"{temp.name}"))
+            cmd = f'java -cp "{os.path.join(self.JMTPath, "JMT.jar")}" jmt.commandline.Jmt jsimg "{os.path.join(dir_path, f"{temp.name}")}"'
             subprocess.run(cmd, shell=True)
 
-        os.unlink(os.path.join(dir_path, temp.name))
+        os.unlink(os.path.join(dir_path, f"{temp.name}"))
 
     def saveNamed(self, fileName):
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
-        self.generate_xml(os.path.join(dir_path, f"{fileName}.jsimg"))
+        self.generate_xml(os.path.join(dir_path, f"{fileName}"))
 
     def saveTemp(self):
         dir_path = os.path.join(os.getcwd(), "output_files")
@@ -103,8 +137,68 @@ class Network:
 
         # Create a temporary file in the specific directory
         with tempfile.NamedTemporaryFile(dir=dir_path, delete=False) as temp:
-            self.generate_xml(temp.name)
+            self.generate_xml(os.path.join(dir_path, f"{temp.name}"))
 
+        return f"{temp.name}.jsimg"
+
+    def generateResultsFileNamed(self, fileName, seed=None):
+        dir_path = os.path.join(os.getcwd(), "output_files")
+        os.makedirs(dir_path, exist_ok=True)
+
+        self.generate_xml(os.path.join(dir_path, f"{fileName}"))
+        adds = " "
+        if not seed is None:
+            adds += f"-seed {seed} "
+        if not self.maxTime is None:
+            adds += f"-maxtime {self.maxTime} "
+
+        cmd = f'java -cp "{os.path.join(self.JMTPath, "JMT.jar")}" jmt.commandline.Jmt sim "{os.path.join(dir_path, f"{fileName}")}" {adds}'
+        print(cmd)
+        subprocess.run(cmd, shell=True)
+
+    def printResultsFromFile(self, fileName):
+        dir_path = os.path.join(os.getcwd(), "output_files")
+        tree = ET.parse(f'{os.path.join(dir_path, f"{fileName}-result.jsim")}')
+        root = tree.getroot()
+
+        # Extract the model name from the root element
+        model_name = root.attrib.get('modelName', 'Unknown Model')
+
+        # Get all measures from the XML
+        measures = [measure.attrib for measure in root.findall('measure')]
+
+        # Sort the measures by station and then by class
+        measures_sorted = sorted(measures, key=lambda x: (x['station'], x['class']))
+
+        # Get unique attribute names from all measures
+        unique_attributes = set()
+        for measure in measures_sorted:
+            unique_attributes.update(measure.keys())
+
+        # Create a dictionary to store the column widths and initialize with the lengths of column headers
+        col_widths = {attr: len(attr) for attr in unique_attributes}
+
+        # Update column widths based on the length of attribute values in the measures
+        for measure in measures_sorted:
+            for attr in unique_attributes:
+                col_widths[attr] = max(col_widths[attr], len(measure.get(attr, 'N/A')))
+
+        # Print the column headers with Station and JobClass as the first two columns
+        print(f"{'Station':<{col_widths['station']}} {'JobClass':<{col_widths['class']}}", end=" ")
+        for attr in unique_attributes:
+            if attr not in ['station', 'class']:
+                print(f"{attr:<{col_widths[attr]}}", end=" ")
+        print()
+
+        # Print the table rows
+        for measure in measures_sorted:
+            station = measure['station']
+            job_class = measure['class']
+            print(f"{station:<{col_widths['station']}} {job_class:<{col_widths['class']}}", end=" ")
+            for attr in unique_attributes:
+                if attr not in ['station', 'class']:
+                    print(f"{measure.get(attr, 'N/A'):<{col_widths[attr]}}", end=" ")
+            print()
 
     def init_routing_matrix(self):
         #TODO see if this is ok
@@ -121,23 +215,28 @@ class Network:
 
         return P
 
-    def generate_xml(self, fileName):
+    def generate_xml(self, fileName, seed=1234 ,maxTime=None):
         ET.register_namespace('xsi', "http://www.w3.org/2001/XMLSchema-instance")
 
         root = ET.Element("archive",
-                          attrib={"name": fileName,
+                          attrib={"name": os.path.basename(fileName),
                                   "timestamp": datetime.now().strftime("%a %b %d %H:%M:%S %Z %Y"),
                                   "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "Archive.xsd"})
 
+        disableStatisticsStop = "false"
+        if not maxTime is None:
+            disableStatisticsStop = "true"
+
         sim = ET.SubElement(root, "sim",
-                            attrib={"disableStatisticStop": "false",
+                            attrib={"disableStatisticStop": f"{disableStatisticsStop}",
                                     "logDecimalSeparator": ".",
-                                    "logDelimiter": ",",
+                                    "logDelimiter": f"{self.logDelimiter}",
                                     "logPath": "/home/james/JMT/",
                                     "logReplaceMode": "0",
                                     "maxEvents": "-1",
                                     "maxSamples": str(self.maxSamples),
-                                    "name": fileName,
+                                    "name": os.path.basename(fileName),
+                                    "seed": str(seed),
                                     "polling": "1.0",
                                     "{http://www.w3.org/2001/XMLSchema-instance}noNamespaceSchemaLocation": "SIMmodeldefinition.xsd"})
 
@@ -296,9 +395,6 @@ class Network:
             node = ET.SubElement(sim, "node", name=sink.name)
             ET.SubElement(node, "section", className="JobSink")
 
-        for link in self.links:
-            ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
-
         for fcr in self.nodes['fcrs']:
             blockingRegion = ET.SubElement(sim, "blockingRegion", name=fcr.name, type="default")
             ET.SubElement(blockingRegion, "regionNode", nodeName=fcr.nodeName)
@@ -317,6 +413,9 @@ class Network:
                 ET.SubElement(blockingRegion, "classSize", jobClass=jobclass.name, size=str(fcr.classSizes.get(jobclass.name, 1)))
 
         self.generate_metrics(sim)
+
+        for link in self.links:
+            ET.SubElement(sim, "connection", source=link.source.name, target=link.target.name)
 
         openedPreloadTag = False
         for jobclass in self.classes:
