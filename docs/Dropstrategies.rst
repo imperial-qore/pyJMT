@@ -1,4 +1,3 @@
 
-.. autoclass:: pyJMT.DropStrategy
+.. autoenum:: pyJMT.DropStrategy
    :members:
-   :undoc-members:

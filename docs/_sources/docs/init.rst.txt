@@ -1,3 +1,3 @@
-.. autoclass:: pyJMT.network.init
+.. autoclass:: pyJMT.init
    :members:
    :show-inheritance:

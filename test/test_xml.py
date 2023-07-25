@@ -125,11 +125,11 @@ class TestXML(unittest.TestCase):
         model.add_link(queue, sink)
 
         # create solution file
-        model.generate_xml("test_mm1_solution.jsimg")
+        model.generate_xml('test_xml_solutions/test_mm1_solution.jsimg')
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_mm1_solution.jsimg')
-        reference_tree = ET.parse('test_mm1_reference.jsimg')
+        generated_tree = ET.parse('test_xml_solutions/test_mm1_solution.jsimg')
+        reference_tree = ET.parse('test_xml_references/test_mm1_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -158,11 +158,11 @@ class TestXML(unittest.TestCase):
         model.add_link(queue, sink)
 
         # create solution file
-        model.generate_xml("test_mg1_solution.jsimg")
+        model.generate_xml('test_xml_solutions/test_mg1_solution.jsimg')
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_mg1_solution.jsimg')
-        reference_tree = ET.parse('test_mg1_reference.jsimg')
+        generated_tree = ET.parse('test_xml_solutions/test_mg1_solution.jsimg')
+        reference_tree = ET.parse('test_xml_references/test_mg1_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -191,11 +191,11 @@ class TestXML(unittest.TestCase):
         model.add_link(queue, delay)
 
         # create solution file
-        model.generate_xml("test_mip_solution.jsimg")
+        model.generate_xml('test_xml_solutions/test_mip_solution.jsimg')
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_mip_solution.jsimg')
-        reference_tree = ET.parse('test_mip_reference.jsimg')
+        generated_tree = ET.parse('test_xml_solutions/test_mip_solution.jsimg')
+        reference_tree = ET.parse('test_xml_references/test_mip_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -229,11 +229,11 @@ class TestXML(unittest.TestCase):
         lb.setRouting(oclass, pj.RoutingStrategy.RROBIN)
 
         # create solution file
-        model.generate_xml("test_rrlb_solution.jsimg")
+        model.generate_xml('test_xml_solutions/test_rrlb_solution.jsimg')
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_rrlb_solution.jsimg')
-        reference_tree = ET.parse('test_rrlb_reference.jsimg')
+        generated_tree = ET.parse('test_xml_solutions/test_rrlb_solution.jsimg')
+        reference_tree = ET.parse('test_xml_references/test_rrlb_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -270,11 +270,11 @@ class TestXML(unittest.TestCase):
         model.link(P)
 
         # create solution file
-        model.generate_xml("test_reentantline_classswitch_routing_solution.jsimg")
+        model.generate_xml('test_xml_solutions/test_reentantline_classswitch_routing_solution.jsimg')
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_reentantline_classswitch_routing_solution.jsimg')
-        reference_tree = ET.parse('test_reentantline_classswitch_routing_reference.jsimg')
+        generated_tree = ET.parse('test_xml_solutions/test_reentantline_classswitch_routing_solution.jsimg')
+        reference_tree = ET.parse('test_xml_references/test_reentantline_classswitch_routing_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -331,11 +331,11 @@ class TestXML(unittest.TestCase):
                          (classswitch1, sink)])
 
         # create solution file
-        model.generate_xml("test_classSwitch_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_classSwitch_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_classSwitch_solution.jsimg")
-        reference_tree = ET.parse("test_classSwitch_reference.jsimg")
+        generated_tree = ET.parse("test_xml_solutions/test_classSwitch_solution.jsimg")
+        reference_tree = ET.parse("test_xml_references/test_classSwitch_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -379,11 +379,11 @@ class TestXML(unittest.TestCase):
                          (join, sink)])
 
         # create solution file
-        model.generate_xml("test_fork_join_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_fork_join_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_fork_join_solution.jsimg")
-        reference_tree = ET.parse("test_fork_join_reference.jsimg")
+        generated_tree = ET.parse("test_xml_solutions/test_fork_join_solution.jsimg")
+        reference_tree = ET.parse("test_xml_references/test_fork_join_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -427,13 +427,13 @@ class TestXML(unittest.TestCase):
                          (myQueue, sink),
                          (queue2, sink)])
 
-        model.useDefaultMetrics = False
+        model.useDefaultMetrics(False)
         # create solution file
-        model.generate_xml("test_logger_fcr_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_logger_fcr_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_logger_fcr_solution.jsimg")
-        reference_tree = ET.parse("test_logger_fcr_reference.jsimg")
+        generated_tree = ET.parse("test_xml_solutions/test_logger_fcr_solution.jsimg")
+        reference_tree = ET.parse("test_xml_references/test_logger_fcr_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -475,7 +475,7 @@ class TestXML(unittest.TestCase):
                          (queue2, join),
                          (join, sink)])
 
-        model.useDefaultMetrics = False
+        model.useDefaultMetrics(False)
         model.add_metric(class1, model, pj.Metrics.NUM_CUSTOMERS)
         model.add_metric(class1, queue1, pj.Metrics.QUEUE_TIME)
         model.add_metric(class1, queue2, pj.Metrics.RESPONSE_TIME)
@@ -500,11 +500,11 @@ class TestXML(unittest.TestCase):
         # model.printResultsFromFile('heyo')
 
         # create solution file
-        model.generate_xml("test_add_metrics_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_add_metrics_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_add_metrics_solution.jsimg")
-        reference_tree = ET.parse("test_add_metrics_reference.jsimg")
+        generated_tree = ET.parse("test_xml_solutions/test_add_metrics_solution.jsimg")
+        reference_tree = ET.parse("test_xml_references/test_add_metrics_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -530,6 +530,8 @@ class TestXML(unittest.TestCase):
         queue10 = pj.Queue(model, 'replayer(\'example_trace.txt\') Queue', pj.SchedStrategy.FCFS)
         queue11 = pj.Queue(model, 'U(0,1) Queue', pj.SchedStrategy.FCFS)
         queue12 = pj.Queue(model, 'weibull(0.445, 0.471) Queue', pj.SchedStrategy.FCFS)
+        queue13 = pj.Queue(model, 'Disabled Queue', pj.SchedStrategy.FCFS)
+        queue14 = pj.Queue(model, 'Zero Service Time Queue', pj.SchedStrategy.FCFS)
         sink = pj.Sink(model, 'Sink')
         # declare and set classes
         oclass = pj.OpenClass(model, 'Class1')
@@ -546,9 +548,16 @@ class TestXML(unittest.TestCase):
         queue10.setService(oclass, pj.Replayer('example_trace.txt'))
         queue11.setService(oclass, pj.Uniform(0, 1))
         queue12.setService(oclass, pj.Weibull(0.445, 0.471))
+        queue13.setService(oclass, pj.Disabled())
+        queue14.setService(oclass, pj.ZeroServiceTime())
+
 
         # topology
-        model.add_links([(source, queue1),
+        model.add_links([(source, queue13),
+                         (source, queue14),
+                         (source, queue1),
+                         (queue13, queue1),
+                         (queue14, queue1),
                          (queue1, queue2),
                          (queue2, queue3),
                          (queue3, queue4),
@@ -563,11 +572,11 @@ class TestXML(unittest.TestCase):
                          (queue12, sink)])
 
         # create solution file
-        model.generate_xml("test_DistributionsLoadIndependent_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_DistributionsLoadIndependent_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_DistributionsLoadIndependent_solution.jsimg')
-        reference_tree = ET.parse('test_DistributionsLoadIndependent_reference.jsimg')
+        generated_tree = ET.parse('test_xml_solutions/test_DistributionsLoadIndependent_solution.jsimg')
+        reference_tree = ET.parse('test_xml_references/test_DistributionsLoadIndependent_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -633,11 +642,11 @@ class TestXML(unittest.TestCase):
                          (queue13, sink)])
 
         # create solution file
-        model.generate_xml("test_SchedulingStrategies_NPE_PE_PS_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_SchedulingStrategies_NPE_PE_PS_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse('test_SchedulingStrategies_NPE_PE_PS_solution.jsimg')
-        reference_tree = ET.parse('test_SchedulingStrategies_NPE_PE_PS_reference.jsimg')
+        generated_tree = ET.parse('test_xml_solutions/test_SchedulingStrategies_NPE_PE_PS_solution.jsimg')
+        reference_tree = ET.parse('test_xml_references/test_SchedulingStrategies_NPE_PE_PS_reference.jsimg')
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -695,11 +704,11 @@ class TestXML(unittest.TestCase):
                          (queue10, sink)])
 
         # create solution file
-        model.generate_xml("test_SchedulingStrategies_Priority_NPE_PE_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_SchedulingStrategies_Priority_NPE_PE_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_SchedulingStrategies_Priority_NPE_PE_solution.jsimg")
-        reference_tree = ET.parse("test_SchedulingStrategies_Priority_NPE_PE_reference.jsimg")
+        generated_tree = ET.parse("test_xml_solutions/test_SchedulingStrategies_Priority_NPE_PE_solution.jsimg")
+        reference_tree = ET.parse("test_xml_references/test_SchedulingStrategies_Priority_NPE_PE_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -749,11 +758,11 @@ class TestXML(unittest.TestCase):
                          (queue6, sink)])
 
         # create solution file
-        model.generate_xml("test_RoutingStrategies_Static_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_RoutingStrategies_Static_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_RoutingStrategies_Static_solution.jsimg")
-        reference_tree = ET.parse("test_RoutingStrategies_Static_reference.jsimg")
+        generated_tree = ET.parse("test_xml_solutions/test_RoutingStrategies_Static_solution.jsimg")
+        reference_tree = ET.parse("test_xml_references/test_RoutingStrategies_Static_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
@@ -764,8 +773,6 @@ class TestXML(unittest.TestCase):
 
         model = pj.Network('test_RoutingStrategies_Probabilites')
 
-
-        pj.SchedStrategy
         # declare nodes
         source = pj.Source(model, 'Source Q1 0.2 Q2 0.4 Q3 0.4')
         queue1 = pj.Queue(model, 'Queue 1 Random', pj.SchedStrategy.FCFS)
@@ -799,9 +806,6 @@ class TestXML(unittest.TestCase):
         queue5.setProbRouting(oclass, queue5, 0.7)
         queue5.setProbRouting(oclass, sink, 0.3)
 
-
-
-
         # topology
         model.add_links([(source, queue1),
                         (source, queue2),
@@ -817,16 +821,40 @@ class TestXML(unittest.TestCase):
                         (queue4, sink)])
 
         # create solution file
-        model.generate_xml("test_RoutingStrategies_Probabilities_solution.jsimg")
+        model.generate_xml("test_xml_solutions/test_RoutingStrategies_Probabilities_solution.jsimg")
 
         # Parse the generated file and the reference file
-        generated_tree = ET.parse("test_RoutingStrategies_Probabilities_solution.jsimg")
-        reference_tree = ET.parse("test_RoutingStrategies_Probabilities_reference.jsimg")
+        generated_tree = ET.parse("test_xml_solutions/test_RoutingStrategies_Probabilities_solution.jsimg")
+        reference_tree = ET.parse("test_xml_references/test_RoutingStrategies_Probabilities_reference.jsimg")
 
         # Compare the generated file with the reference file
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("Routing Strategies Probabilities Ok")
 
+    def test(self):
+
+        pj.init("C:\\Users\\James\\Documents\\Computing\\Java Modelling Tools")
+
+
+        model = pj.Network("test")
+        source = pj.Source(model, "source")
+        queue = pj.Queue(model, "queue", pj.SchedStrategy.FCFS)
+        sink = pj.Sink(model, "sink")
+
+        oclass = pj.OpenClass(model, "oclass")
+        source.setArrival(oclass, pj.Exp(0.5))
+        queue.setService(oclass, pj.Exp(1))
+
+        queue.setRouting(oclass, pj.RoutingStrategy.PROB)
+        queue.setProbRouting(oclass, sink, 1)
+
+        model.add_links([(source, queue), (queue, sink)])
+        # model.jsimg_open()
+
+        model.saveNamed("test")
+        model.generateResultsFileNamed("test")
 
 if __name__ == '__main__':
     unittest.main()
+
+#TODO JMT INSTALL

@@ -1,4 +1,3 @@
 
-.. autoclass:: pyJMT.Metrics
+.. autoenum:: pyJMT.Metrics
    :members:
-   :undoc-members:

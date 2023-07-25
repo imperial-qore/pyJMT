@@ -1,8 +1,8 @@
 import xml.etree.ElementTree as ET
 from .nodes import Source, Sink, Queue, Delay, Router, Fork, Join, RoutingSection
 from .classes import OpenClass, ClosedClass
-from .service_distributions import Cox, Det, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto, \
-    Replayer, Uniform, Weibull
+from .service_distributions import Cox, Det, Disabled, Exp, Erlang, Gamma, HyperExp, Lognormal, Normal, Pareto, \
+    Replayer, Uniform, Weibull, ZeroServiceTime
 from .link import Link
 import os
 import subprocess
@@ -19,7 +19,7 @@ def init(file_path, maxTime=600, maxSamples=1000000):
     """
     Initialize the globals needed for later functions/classes.
 
-    :param file_path: Path for the file.
+    :param file_path: Path to JMT.jar.
     :type file_path: str
     :param maxTime: Maximum time for the task. Defaults to 600.
     :type maxTime: int, optional
@@ -70,7 +70,7 @@ class Network:
                       'loggers': [], 'fcrs': []}
         self.links: [Link] = []
         self.classes = []
-        self.useDefaultMetrics = True
+        self.defaultMetrics = True
         self.additionalMetrics = []
         self.JMTPath = _file_path
         self.maxSamples = _maxSamples
@@ -96,7 +96,7 @@ class Network:
            :param trueorfalse: The bool to set this parameter to
            :type trueorfalse: bool
         """
-        self.defaultMetrics(trueorfalse)
+        self.defaultMetrics = trueorfalse
 
     def get_number_of_nodes(self):
         total_length = sum(len(v) for v in self.nodes.values())
@@ -734,9 +734,18 @@ class Network:
             service = serviceDict.get("service_strategy")
 
             ET.SubElement(parameter, "refClass").text = jobclass.name
-            subParameter = ET.SubElement(parameter, "subParameter",
-                                         classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
-                                         name="ServiceTimeStrategy")
+            if isinstance(service, Disabled):
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.ServiceStrategies.DisabledServiceTimeStrategy",
+                                             name="DisabledServiceTimeStrategy")
+            elif isinstance(service, ZeroServiceTime):
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.ServiceStrategies.ZeroServiceTimeStrategy",
+                                             name="ZeroServiceTimeStrategy")
+            else:
+                subParameter = ET.SubElement(parameter, "subParameter",
+                                             classPath="jmt.engine.NetStrategies.ServiceStrategies.ServiceTimeStrategy",
+                                             name="ServiceTimeStrategy")
             if isinstance(service, Cox):
                 ET.SubElement(subParameter, "subParameter", classPath="jmt.engine.random.CoxianDistr",
                               name="Coxian")
@@ -849,8 +858,6 @@ class Network:
                 ET.SubElement(alpha, "value").text = str(self.roundedFraction(service.lambda_value))
                 r = ET.SubElement(distrPar, "subParameter", classPath="java.lang.Double", name="r")
                 ET.SubElement(r, "value").text = str(self.roundedFraction(service.k))
-            else:
-                ET.SubElement(subParameter, "value").text = "null"
 
     def generate_queuesection(self, node, parentTag):
 

@@ -43,6 +43,19 @@ class Det:
         self.k = k
 
 
+class Disabled:
+    """
+       A Disabled service distribution.
+
+       """
+
+    def __init__(self):
+        """
+            The constructor for a Disabled Distribution.
+
+        """
+
+
 class Erlang:
     """
     An Erlang Distribution.
@@ -281,3 +294,17 @@ class Weibull:
 
         self.lambda_value = lambda_value
         self.k = k
+
+
+class ZeroServiceTime:
+    """
+    A Zero Service time service distribution.
+
+    """
+
+    def __init__(self):
+        """
+       The constructor for a Zero Service time service Distribution.
+
+       """
+

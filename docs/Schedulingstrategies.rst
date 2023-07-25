@@ -1,4 +1,2 @@
-.. autoclass:: pyJMT.SchedStrategy
+.. autoenum:: pyJMT.SchedStrategy
    :members:
-   :undoc-members:
-   :show-inheritance:

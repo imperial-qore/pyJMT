@@ -1,5 +1,4 @@
 
 
-.. autoclass:: pyJMT.RoutingStrategy
+.. autoenum:: pyJMT.RoutingStrategy
    :members:
-   :undoc-members:
