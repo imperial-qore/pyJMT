@@ -7,30 +7,13 @@ from pyJMT.drop_strategies import DropStrategy
 
 
 class Node:
-    """
-        The base class for all nodes in the model.
-
-        :param model: The model in which this node belongs.
-        :type model: pyJMT.Model
-        :param name: The name of the node.
-        :type name: str
-        """
     def __init__(self, model, name):
         self.model = model
         self.name = name
 
 
 class QueueSection:
-    """
-       Defines a Queue section within a node, with specific strategy, capacity, and drop rules.
 
-       :param strategy: The scheduling strategy used by the queue.
-       :type strategy: SchedStrategy
-       :param capacity: The maximum capacity of the queue, defaults to -1 for infinite capacity.
-       :type capacity: int, optional
-       :param dropRule: The rule for dropping jobs when the queue is full, defaults to DropStrategy.DROP.
-       :type dropRule: DropStrategy, optional
-       """
     def __init__(self, strategy, capacity=-1, dropRule=DropStrategy.DROP):
         self.strategy = strategy
         self.capacity = capacity
@@ -65,12 +48,7 @@ class QueueSection:
 
 
 class ServiceSection:
-    """
-        Defines a Service section within a node, specifying the number of servers and the service distributions.
 
-        :param numberOfServers: The number of servers in the service section, defaults to 1.
-        :type numberOfServers: int, optional
-        """
     def __init__(self, numberOfServers=1):
         self.services = {}
         self.numberOfServers = numberOfServers
@@ -82,7 +60,7 @@ class ServiceSection:
                :param jobclass: The job class.
                :type jobclass: JobClass
                :param service_dist: The service distribution.
-               :type service_dist: SchedStrategy
+               :type service_dist: Distribution
                :param weight: The weight, defaults to 1.0.
                :type weight: float, optional
                """
@@ -103,9 +81,7 @@ class ServiceSection:
 
 
 class RoutingSection:
-    """
-       Defines a Routing section within a node, specifying the routing strategy for each job class.
-       """
+
     def __init__(self):
         self.routings = {}
 
@@ -158,12 +134,7 @@ class RoutingSection:
 
 
 class ClassSwitchSection:
-    """
-       Defines a ClassSwitch section within a node, specifying the probabilities of job classes switching into each other.
 
-       :param model: The model in which this node belongs.
-       :type model: Network
-       """
     def __init__(self, model):
         self.p = {}
         classes = model.get_classes()

@@ -8,3 +8,11 @@ from .metrics import Metrics
 from .scheduling_strategies import SchedStrategy
 from .routing_strategies import RoutingStrategy
 from .drop_strategies import DropStrategy
+
+
+__all_exports = [Network, init]
+
+for e in __all_exports:
+    e.__module__ = __name__
+
+__all__ = [e.__name__ for e in __all_exports]

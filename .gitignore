@@ -46,14 +46,6 @@ coverage.xml
 *.log
 *.pot
 
-_static
-_build
-_templates
-docs/.doctrees
-docs/_sources
-docs/_static
-docs/docs
-
 .idea
 
 #Solutions to tests
