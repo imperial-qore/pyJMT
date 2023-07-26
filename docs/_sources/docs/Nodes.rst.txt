@@ -1,4 +1,6 @@
-
+=====
+Nodes
+=====
 .. autoclass:: pyJMT.Source
     :members:
     :inherited-members:

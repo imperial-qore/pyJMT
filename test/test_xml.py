@@ -60,9 +60,9 @@ class TestXML(unittest.TestCase):
 
         queue.setService(jclass, pj.Exp(0.5))
 
-        model.add_link(source, queue)
+        model.addLink(source, queue)
 
-        model.add_link(queue, sink)
+        model.addLink(queue, sink)
 
         model.printResults()
 
@@ -72,9 +72,9 @@ class TestXML(unittest.TestCase):
 
         queue.setService(jclass, pj.Exp(1))
 
-        model.add_link(queue, queue2)
+        model.addLink(queue, queue2)
 
-        model.add_link(queue2, sink)
+        model.addLink(queue2, sink)
 
         model.printResults()
     def test_Saving(self):
@@ -92,8 +92,8 @@ class TestXML(unittest.TestCase):
         queue.setService(oclass, pj.Exp(2))
 
         # topology
-        model.add_link(source, queue)
-        model.add_link(queue, sink)
+        model.addLink(source, queue)
+        model.addLink(queue, sink)
 
         # create solution file and open
         # model.jsimg_open()
@@ -119,8 +119,8 @@ class TestXML(unittest.TestCase):
         queue.setService(oclass, pj.Exp(2))
 
         # topology
-        model.add_link(source, queue)
-        model.add_link(queue, sink)
+        model.addLink(source, queue)
+        model.addLink(queue, sink)
 
         # create solution file
         model.generate_xml('test_xml_solutions/test_mm1_solution.jsimg')
@@ -152,8 +152,8 @@ class TestXML(unittest.TestCase):
         queue.setService(jobclass2, pj.Replayer('example_trace.txt'))
 
         # topology
-        model.add_link(source, queue)
-        model.add_link(queue, sink)
+        model.addLink(source, queue)
+        model.addLink(queue, sink)
 
         # create solution file
         model.generate_xml('test_xml_solutions/test_mg1_solution.jsimg')
@@ -185,8 +185,8 @@ class TestXML(unittest.TestCase):
         queue.setService(cclass, pj.Exp(4.0))
 
         # topology
-        model.add_link(delay, queue)
-        model.add_link(queue, delay)
+        model.addLink(delay, queue)
+        model.addLink(queue, delay)
 
         # create solution file
         model.generate_xml('test_xml_solutions/test_mip_solution.jsimg')
@@ -218,11 +218,11 @@ class TestXML(unittest.TestCase):
         queue2.setService(oclass, pj.Exp(2))
 
         # topology
-        model.add_links([(source, lb),
-                         (lb, queue1),
-                         (lb, queue2),
-                         (queue1, sink),
-                         (queue2, sink)])
+        model.addLinks([(source, lb),
+                        (lb, queue1),
+                        (lb, queue2),
+                        (queue1, sink),
+                        (queue2, sink)])
 
         lb.setRouting(oclass, pj.RoutingStrategy.RROBIN)
 
@@ -320,13 +320,13 @@ class TestXML(unittest.TestCase):
 
 
         # topology
-        model.add_links([(source1, queue1),
-                         (source1, queue2),
-                         (source2, queue1),
-                         (source2, queue2),
-                         (queue1, classswitch1),
-                         (queue2, classswitch1),
-                         (classswitch1, sink)])
+        model.addLinks([(source1, queue1),
+                        (source1, queue2),
+                        (source2, queue1),
+                        (source2, queue2),
+                        (queue1, classswitch1),
+                        (queue2, classswitch1),
+                        (classswitch1, sink)])
 
         # create solution file
         model.generate_xml("test_xml_solutions/test_classSwitch_solution.jsimg")
@@ -368,13 +368,13 @@ class TestXML(unittest.TestCase):
         delay1.setService(class1, pj.Exp(1))
 
         # topology
-        model.add_links([(source1, fork),
-                         (fork, queue1),
-                         (fork, delay1),
-                         (delay1, queue2),
-                         (queue1, join),
-                         (queue2, join),
-                         (join, sink)])
+        model.addLinks([(source1, fork),
+                        (fork, queue1),
+                        (fork, delay1),
+                        (delay1, queue2),
+                        (queue1, join),
+                        (queue2, join),
+                        (join, sink)])
 
         # create solution file
         model.generate_xml("test_xml_solutions/test_fork_join_solution.jsimg")
@@ -417,13 +417,13 @@ class TestXML(unittest.TestCase):
         fcr1.setMaxCapacity(20)
 
         # topology
-        model.add_links([(source1, logger1),
-                         (source1, myQueue),
-                         (logger1, queue2),
-                         (logger1, sink),
-                         (myQueue, queue2),
-                         (myQueue, sink),
-                         (queue2, sink)])
+        model.addLinks([(source1, logger1),
+                        (source1, myQueue),
+                        (logger1, queue2),
+                        (logger1, sink),
+                        (myQueue, queue2),
+                        (myQueue, sink),
+                        (queue2, sink)])
 
         model.useDefaultMetrics(False)
         # create solution file
@@ -465,34 +465,34 @@ class TestXML(unittest.TestCase):
         delay1.setService(class1, pj.Exp(1))
 
         # topology
-        model.add_links([(source1, fork),
-                         (fork, queue1),
-                         (fork, delay1),
-                         (delay1, queue2),
-                         (queue1, join),
-                         (queue2, join),
-                         (join, sink)])
+        model.addLinks([(source1, fork),
+                        (fork, queue1),
+                        (fork, delay1),
+                        (delay1, queue2),
+                        (queue1, join),
+                        (queue2, join),
+                        (join, sink)])
 
         model.useDefaultMetrics(False)
-        model.add_metric(class1, model, pj.Metrics.NUM_CUSTOMERS)
-        model.add_metric(class1, queue1, pj.Metrics.QUEUE_TIME)
-        model.add_metric(class1, queue2, pj.Metrics.RESPONSE_TIME)
-        model.add_metric(class1, delay1, pj.Metrics.RESIDENCE_TIME)
-        model.add_metric(class1, fork, pj.Metrics.ARRIVAL_RATE)
-        model.add_metric(class1, join, pj.Metrics.THROUGHPUT)
-        model.add_metric(class1, queue2, pj.Metrics.UTILIZATION)
-        model.add_metric(class1, queue1, pj.Metrics.EFFECTIVE_UTILIZATION)
-        model.add_metric(class1, queue2, pj.Metrics.DROP_RATE)
-        model.add_metric(class1, queue1, pj.Metrics.BALKING_RATE)
-        model.add_metric(class1, queue2, pj.Metrics.RENEGING_RATE)
-        model.add_metric(class1, queue1, pj.Metrics.RETRIAL_RATE)
-        model.add_metric(class1, queue2, pj.Metrics.RETRIAL_ORBIT_SIZE)
-        model.add_metric(class1, queue1, pj.Metrics.RETRIAL_ORBIT_RESIDENCE_TIME)
-        model.add_metric(class1, model, pj.Metrics.POWER)
-        model.add_metric(class1, sink, pj.Metrics.RESPONSE_TIME_PER_SINK)
-        model.add_metric(class1, sink, pj.Metrics.THROUGHPUT_PER_SINK)
-        model.add_metric(class1, fork, pj.Metrics.FORK_JOIN_NUM_CUSTOMERS)
-        model.add_metric(class1, fork, pj.Metrics.FORK_JOIN_RESPONSE_TIME)
+        model.addMetric(class1, model, pj.Metrics.NUM_CUSTOMERS)
+        model.addMetric(class1, queue1, pj.Metrics.QUEUE_TIME)
+        model.addMetric(class1, queue2, pj.Metrics.RESPONSE_TIME)
+        model.addMetric(class1, delay1, pj.Metrics.RESIDENCE_TIME)
+        model.addMetric(class1, fork, pj.Metrics.ARRIVAL_RATE)
+        model.addMetric(class1, join, pj.Metrics.THROUGHPUT)
+        model.addMetric(class1, queue2, pj.Metrics.UTILIZATION)
+        model.addMetric(class1, queue1, pj.Metrics.EFFECTIVE_UTILIZATION)
+        model.addMetric(class1, queue2, pj.Metrics.DROP_RATE)
+        model.addMetric(class1, queue1, pj.Metrics.BALKING_RATE)
+        model.addMetric(class1, queue2, pj.Metrics.RENEGING_RATE)
+        model.addMetric(class1, queue1, pj.Metrics.RETRIAL_RATE)
+        model.addMetric(class1, queue2, pj.Metrics.RETRIAL_ORBIT_SIZE)
+        model.addMetric(class1, queue1, pj.Metrics.RETRIAL_ORBIT_RESIDENCE_TIME)
+        model.addMetric(class1, model, pj.Metrics.POWER)
+        model.addMetric(class1, sink, pj.Metrics.RESPONSE_TIME_PER_SINK)
+        model.addMetric(class1, sink, pj.Metrics.THROUGHPUT_PER_SINK)
+        model.addMetric(class1, fork, pj.Metrics.FORK_JOIN_NUM_CUSTOMERS)
+        model.addMetric(class1, fork, pj.Metrics.FORK_JOIN_RESPONSE_TIME)
 
         # model.generateResultsFileNamed("heyo", 1234)
         # model.printResultsFromFile('heyo')
@@ -551,23 +551,23 @@ class TestXML(unittest.TestCase):
 
 
         # topology
-        model.add_links([(source, queue13),
-                         (source, queue14),
-                         (source, queue1),
-                         (queue13, queue1),
-                         (queue14, queue1),
-                         (queue1, queue2),
-                         (queue2, queue3),
-                         (queue3, queue4),
-                         (queue4, queue5),
-                         (queue5, queue6),
-                         (queue6, queue7),
-                         (queue7, queue8),
-                         (queue8, queue9),
-                         (queue9, queue10),
-                         (queue10, queue11),
-                         (queue11, queue12),
-                         (queue12, sink)])
+        model.addLinks([(source, queue13),
+                        (source, queue14),
+                        (source, queue1),
+                        (queue13, queue1),
+                        (queue14, queue1),
+                        (queue1, queue2),
+                        (queue2, queue3),
+                        (queue3, queue4),
+                        (queue4, queue5),
+                        (queue5, queue6),
+                        (queue6, queue7),
+                        (queue7, queue8),
+                        (queue8, queue9),
+                        (queue9, queue10),
+                        (queue10, queue11),
+                        (queue11, queue12),
+                        (queue12, sink)])
 
         # create solution file
         model.generate_xml("test_xml_solutions/test_DistributionsLoadIndependent_solution.jsimg")
@@ -624,20 +624,20 @@ class TestXML(unittest.TestCase):
         queue13.setService(oclass, pj.Weibull(0.445, 0.471))
 
         # topology
-        model.add_links([(source, queue1),
-                         (queue1, queue2),
-                         (queue2, queue3),
-                         (queue3, queue4),
-                         (queue4, queue5),
-                         (queue5, queue6),
-                         (queue6, queue7),
-                         (queue7, queue8),
-                         (queue8, queue9),
-                         (queue9, queue10),
-                         (queue10, queue11),
-                         (queue11, queue12),
-                         (queue12, queue13),
-                         (queue13, sink)])
+        model.addLinks([(source, queue1),
+                        (queue1, queue2),
+                        (queue2, queue3),
+                        (queue3, queue4),
+                        (queue4, queue5),
+                        (queue5, queue6),
+                        (queue6, queue7),
+                        (queue7, queue8),
+                        (queue8, queue9),
+                        (queue9, queue10),
+                        (queue10, queue11),
+                        (queue11, queue12),
+                        (queue12, queue13),
+                        (queue13, sink)])
 
         # create solution file
         model.generate_xml("test_xml_solutions/test_SchedulingStrategies_NPE_PE_PS_solution.jsimg")
@@ -689,17 +689,17 @@ class TestXML(unittest.TestCase):
         queue10.setService(oclass, pj.Replayer('example_trace.txt'))
 
         # topology
-        model.add_links([(source, queue1),
-                         (queue1, queue2),
-                         (queue2, queue3),
-                         (queue3, queue4),
-                         (queue4, queue5),
-                         (queue5, queue6),
-                         (queue6, queue7),
-                         (queue7, queue8),
-                         (queue8, queue9),
-                         (queue9, queue10),
-                         (queue10, sink)])
+        model.addLinks([(source, queue1),
+                        (queue1, queue2),
+                        (queue2, queue3),
+                        (queue3, queue4),
+                        (queue4, queue5),
+                        (queue5, queue6),
+                        (queue6, queue7),
+                        (queue7, queue8),
+                        (queue8, queue9),
+                        (queue9, queue10),
+                        (queue10, sink)])
 
         # create solution file
         model.generate_xml("test_xml_solutions/test_SchedulingStrategies_Priority_NPE_PE_solution.jsimg")
@@ -747,13 +747,13 @@ class TestXML(unittest.TestCase):
         queue6.setRouting(oclass, pj.RoutingStrategy.DISABLED)
 
         # topology
-        model.add_links([(source, queue1),
-                         (queue1, queue2),
-                         (queue2, queue3),
-                         (queue3, queue4),
-                         (queue4, queue5),
-                         (queue5, queue6),
-                         (queue6, sink)])
+        model.addLinks([(source, queue1),
+                        (queue1, queue2),
+                        (queue2, queue3),
+                        (queue3, queue4),
+                        (queue4, queue5),
+                        (queue5, queue6),
+                        (queue6, sink)])
 
         # create solution file
         model.generate_xml("test_xml_solutions/test_RoutingStrategies_Static_solution.jsimg")
@@ -805,7 +805,7 @@ class TestXML(unittest.TestCase):
         queue5.setProbRouting(oclass, sink, 0.3)
 
         # topology
-        model.add_links([(source, queue1),
+        model.addLinks([(source, queue1),
                         (source, queue2),
                         (source, queue3),
                         (queue1, queue4),
@@ -843,7 +843,7 @@ class TestXML(unittest.TestCase):
         queue.setRouting(oclass, pj.RoutingStrategy.PROB)
         queue.setProbRouting(oclass, sink, 1)
 
-        model.add_links([(source, queue), (queue, sink)])
+        model.addLinks([(source, queue), (queue, sink)])
         # model.jsimg_open()
 
         model.saveNamed("test")

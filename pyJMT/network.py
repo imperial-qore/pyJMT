@@ -23,13 +23,6 @@ def add_extension_if_none(filename, extension):
 class Network:
     """
     A class to represent a network.
-
-    ...
-
-    Attributes
-    ----------
-    name : str
-        name of the network
     """
 
     def __init__(self, name, maxTime=600, maxSamples=1000000):
@@ -98,7 +91,7 @@ class Network:
     def get_classes(self):
         return self.classes
 
-    def add_metric(self, jobclass, node, metric):
+    def addMetric(self, jobclass, node, metric):
         """
              Adds a metric to a node and jobclass combination
 
@@ -111,7 +104,7 @@ class Network:
         """
         self.additionalMetrics.append((jobclass, node, metric))
 
-    def add_link(self, source, target):
+    def addLink(self, source, target):
         """
             Adds a link between two nodes
             :param source: The start node of the link
@@ -127,14 +120,14 @@ class Network:
         link = Link(source, target)
         self.links.append(link)
 
-    def add_links(self, linkList):
+    def addLinks(self, linkList):
         """
             Adds many links between nodes, takes in a list of pairs of nodes.
             :param linkList: The list of pairs of nodes to add links for.
             :type linkList: [(Node, Node)]
         """
         for source, target in linkList:
-            self.add_link(source, target)
+            self.addLink(source, target)
 
     def link(self, p):
         """
@@ -162,9 +155,9 @@ class Network:
                     if containsAlready:
                         break
                     else:
-                        self.add_link(n1, n2)
+                        self.addLink(n1, n2)
 
-    def remove_link(self, source, target):
+    def removeLink(self, source, target):
         """
            Removes a link between two nodes.
            :param source: The start node of the link.
@@ -180,16 +173,16 @@ class Network:
         link = [x for x in self.links if x.source == source and x.target == target]
         self.links.remove(link[0])
 
-    def remove_links(self, linkList):
+    def removeLinks(self, linkList):
         """
              Removes many links between nodes, takes in a list of pairs of nodes.
             :param linkList: The list of pairs of nodes to remove links for.
             :type linkList: [(Node, Node)]
         """
         for source, target in linkList:
-            self.remove_link(source, target)
+            self.removeLink(source, target)
 
-    def jsimg_open(self):
+    def jsimgOpen(self):
         """
             Opens the Network in JMT, very useful for debugging
         """

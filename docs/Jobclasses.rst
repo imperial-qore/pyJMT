@@ -1,4 +1,6 @@
-
+==========
+Jobclasses
+==========
 .. autoclass:: pyJMT.OpenClass
    :members:
 

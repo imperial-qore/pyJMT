@@ -1,9 +1,17 @@
+=====================
+Service Distributions
+=====================
 .. autoclass:: pyJMT.Cox
    :members:
    :undoc-members:
    :show-inheritance:
 
 .. autoclass:: pyJMT.Det
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: pyJMT.Disabled
    :members:
    :undoc-members:
    :show-inheritance:
@@ -54,6 +62,11 @@
    :show-inheritance:
 
 .. autoclass:: pyJMT.Weibull
+   :members:
+   :undoc-members:
+   :show-inheritance:
+
+.. autoclass:: pyJMT.ZeroServiceTime
    :members:
    :undoc-members:
    :show-inheritance:

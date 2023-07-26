@@ -1,8 +1,3 @@
-.. pyJMT documentation master file, created by
-   sphinx-quickstart on Mon Jul 24 14:02:10 2023.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to pyJMT's documentation!
 =================================
 
@@ -10,85 +5,18 @@ Welcome to pyJMT's documentation!
    :maxdepth: 2
    :caption: Contents:
 
-Initialisation
---------------------
-
-.. toctree::
-   :maxdepth: 2
-
-   ./docs/init
-
-Network
---------------------
-
-.. toctree::
-   :maxdepth: 2
 
    ./docs/Network
-
-Nodes
-------------------
-
-.. toctree::
-   :maxdepth: 2
-
    ./docs/Nodes
-
-Jobclasses
---------------------
-
-.. toctree::
-   :maxdepth: 2
-
    ./docs/Jobclasses
-
-
-Service Distributions
------------------------------------
-.. toctree::
-   :maxdepth: 2
-
    ./docs/Distributions
-
-
-Scheduling Strategies
------------------------------------
-.. toctree::
-   :maxdepth: 2
-
    ./docs/Schedulingstrategies
-
-
-Drop Strategies
------------------------------
-.. toctree::
-   :maxdepth: 2
-
    ./docs/Dropstrategies
-
-
-Metrics
---------------------
-
-.. toctree::
-   :maxdepth: 2
-
    ./docs/Metrics
-
-Routing Strategies
---------------------------------
-.. toctree::
-   :maxdepth: 2
-
    ./docs/Routingstrategies
-
-
-
 
 
 Indices and tables
 ==================
 
-* :ref:`genindex`
-* :ref:`modindex`
 * :ref:`search`
