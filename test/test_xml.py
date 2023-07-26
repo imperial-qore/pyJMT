@@ -3,8 +3,6 @@ import unittest
 import pyJMT as pj
 import xml.etree.ElementTree as ET
 
-pj.init("C:/Users/James/Documents/Computing/Java Modelling Tools")
-
 def elements_equal(e1, e2, path=''):
     if e1.tag != e2.tag:
         print(f"Different tag at {path}: {e1.tag} != {e2.tag}")
@@ -832,9 +830,6 @@ class TestXML(unittest.TestCase):
         print("Routing Strategies Probabilities Ok")
 
     def test(self):
-
-        pj.init("C:\\Users\\James\\Documents\\Computing\\Java Modelling Tools")
-
 
         model = pj.Network("test")
         source = pj.Source(model, "source")
