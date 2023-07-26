@@ -3,6 +3,7 @@ import unittest
 import pyJMT as pj
 import xml.etree.ElementTree as ET
 
+
 def elements_equal(e1, e2, path=''):
     if e1.tag != e2.tag:
         print(f"Different tag at {path}: {e1.tag} != {e2.tag}")
@@ -77,6 +78,7 @@ class TestXML(unittest.TestCase):
         model.addLink(queue2, sink)
 
         model.printResults()
+
     def test_Saving(self):
         # declare model
         model = pj.Network("M/M/1")
@@ -100,7 +102,6 @@ class TestXML(unittest.TestCase):
         # model.saveTemp()
         model.generateResultsFileNamed("heyo", 1234)
         model.printResultsFromFile('heyo')
-
 
         print("Opened ok")
 
@@ -294,7 +295,7 @@ class TestXML(unittest.TestCase):
         class1 = pj.OpenClass(model, 'Class1')
         class2 = pj.OpenClass(model, 'Class2')
 
-        #Create classswitches
+        # Create classswitches
         classswitch1 = pj.ClassSwitch(model, "ClassSwitch 1")
         classswitch2 = pj.ClassSwitch(model, "ClassSwitch 2")
 
@@ -306,7 +307,7 @@ class TestXML(unittest.TestCase):
         queue2.setService(class1, pj.Exp(1))
         queue2.setService(class2, pj.Exp(1))
 
-        #Set some classswitch probabilites by hand
+        # Set some classswitch probabilites by hand
 
         classswitch1.setClassSwitchProb(class1, class1, 0.4)
         classswitch1.setClassSwitchProb(class1, class2, 0.6)
@@ -317,7 +318,6 @@ class TestXML(unittest.TestCase):
         classswitch2.setClassSwitchProb(class1, class2, 0.5)
         classswitch2.setClassSwitchProb(class2, class1, 0.5)
         classswitch2.setClassSwitchProb(class2, class2, 0.5)
-
 
         # topology
         model.addLinks([(source1, queue1),
@@ -340,7 +340,6 @@ class TestXML(unittest.TestCase):
         print("Classswitch Ok")
 
     def test_fork_join(self):
-
         model = pj.Network('test_fork_join')
 
         # declare nodes
@@ -348,7 +347,6 @@ class TestXML(unittest.TestCase):
 
         fork = pj.Fork(model, 'Fork 1')
         fork.setTasksPerLink(2)
-
 
         queue1 = pj.Queue(model, 'Queue 1', pj.SchedStrategy.FCFS)
         queue2 = pj.Queue(model, 'Queue 2', pj.SchedStrategy.FCFS)
@@ -388,7 +386,6 @@ class TestXML(unittest.TestCase):
         print("fork and join Ok")
 
     def test_logger_fcr(self):
-
         model = pj.Network('test_logger_fcr')
 
         # declare nodes
@@ -438,7 +435,6 @@ class TestXML(unittest.TestCase):
         print("logger and fcr Ok")
 
     def test_add_metrics(self):
-
         model = pj.Network('test_add_metric')
 
         # declare nodes
@@ -548,7 +544,6 @@ class TestXML(unittest.TestCase):
         queue12.setService(oclass, pj.Weibull(0.445, 0.471))
         queue13.setService(oclass, pj.Disabled())
         queue14.setService(oclass, pj.ZeroServiceTime())
-
 
         # topology
         model.addLinks([(source, queue13),
@@ -829,27 +824,6 @@ class TestXML(unittest.TestCase):
         self.assertTrue(elements_equal(generated_tree.getroot(), reference_tree.getroot()))
         print("Routing Strategies Probabilities Ok")
 
-    def test(self):
-
-        model = pj.Network("test")
-        source = pj.Source(model, "source")
-        queue = pj.Queue(model, "queue", pj.SchedStrategy.FCFS)
-        sink = pj.Sink(model, "sink")
-
-        oclass = pj.OpenClass(model, "oclass")
-        source.setArrival(oclass, pj.Exp(0.5))
-        queue.setService(oclass, pj.Exp(1))
-
-        queue.setRouting(oclass, pj.RoutingStrategy.PROB)
-        queue.setProbRouting(oclass, sink, 1)
-
-        model.addLinks([(source, queue), (queue, sink)])
-        # model.jsimg_open()
-
-        model.saveNamed("test")
-        model.generateResultsFileNamed("test")
 
 if __name__ == '__main__':
     unittest.main()
-
-#TODO JMT INSTALL
