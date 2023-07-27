@@ -663,10 +663,11 @@ class Network:
                 routingParameterArray = ET.SubElement(subParameter, "subParameter", array="true",
                                                       classPath="jmt.engine.NetStrategies.RoutingStrategies.ClassSwitchRoutingParameter",
                                                       name="ClassSwitchRoutingParameterArray")
-                routingParameter = ET.SubElement(routingParameterArray, "subParameter",
-                                                 classPath="jmt.engine.NetStrategies.RoutingStrategies.ClassSwitchRoutingParameter",
-                                                 name="ClassSwitchRoutingParameter")
+
                 for (target, routeprob) in routing['classswitchprobs'].keys():
+                    routingParameter = ET.SubElement(routingParameterArray, "subParameter",
+                                                     classPath="jmt.engine.NetStrategies.RoutingStrategies.ClassSwitchRoutingParameter",
+                                                     name="ClassSwitchRoutingParameter")
 
                     stationNameParameter = ET.SubElement(routingParameter, "subParameter", classPath="java.lang.String",
                                                          name="stationName")
