@@ -100,7 +100,7 @@ class TestXML(unittest.TestCase):
         # create solution file and open
         # model.jsimg_open()
         # model.saveTemp()
-        model.generateResultsFileNamed("heyo", 1234)
+        model.saveResultsFileNamed("heyo", 1234)
         model.printResultsFromFile('heyo')
 
         print("Opened ok")

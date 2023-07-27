@@ -197,7 +197,7 @@ class Network:
 
         os.unlink(os.path.join(dir_path, f"{temp.name}"))
 
-    def saveNamed(self, fileName):
+    def saveNamedJsimg(self, fileName):
         """
              Saves the current network to a file in output_files with a given name.
              :param fileName: The name of the file.
@@ -207,7 +207,7 @@ class Network:
         os.makedirs(dir_path, exist_ok=True)
         self.generate_xml(os.path.join(dir_path, add_extension_if_none(fileName, "jsimg")))
 
-    def saveTemp(self):
+    def saveTempJsimg(self):
         """
                    Saves the current network to a file in output_files with a temporary name and returns the name.
                    :returns temporary file name
@@ -221,7 +221,7 @@ class Network:
 
         return add_extension_if_none(temp.name, "jsimg")
 
-    def generateResultsFileNamed(self, fileName, seed=None):
+    def saveResultsFileNamed(self, fileName, seed=None):
         """
             Runs a simulation and generates a JMT results file with the given fileName from this Network as well as a Jsimg file
              :param fileName: The file name for the results file to be given.
@@ -229,10 +229,10 @@ class Network:
            :param seed: The seed for the simulation.
            :type seed: int, optional
         """
-        self.saveNamed(fileName)
-        self.generateResultsFromJsimg(fileName, seed)
+        self.saveNamedJsimg(fileName)
+        self.saveResultsFromJsimg(fileName, seed)
 
-    def generateResultsFromJsimg(self, fileName, seed=None):
+    def saveResultsFromJsimg(self, fileName, seed=None):
         """
             Runs a simulation and generates a JMT results file with the given fileName from this Network
              :param fileName: The file name for the results file to be given.
@@ -307,8 +307,8 @@ class Network:
                 :param seed: The seed for the simulation.
                 :type seed: int, optional
            """
-        tempfileName = self.saveTemp()
-        self.generateResultsFileNamed(tempfileName, seed)
+        tempfileName = self.saveTempJsimg()
+        self.saveResultsFileNamed(tempfileName, seed)
         self.printResultsFromFile(tempfileName)
         dir = os.path.join(os.getcwd(), "output_files")
         os.unlink(os.path.join(dir, add_extension_if_none(tempfileName, "jsimg")))
@@ -577,7 +577,7 @@ class Network:
     def generate_metrics(self, sim):
         if self.defaultMetrics:
             # TODO CHECK WHAT DEFAULTS SHOULD BE EXACTLY
-            measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
+            measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"] #TODO RESIDENCE TIME
             for measure in measuresQueue:
                 for queue in self.nodes['queues']:
                     for oclass in queue.services.keys():
@@ -853,11 +853,8 @@ class Network:
         dropStrategies = ET.SubElement(section, "parameter", array="true", classPath="java.lang.String",
                                        name="dropStrategies")
 
-        # TODO FIGURE OUT WHAT CAUSES DROP TYPE TO CHANGE
-        # TODO UPDATE SEEMS LIKE IT DOESNT MATTER WHEN CAPACITY IS INFINITE
         drop = "drop"
         if isinstance(node, Queue):
-            # TODO DO THIS PROPERLY
             drop = node.dropRule.value
 
         for jobclass in self.classes:

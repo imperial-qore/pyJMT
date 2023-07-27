@@ -55,3 +55,6 @@ coverage.xml
 */output_files/
 
 *.html
+JMT.jar
+docs/.doctrees
+docs/_build

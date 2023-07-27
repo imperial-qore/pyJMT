@@ -1,2 +1,9 @@
-requests~=2.31.0
 setuptools~=58.1.0
+wheel
+twine
+sphinx
+sphinx_toolbox
+sphinx-rtd-theme
+
+requests~=2.31.0
+enum_tools~=0.10.0
