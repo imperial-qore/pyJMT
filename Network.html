@@ -19,7 +19,7 @@
     <script src="_static/js/theme.js"></script>
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Nodes" href="Nodes.html" />
+    <link rel="next" title="Importing Files" href="Importing.html" />
     <link rel="prev" title="Welcome to pyJMT’s documentation!" href="index.html" /> 
 </head>
 
@@ -49,23 +49,23 @@
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.addLink"><code class="docutils literal notranslate"><span class="pre">Network.addLink()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.addLinks"><code class="docutils literal notranslate"><span class="pre">Network.addLinks()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.addMetric"><code class="docutils literal notranslate"><span class="pre">Network.addMetric()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.getResults"><code class="docutils literal notranslate"><span class="pre">Network.getResults()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.init_routing_matrix"><code class="docutils literal notranslate"><span class="pre">Network.init_routing_matrix()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.jsimgOpen"><code class="docutils literal notranslate"><span class="pre">Network.jsimgOpen()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.link"><code class="docutils literal notranslate"><span class="pre">Network.link()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.printResults"><code class="docutils literal notranslate"><span class="pre">Network.printResults()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.printResultsFromFile"><code class="docutils literal notranslate"><span class="pre">Network.printResultsFromFile()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.removeLink"><code class="docutils literal notranslate"><span class="pre">Network.removeLink()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.removeLinks"><code class="docutils literal notranslate"><span class="pre">Network.removeLinks()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.removeNode"><code class="docutils literal notranslate"><span class="pre">Network.removeNode()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.saveNamedJsimg"><code class="docutils literal notranslate"><span class="pre">Network.saveNamedJsimg()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.saveResultsFileNamed"><code class="docutils literal notranslate"><span class="pre">Network.saveResultsFileNamed()</span></code></a></li>
-<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.saveResultsFromJsimg"><code class="docutils literal notranslate"><span class="pre">Network.saveResultsFromJsimg()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.saveTempJsimg"><code class="docutils literal notranslate"><span class="pre">Network.saveTempJsimg()</span></code></a></li>
 <li class="toctree-l3"><a class="reference internal" href="#pyJMT.Network.useDefaultMetrics"><code class="docutils literal notranslate"><span class="pre">Network.useDefaultMetrics()</span></code></a></li>
 </ul>
 </li>
 </ul>
 </li>
+<li class="toctree-l1"><a class="reference internal" href="Importing.html">Importing Files</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Nodes.html">Nodes</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Jobclasses.html">Jobclasses</a></li>
 <li class="toctree-l1"><a class="reference internal" href="Distributions.html">Service Distributions</a></li>
@@ -109,19 +109,26 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.addLink">
 <span class="sig-name descname"><span class="pre">addLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.addLink" title="Permalink to this definition"></a></dt>
-<dd><p>Adds a link between two nodes
-:param source: The start node of the link
-:type source: Node
-:param target: The end node of the link
-:type target: Node</p>
+<dd><p>Adds a link between two nodes</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>Node</em>) – The start node of the link</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The end node of the link</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.addLinks">
 <span class="sig-name descname"><span class="pre">addLinks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linkList</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.addLinks" title="Permalink to this definition"></a></dt>
-<dd><p>Adds many links between nodes, takes in a list of pairs of nodes.
-:param linkList: The list of pairs of nodes to add links for.
-:type linkList: [(Node, Node)]</p>
+<dd><p>Adds many links between nodes, takes in a list of pairs of nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>linkList</strong> (<em>[</em><em>(</em><em>Node</em><em>, </em><em>Node</em><em>)</em><em>]</em>) – The list of pairs of nodes to add links for.</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -140,12 +147,27 @@
 </dd></dl>
 
 <dl class="py method">
-<dt class="sig sig-object py" id="pyJMT.Network.init_routing_matrix">
-<span class="sig-name descname"><span class="pre">init_routing_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.init_routing_matrix" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Creates and returns a routing matrix for use with Network.link</dt><dd><p>:returns p : Routing Matrix</p>
+<dt class="sig sig-object py" id="pyJMT.Network.getResults">
+<span class="sig-name descname"><span class="pre">getResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.getResults" title="Permalink to this definition"></a></dt>
+<dd><p>Returns a dictionary of the results from the current network’s simulation without saving anything.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – The seed for the simulation.</p>
 </dd>
 </dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Network.init_routing_matrix">
+<span class="sig-name descname"><span class="pre">init_routing_matrix</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.init_routing_matrix" title="Permalink to this definition"></a></dt>
+<dd><p>Creates and returns a routing matrix for use with Network.link</p>
+<blockquote>
+<div><dl class="field-list simple">
+<dt class="field-odd">return<span class="colon">:</span></dt>
+<dd class="field-odd"><p>Routing Matrix p</p>
+</dd>
+</dl>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
@@ -157,9 +179,7 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.link">
 <span class="sig-name descname"><span class="pre">link</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.link" title="Permalink to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Adds many between links nodes, takes in a routing matrix.</p>
-</div></blockquote>
+<dd><p>Adds many between links nodes, takes in a routing matrix.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>p</strong> (<em>Routing Matrix</em>) – The routing matrix.</p>
@@ -170,8 +190,9 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.printResults">
 <span class="sig-name descname"><span class="pre">printResults</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.printResults" title="Permalink to this definition"></a></dt>
-<dd><dl class="simple">
-<dt>Prints results to console without saving anything</dt><dd><dl class="field-list simple">
+<dd><p>Prints results to console without saving anything</p>
+<blockquote>
+<div><dl class="field-list simple">
 <dt class="field-odd">param seed<span class="colon">:</span></dt>
 <dd class="field-odd"><p>The seed for the simulation.</p>
 </dd>
@@ -179,32 +200,27 @@
 <dd class="field-even"><p>int, optional</p>
 </dd>
 </dl>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyJMT.Network.printResultsFromFile">
-<span class="sig-name descname"><span class="pre">printResultsFromFile</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.printResultsFromFile" title="Permalink to this definition"></a></dt>
-<dd><p>Prints results to console from a JMT results file</p>
+</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.removeLink">
 <span class="sig-name descname"><span class="pre">removeLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">source</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.removeLink" title="Permalink to this definition"></a></dt>
-<dd><p>Removes a link between two nodes.
-:param source: The start node of the link.
-:type source: Node
-:param target: The end node of the link.
-:type target: Node</p>
+<dd><p>Removes a link between two nodes.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> (<em>Node</em>) – The start node of the link.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The end node of the link.</p></li>
+</ul>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.removeLinks">
 <span class="sig-name descname"><span class="pre">removeLinks</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">linkList</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.removeLinks" title="Permalink to this definition"></a></dt>
-<dd><blockquote>
-<div><p>Removes many links between nodes, takes in a list of pairs of nodes.</p>
-</div></blockquote>
+<dd><p>Removes many links between nodes, takes in a list of pairs of nodes.</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
 <dd class="field-odd"><p><strong>linkList</strong> (<em>[</em><em>(</em><em>Node</em><em>, </em><em>Node</em><em>)</em><em>]</em>) – The list of pairs of nodes to remove links for.</p>
@@ -226,54 +242,24 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.saveNamedJsimg">
 <span class="sig-name descname"><span class="pre">saveNamedJsimg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.saveNamedJsimg" title="Permalink to this definition"></a></dt>
-<dd><p>Saves the current network to a file in output_files with a given name.
-:param fileName: The name of the file.</p>
-<blockquote>
-<div><dl class="field-list simple">
-<dt class="field-odd">type fileName<span class="colon">:</span></dt>
-<dd class="field-odd"><p>str</p>
+<dd><p>Saves the current network to a file in output_files with a given name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>fileName</strong> (<em>str</em>) – The name of the file.</p>
 </dd>
 </dl>
-</div></blockquote>
 </dd></dl>
 
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.saveResultsFileNamed">
 <span class="sig-name descname"><span class="pre">saveResultsFileNamed</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.saveResultsFileNamed" title="Permalink to this definition"></a></dt>
-<dd><blockquote>
-<div><dl class="simple">
-<dt>Runs a simulation and generates a JMT results file with the given fileName from this Network as well as a Jsimg file</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param fileName<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The file name for the results file to be given.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</div></blockquote>
+<dd><p>Runs a simulation and generates a JMT results file with the given fileName from this Network as well as a Jsimg file</p>
 <dl class="field-list simple">
 <dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – The seed for the simulation.</p>
-</dd>
-</dl>
-</dd></dl>
-
-<dl class="py method">
-<dt class="sig sig-object py" id="pyJMT.Network.saveResultsFromJsimg">
-<span class="sig-name descname"><span class="pre">saveResultsFromJsimg</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">fileName</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">seed</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">None</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxTime</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">600</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.saveResultsFromJsimg" title="Permalink to this definition"></a></dt>
-<dd><blockquote>
-<div><dl class="simple">
-<dt>Runs a simulation and generates a JMT results file with the given fileName from this Network</dt><dd><dl class="field-list simple">
-<dt class="field-odd">param fileName<span class="colon">:</span></dt>
-<dd class="field-odd"><p>The file name for the results file to be given.</p>
-</dd>
-</dl>
-</dd>
-</dl>
-</div></blockquote>
-<dl class="field-list simple">
-<dt class="field-odd">Parameters<span class="colon">:</span></dt>
-<dd class="field-odd"><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional
-:param maxTime: The maximum time for the simulation to run. Default is 600 seconds</em>) – The seed for the simulation. Leave blank or as None for a random seed</p>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>fileName</strong> (<em>str</em>) – The file name for the results file to be given.</p></li>
+<li><p><strong>seed</strong> (<em>int</em><em>, </em><em>optional</em>) – The seed for the simulation.</p></li>
+</ul>
 </dd>
 </dl>
 </dd></dl>
@@ -281,8 +267,15 @@
 <dl class="py method">
 <dt class="sig sig-object py" id="pyJMT.Network.saveTempJsimg">
 <span class="sig-name descname"><span class="pre">saveTempJsimg</span></span><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Network.saveTempJsimg" title="Permalink to this definition"></a></dt>
-<dd><p>Saves the current network to a file in output_files with a temporary name and returns the name.
-:returns temporary file name</p>
+<dd><p>Saves the current network to a file in output_files with a temporary name and returns the name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns<span class="colon">:</span></dt>
+<dd class="field-odd"><p>temporary file name</p>
+</dd>
+<dt class="field-even">Return type<span class="colon">:</span></dt>
+<dd class="field-even"><p>str</p>
+</dd>
+</dl>
 </dd></dl>
 
 <dl class="py method">
@@ -305,7 +298,7 @@
           </div>
           <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
         <a href="index.html" class="btn btn-neutral float-left" title="Welcome to pyJMT’s documentation!" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
-        <a href="Nodes.html" class="btn btn-neutral float-right" title="Nodes" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+        <a href="Importing.html" class="btn btn-neutral float-right" title="Importing Files" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
     </div>
 
   <hr/>
