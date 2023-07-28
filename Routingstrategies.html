@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Routing Strategies &mdash; pyJMT 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=e031e9a9"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="prev" title="Metrics" href="Metrics.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyJMT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Jobclasses.html">Jobclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributions.html">Service Distributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Schedulingstrategies.html">Scheduling Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dropstrategies.html">Drop Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Metrics.html">Metrics</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Routing Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.RoutingStrategy"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.RANDOM"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.RANDOM</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.RROBIN"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.RROBIN</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.JSQ"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.JSQ</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.SHORTEST_RESPONSE_TIME"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.SHORTEST_RESPONSE_TIME</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.LEAST_UTILIZATION"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.LEAST_UTILIZATION</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.FASTEST_SERVICE"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.FASTEST_SERVICE</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.DISABLED"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.DISABLED</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.PROB"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.PROB</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.RoutingStrategy.CLASSSWITCH"><code class="docutils literal notranslate"><span class="pre">RoutingStrategy.CLASSSWITCH</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyJMT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Routing Strategies</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Routingstrategies.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="routing-strategies">
+<h1>Routing Strategies<a class="headerlink" href="#routing-strategies" title="Permalink to this heading"></a></h1>
+<dl class="py class enum">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">RoutingStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.RoutingStrategy" title="Permalink to this definition"></a></dt>
+<dd><p>An enumeration.</p>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.RANDOM">
+<span class="sig-name descname"><span class="pre">RANDOM</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.RANDOM:</span> <span class="pre">['Static',</span> <span class="pre">'Random',</span> <span class="pre">'RandomStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.RANDOM" title="Permalink to this definition"></a></dt>
+<dd><p>Random routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.RROBIN">
+<span class="sig-name descname"><span class="pre">RROBIN</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.RROBIN:</span> <span class="pre">['Static',</span> <span class="pre">'Round</span> <span class="pre">Robin',</span> <span class="pre">'RoundRobinStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.RROBIN" title="Permalink to this definition"></a></dt>
+<dd><p>Round Robin routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.JSQ">
+<span class="sig-name descname"><span class="pre">JSQ</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.JSQ:</span> <span class="pre">['Static',</span> <span class="pre">'Join</span> <span class="pre">the</span> <span class="pre">Shortest</span> <span class="pre">Queue</span> <span class="pre">(JSQ)',</span> <span class="pre">'ShortestQueueLengthRoutingStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.JSQ" title="Permalink to this definition"></a></dt>
+<dd><p>Join the Shortest Queue (JSQ) routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.SHORTEST_RESPONSE_TIME">
+<span class="sig-name descname"><span class="pre">SHORTEST_RESPONSE_TIME</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.SHORTEST_RESPONSE_TIME:</span> <span class="pre">['Static',</span> <span class="pre">'Shortest</span> <span class="pre">Response</span> <span class="pre">Time',</span> <span class="pre">'ShortestResponseTimeRoutingStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.SHORTEST_RESPONSE_TIME" title="Permalink to this definition"></a></dt>
+<dd><p>Shortest Response Time routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.LEAST_UTILIZATION">
+<span class="sig-name descname"><span class="pre">LEAST_UTILIZATION</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.LEAST_UTILIZATION:</span> <span class="pre">['Static',</span> <span class="pre">'Least</span> <span class="pre">Utilization',</span> <span class="pre">'LeastUtilizationRoutingStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.LEAST_UTILIZATION" title="Permalink to this definition"></a></dt>
+<dd><p>Least Utilization routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.FASTEST_SERVICE">
+<span class="sig-name descname"><span class="pre">FASTEST_SERVICE</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.FASTEST_SERVICE:</span> <span class="pre">['Static',</span> <span class="pre">'Fastest</span> <span class="pre">Service',</span> <span class="pre">'FastestServiceRoutingStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.FASTEST_SERVICE" title="Permalink to this definition"></a></dt>
+<dd><p>Fastest Service routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.DISABLED">
+<span class="sig-name descname"><span class="pre">DISABLED</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.DISABLED:</span> <span class="pre">['Static',</span> <span class="pre">'Disabled',</span> <span class="pre">'DisabledRoutingStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.DISABLED" title="Permalink to this definition"></a></dt>
+<dd><p>Disabled routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.PROB">
+<span class="sig-name descname"><span class="pre">PROB</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.PROB:</span> <span class="pre">['Prob',</span> <span class="pre">'Probabilities',</span> <span class="pre">'RandomStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.PROB" title="Permalink to this definition"></a></dt>
+<dd><p>Probabilities routing strategy.</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.RoutingStrategy.CLASSSWITCH">
+<span class="sig-name descname"><span class="pre">CLASSSWITCH</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;RoutingStrategy.CLASSSWITCH:</span> <span class="pre">['ClassSwitch',</span> <span class="pre">'Class</span> <span class="pre">Switch',</span> <span class="pre">'ClassSwitchRoutingStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.RoutingStrategy.CLASSSWITCH" title="Permalink to this definition"></a></dt>
+<dd><p>Class Switch routing strategy.</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Metrics.html" class="btn btn-neutral float-left" title="Metrics" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, James Stadler.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

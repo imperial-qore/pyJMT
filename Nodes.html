@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Nodes &mdash; pyJMT 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=e031e9a9"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Jobclasses" href="Jobclasses.html" />
+    <link rel="prev" title="Network" href="Network.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyJMT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Network.html">Network</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Nodes</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Source"><code class="docutils literal notranslate"><span class="pre">Source</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Source.setArrival"><code class="docutils literal notranslate"><span class="pre">Source.setArrival()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Source.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">Source.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Source.setProbRouting"><code class="docutils literal notranslate"><span class="pre">Source.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Source.setRouting"><code class="docutils literal notranslate"><span class="pre">Source.setRouting()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Sink"><code class="docutils literal notranslate"><span class="pre">Sink</span></code></a></li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Queue"><code class="docutils literal notranslate"><span class="pre">Queue</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setCapacity"><code class="docutils literal notranslate"><span class="pre">Queue.setCapacity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">Queue.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setDropRule"><code class="docutils literal notranslate"><span class="pre">Queue.setDropRule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setNumberOfServers"><code class="docutils literal notranslate"><span class="pre">Queue.setNumberOfServers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setProbRouting"><code class="docutils literal notranslate"><span class="pre">Queue.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setRouting"><code class="docutils literal notranslate"><span class="pre">Queue.setRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setService"><code class="docutils literal notranslate"><span class="pre">Queue.setService()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Queue.setStrategy"><code class="docutils literal notranslate"><span class="pre">Queue.setStrategy()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Delay"><code class="docutils literal notranslate"><span class="pre">Delay</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Delay.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">Delay.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Delay.setNumberOfServers"><code class="docutils literal notranslate"><span class="pre">Delay.setNumberOfServers()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Delay.setProbRouting"><code class="docutils literal notranslate"><span class="pre">Delay.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Delay.setRouting"><code class="docutils literal notranslate"><span class="pre">Delay.setRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Delay.setService"><code class="docutils literal notranslate"><span class="pre">Delay.setService()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Router"><code class="docutils literal notranslate"><span class="pre">Router</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Router.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">Router.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Router.setProbRouting"><code class="docutils literal notranslate"><span class="pre">Router.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Router.setRouting"><code class="docutils literal notranslate"><span class="pre">Router.setRouting()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.ClassSwitch"><code class="docutils literal notranslate"><span class="pre">ClassSwitch</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.ClassSwitch.setClassSwitchProb"><code class="docutils literal notranslate"><span class="pre">ClassSwitch.setClassSwitchProb()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.ClassSwitch.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">ClassSwitch.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.ClassSwitch.setProbRouting"><code class="docutils literal notranslate"><span class="pre">ClassSwitch.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.ClassSwitch.setRouting"><code class="docutils literal notranslate"><span class="pre">ClassSwitch.setRouting()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Fork"><code class="docutils literal notranslate"><span class="pre">Fork</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Fork.setCapacity"><code class="docutils literal notranslate"><span class="pre">Fork.setCapacity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Fork.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">Fork.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Fork.setDropRule"><code class="docutils literal notranslate"><span class="pre">Fork.setDropRule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Fork.setProbRouting"><code class="docutils literal notranslate"><span class="pre">Fork.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Fork.setRouting"><code class="docutils literal notranslate"><span class="pre">Fork.setRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Fork.setStrategy"><code class="docutils literal notranslate"><span class="pre">Fork.setStrategy()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Fork.setTasksPerLink"><code class="docutils literal notranslate"><span class="pre">Fork.setTasksPerLink()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Join"><code class="docutils literal notranslate"><span class="pre">Join</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Join.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">Join.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Join.setProbRouting"><code class="docutils literal notranslate"><span class="pre">Join.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Join.setRouting"><code class="docutils literal notranslate"><span class="pre">Join.setRouting()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion.setClassMaxCapacity"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion.setClassMaxCapacity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion.setClassMaxMemory"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion.setClassMaxMemory()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion.setClassSize"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion.setClassSize()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion.setClassWeight"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion.setClassWeight()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion.setDropRule"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion.setDropRule()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion.setMaxCapacity"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion.setMaxCapacity()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.FiniteCapacityRegion.setMaxMemory"><code class="docutils literal notranslate"><span class="pre">FiniteCapacityRegion.setMaxMemory()</span></code></a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.Logger"><code class="docutils literal notranslate"><span class="pre">Logger</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setClassSwitchRouting"><code class="docutils literal notranslate"><span class="pre">Logger.setClassSwitchRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setDelimiter"><code class="docutils literal notranslate"><span class="pre">Logger.setDelimiter()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setJobClass"><code class="docutils literal notranslate"><span class="pre">Logger.setJobClass()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setJobID"><code class="docutils literal notranslate"><span class="pre">Logger.setJobID()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setLogLoggerName"><code class="docutils literal notranslate"><span class="pre">Logger.setLogLoggerName()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setProbRouting"><code class="docutils literal notranslate"><span class="pre">Logger.setProbRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setRouting"><code class="docutils literal notranslate"><span class="pre">Logger.setRouting()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setStartTime"><code class="docutils literal notranslate"><span class="pre">Logger.setStartTime()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setTimeAnyClass"><code class="docutils literal notranslate"><span class="pre">Logger.setTimeAnyClass()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setTimeSameClass"><code class="docutils literal notranslate"><span class="pre">Logger.setTimeSameClass()</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.Logger.setTimestamp"><code class="docutils literal notranslate"><span class="pre">Logger.setTimestamp()</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Jobclasses.html">Jobclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributions.html">Service Distributions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Schedulingstrategies.html">Scheduling Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Dropstrategies.html">Drop Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Routingstrategies.html">Routing Strategies</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyJMT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Nodes</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Nodes.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="nodes">
+<h1>Nodes<a class="headerlink" href="#nodes" title="Permalink to this heading"></a></h1>
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Source">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Source</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Source" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Source node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Source.setArrival">
+<span class="sig-name descname"><span class="pre">setArrival</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">arrival_dist</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Source.setArrival" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the arrival distribution for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>arrival_dist</strong> (<em>Distribution</em>) – The arrival distribution.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Source.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Source.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Source.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Source.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Source.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Source.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Sink">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Sink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Sink" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Sink node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Queue">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Queue</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">strategy</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">capacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">dropRule</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">DropStrategy.DROP</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Queue node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+<li><p><strong>strategy</strong> (<a class="reference internal" href="Schedulingstrategies.html#pyJMT.SchedStrategy" title="pyJMT.SchedStrategy"><em>SchedStrategy</em></a>) – The scheduling strategy used by the queue.</p></li>
+<li><p><strong>capacity</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum capacity of the queue, defaults to -1 for infinite capacity.</p></li>
+<li><p><strong>dropRule</strong> (<a class="reference internal" href="Dropstrategies.html#pyJMT.DropStrategy" title="pyJMT.DropStrategy"><em>DropStrategy</em></a><em>, </em><em>optional</em>) – The rule for dropping jobs when the queue is full, defaults to DropStrategy.DROP.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setCapacity">
+<span class="sig-name descname"><span class="pre">setCapacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capacity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setCapacity" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the capacity for the queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>capacity</strong> (<em>int</em>) – The capacity.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setDropRule">
+<span class="sig-name descname"><span class="pre">setDropRule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dropRule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setDropRule" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the drop rule for the queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dropRule</strong> (<a class="reference internal" href="Dropstrategies.html#pyJMT.DropStrategy" title="pyJMT.DropStrategy"><em>DropStrategy</em></a>) – The drop rule.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setNumberOfServers">
+<span class="sig-name descname"><span class="pre">setNumberOfServers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setNumberOfServers" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the number of servers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>int</em>) – The number of servers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setService">
+<span class="sig-name descname"><span class="pre">setService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setService" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the service strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>service_dist</strong> (<em>Distribution</em>) – The service distribution.</p></li>
+<li><p><strong>weight</strong> (<em>float</em><em>, </em><em>optional</em>) – The weight, defaults to 1.0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Queue.setStrategy">
+<span class="sig-name descname"><span class="pre">setStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strategy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Queue.setStrategy" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the scheduling strategy for the queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>strategy</strong> (<a class="reference internal" href="Schedulingstrategies.html#pyJMT.SchedStrategy" title="pyJMT.SchedStrategy"><em>SchedStrategy</em></a>) – The scheduling strategy.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Delay">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Delay</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Delay" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Delay node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Delay.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Delay.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Delay.setNumberOfServers">
+<span class="sig-name descname"><span class="pre">setNumberOfServers</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">x</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Delay.setNumberOfServers" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the number of servers.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>x</strong> (<em>int</em>) – The number of servers.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Delay.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Delay.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Delay.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Delay.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Delay.setService">
+<span class="sig-name descname"><span class="pre">setService</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">service_dist</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">1.0</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Delay.setService" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the service strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>service_dist</strong> (<em>Distribution</em>) – The service distribution.</p></li>
+<li><p><strong>weight</strong> (<em>float</em><em>, </em><em>optional</em>) – The weight, defaults to 1.0.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Router">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Router</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Router" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Router node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Router.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Router.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Router.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Router.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Router.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Router.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.ClassSwitch">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">ClassSwitch</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.ClassSwitch" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a ClassSwitch node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.ClassSwitch.setClassSwitchProb">
+<span class="sig-name descname"><span class="pre">setClassSwitchProb</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">class1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">class2</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">p</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.ClassSwitch.setClassSwitchProb" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch probability from one class to another.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>class1</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>class2</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>p</strong> (<em>float</em>) – The class switch probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.ClassSwitch.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.ClassSwitch.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.ClassSwitch.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.ClassSwitch.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.ClassSwitch.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.ClassSwitch.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Fork">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Fork</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Fork node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Fork.setCapacity">
+<span class="sig-name descname"><span class="pre">setCapacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">capacity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork.setCapacity" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the capacity for the queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>capacity</strong> (<em>int</em>) – The capacity.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Fork.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Fork.setDropRule">
+<span class="sig-name descname"><span class="pre">setDropRule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">dropRule</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork.setDropRule" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the drop rule for the queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>dropRule</strong> (<a class="reference internal" href="Dropstrategies.html#pyJMT.DropStrategy" title="pyJMT.DropStrategy"><em>DropStrategy</em></a>) – The drop rule.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Fork.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Fork.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Fork.setStrategy">
+<span class="sig-name descname"><span class="pre">setStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">strategy</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork.setStrategy" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the scheduling strategy for the queue.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>strategy</strong> (<a class="reference internal" href="Schedulingstrategies.html#pyJMT.SchedStrategy" title="pyJMT.SchedStrategy"><em>SchedStrategy</em></a>) – The scheduling strategy.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Fork.setTasksPerLink">
+<span class="sig-name descname"><span class="pre">setTasksPerLink</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">num_tasks</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Fork.setTasksPerLink" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the number of tasks per link.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>num_tasks</strong> (<em>int</em>) – The number of tasks to be split into for each link.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Join">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Join</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Join" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Join node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Join.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Join.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Join.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Join.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Join.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Join.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">FiniteCapacityRegion</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">node</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxCapacity</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxMemory</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">-1</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a FiniteCapacityRegion node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+<li><p><strong>node</strong> (<em>Node</em>) – The node associated with this finite capacity region.</p></li>
+<li><p><strong>maxCapacity</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum capacity of the region, defaults to -1 for infinite capacity.</p></li>
+<li><p><strong>maxMemory</strong> (<em>int</em><em>, </em><em>optional</em>) – The maximum memory of the region, defaults to -1 for infinite memory.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion.setClassMaxCapacity">
+<span class="sig-name descname"><span class="pre">setClassMaxCapacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxCapacity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion.setClassMaxCapacity" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the maximum capacity for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – Instance of the job class.</p></li>
+<li><p><strong>maxCapacity</strong> (<em>int</em>) – Maximum capacity for the job class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion.setClassMaxMemory">
+<span class="sig-name descname"><span class="pre">setClassMaxMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">maxMemory</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion.setClassMaxMemory" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the maximum memory for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – Instance of the job class.</p></li>
+<li><p><strong>maxMemory</strong> (<em>int</em>) – Maximum memory for the job class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion.setClassSize">
+<span class="sig-name descname"><span class="pre">setClassSize</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">size</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion.setClassSize" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the size for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – Instance of the job class.</p></li>
+<li><p><strong>size</strong> (<em>int</em>) – Size for the job class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion.setClassWeight">
+<span class="sig-name descname"><span class="pre">setClassWeight</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">weight</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion.setClassWeight" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the weight for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – Instance of the job class.</p></li>
+<li><p><strong>weight</strong> (<em>float</em><em> or </em><em>int</em>) – Weight for the job class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion.setDropRule">
+<span class="sig-name descname"><span class="pre">setDropRule</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">drop</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion.setDropRule" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the drop rule for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – Instance of the job class.</p></li>
+<li><p><strong>drop</strong> (<em>JobClass</em>) – Drop rule for the job class.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion.setMaxCapacity">
+<span class="sig-name descname"><span class="pre">setMaxCapacity</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxCapacity</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion.setMaxCapacity" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the maximum capacity of the region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>maxCapacity</strong> (<em>int</em>) – The maximum capacity.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.FiniteCapacityRegion.setMaxMemory">
+<span class="sig-name descname"><span class="pre">setMaxMemory</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">maxMemory</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.FiniteCapacityRegion.setMaxMemory" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the maximum memory of the region.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>maxMemory</strong> (<em>int</em>) – The maximum memory.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="py class">
+<dt class="sig sig-object py" id="pyJMT.Logger">
+<em class="property"><span class="pre">class</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">Logger</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">model</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">name</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logfileName</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'global.csv'</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">logfilePath</span></span><span class="o"><span class="pre">=</span></span><span class="default_value"><span class="pre">'/github/workspace/docs'</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger" title="Permalink to this definition"></a></dt>
+<dd><p>Defines a Logger node in the model.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>model</strong> (<a class="reference internal" href="Network.html#pyJMT.Network" title="pyJMT.Network"><em>Network</em></a>) – The model in which this node belongs.</p></li>
+<li><p><strong>name</strong> (<em>str</em>) – The name of the node.</p></li>
+<li><p><strong>logfileName</strong> (<em>str</em><em>, </em><em>optional</em>) – The name of the log file, defaults to ‘global.csv’.</p></li>
+<li><p><strong>logfilePath</strong> (<em>str</em><em>, </em><em>optional</em>) – The path to the log file, defaults to the directory of JMT.jar.</p></li>
+</ul>
+</dd>
+</dl>
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setClassSwitchRouting">
+<span class="sig-name descname"><span class="pre">setClassSwitchRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">sourcejobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">targetjobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routeprob</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">classchangeprob</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setClassSwitchRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the class switch routing for a source job class to a target job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>sourcejobclass</strong> (<em>JobClass</em>) – The source job class.</p></li>
+<li><p><strong>targetjobclass</strong> (<em>JobClass</em>) – The target job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>routeprob</strong> (<em>float</em>) – The routing probability.</p></li>
+<li><p><strong>classchangeprob</strong> (<em>float</em>) – The class change probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setDelimiter">
+<span class="sig-name descname"><span class="pre">setDelimiter</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">delimiter</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setDelimiter" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the delimiter for the log file.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>delimiter</strong> (<em>str</em>) – The delimiter.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setJobClass">
+<span class="sig-name descname"><span class="pre">setJobClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setJobClass" title="Permalink to this definition"></a></dt>
+<dd><p>Toggles logging of the job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bool</strong> (<em>bool</em>) – If true, the job class will be logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setJobID">
+<span class="sig-name descname"><span class="pre">setJobID</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setJobID" title="Permalink to this definition"></a></dt>
+<dd><p>Toggles logging of the job ID.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bool</strong> (<em>bool</em>) – If true, the job ID will be logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setLogLoggerName">
+<span class="sig-name descname"><span class="pre">setLogLoggerName</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setLogLoggerName" title="Permalink to this definition"></a></dt>
+<dd><p>Toggles logging of the logger name.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bool</strong> (<em>bool</em>) – If true, the logger name will be logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setProbRouting">
+<span class="sig-name descname"><span class="pre">setProbRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">target</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">val</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setProbRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the probability routing for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>target</strong> (<em>Node</em>) – The target node.</p></li>
+<li><p><strong>val</strong> (<em>float</em>) – The routing probability.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setRouting">
+<span class="sig-name descname"><span class="pre">setRouting</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">jobclass</span></span></em>, <em class="sig-param"><span class="n"><span class="pre">routing_strat</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setRouting" title="Permalink to this definition"></a></dt>
+<dd><p>Sets the routing strategy for a given job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>jobclass</strong> (<em>JobClass</em>) – The job class.</p></li>
+<li><p><strong>routing_strat</strong> (<a class="reference internal" href="Routingstrategies.html#pyJMT.RoutingStrategy" title="pyJMT.RoutingStrategy"><em>pyJMT.RoutingStrategy</em></a>) – The routing strategy.</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setStartTime">
+<span class="sig-name descname"><span class="pre">setStartTime</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setStartTime" title="Permalink to this definition"></a></dt>
+<dd><p>Toggles logging of the start time.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bool</strong> (<em>bool</em>) – If true, the start time will be logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setTimeAnyClass">
+<span class="sig-name descname"><span class="pre">setTimeAnyClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setTimeAnyClass" title="Permalink to this definition"></a></dt>
+<dd><p>Toggles logging of the time in any job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bool</strong> (<em>bool</em>) – If true, the time in any job class will be logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setTimeSameClass">
+<span class="sig-name descname"><span class="pre">setTimeSameClass</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setTimeSameClass" title="Permalink to this definition"></a></dt>
+<dd><p>Toggles logging of the time in the same job class.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bool</strong> (<em>bool</em>) – If true, the time in the same job class will be logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="py method">
+<dt class="sig sig-object py" id="pyJMT.Logger.setTimestamp">
+<span class="sig-name descname"><span class="pre">setTimestamp</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">bool</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.Logger.setTimestamp" title="Permalink to this definition"></a></dt>
+<dd><p>Toggles logging of the timestamp.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters<span class="colon">:</span></dt>
+<dd class="field-odd"><p><strong>bool</strong> (<em>bool</em>) – If true, the timestamp will be logged.</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Network.html" class="btn btn-neutral float-left" title="Network" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Jobclasses.html" class="btn btn-neutral float-right" title="Jobclasses" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, James Stadler.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>

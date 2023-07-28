@@ -1,0 +1,289 @@
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8" /><meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Scheduling Strategies &mdash; pyJMT 0.1 documentation</title>
+      <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+      <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+        <script src="_static/jquery.js?v=5d32c60e"></script>
+        <script src="_static/_sphinx_javascript_frameworks_compat.js?v=2cd50e6c"></script>
+        <script data-url_root="./" id="documentation_options" src="_static/documentation_options.js?v=e031e9a9"></script>
+        <script src="_static/doctools.js?v=888ff710"></script>
+        <script src="_static/sphinx_highlight.js?v=4825356b"></script>
+    <script src="_static/js/theme.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Drop Strategies" href="Dropstrategies.html" />
+    <link rel="prev" title="Service Distributions" href="Distributions.html" /> 
+</head>
+
+<body class="wy-body-for-nav"> 
+  <div class="wy-grid-for-nav">
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+
+          
+          
+          <a href="index.html" class="icon icon-home">
+            pyJMT
+          </a>
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" aria-label="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+        </div><div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="Navigation menu">
+              <p class="caption" role="heading"><span class="caption-text">Contents:</span></p>
+<ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="Network.html">Network</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Nodes.html">Nodes</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Jobclasses.html">Jobclasses</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Distributions.html">Service Distributions</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Scheduling Strategies</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#pyJMT.SchedStrategy"><code class="docutils literal notranslate"><span class="pre">SchedStrategy</span></code></a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.FCFS"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.FCFS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.FCFS_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.FCFS_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LCFS"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LCFS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LCFS_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LCFS_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.RAND"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.RAND</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.RAND_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.RAND_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.SJF"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.SJF</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.SJF_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.SJF_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LJF"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LJF</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LJF_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LJF_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.SEPT"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.SEPT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.SEPT_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.SEPT_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LEPT"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LEPT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LEPT_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LEPT_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.FCFS_PR"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.FCFS_PR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.FCFS_PR_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.FCFS_PR_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LCFS_PR"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LCFS_PR</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.LCFS_PR_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.LCFS_PR_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.SRPT"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.SRPT</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.SRPT_PRIORITY"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.SRPT_PRIORITY</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.PS"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.PS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.DPS"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.DPS</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="#pyJMT.SchedStrategy.GPS"><code class="docutils literal notranslate"><span class="pre">SchedStrategy.GPS</span></code></a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Dropstrategies.html">Drop Strategies</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Metrics.html">Metrics</a></li>
+<li class="toctree-l1"><a class="reference internal" href="Routingstrategies.html">Routing Strategies</a></li>
+</ul>
+
+        </div>
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap"><nav class="wy-nav-top" aria-label="Mobile navigation menu" >
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">pyJMT</a>
+      </nav>
+
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="Page navigation">
+  <ul class="wy-breadcrumbs">
+      <li><a href="index.html" class="icon icon-home" aria-label="Home"></a></li>
+      <li class="breadcrumb-item active">Scheduling Strategies</li>
+      <li class="wy-breadcrumbs-aside">
+            <a href="_sources/Schedulingstrategies.rst.txt" rel="nofollow"> View page source</a>
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+             
+  <section id="scheduling-strategies">
+<h1>Scheduling Strategies<a class="headerlink" href="#scheduling-strategies" title="Permalink to this heading"></a></h1>
+<dl class="py class enum">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy">
+<em class="property"><span class="pre">enum</span><span class="w"> </span></em><span class="sig-prename descclassname"><span class="pre">pyJMT.</span></span><span class="sig-name descname"><span class="pre">SchedStrategy</span></span><span class="sig-paren">(</span><em class="sig-param"><span class="n"><span class="pre">value</span></span></em><span class="sig-paren">)</span><a class="headerlink" href="#pyJMT.SchedStrategy" title="Permalink to this definition"></a></dt>
+<dd><p>An enumeration.</p>
+<p>Valid values are as follows:</p>
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.FCFS">
+<span class="sig-name descname"><span class="pre">FCFS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.FCFS:</span> <span class="pre">['NP',</span> <span class="pre">'TailStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.FCFS" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive FCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.FCFS_PRIORITY">
+<span class="sig-name descname"><span class="pre">FCFS_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.FCFS_PRIORITY:</span> <span class="pre">['NP',</span> <span class="pre">'TailStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.FCFS_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive priority based FCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LCFS">
+<span class="sig-name descname"><span class="pre">LCFS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LCFS:</span> <span class="pre">['NP',</span> <span class="pre">'HeadStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LCFS" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive LCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LCFS_PRIORITY">
+<span class="sig-name descname"><span class="pre">LCFS_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LCFS_PRIORITY:</span> <span class="pre">['NP',</span> <span class="pre">'HeadStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LCFS_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive priority based LCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.RAND">
+<span class="sig-name descname"><span class="pre">RAND</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.RAND:</span> <span class="pre">['NP',</span> <span class="pre">'RandStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.RAND" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive RAND policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.RAND_PRIORITY">
+<span class="sig-name descname"><span class="pre">RAND_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.RAND_PRIORITY:</span> <span class="pre">['NP',</span> <span class="pre">'RandStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.RAND_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive priority based RAND policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.SJF">
+<span class="sig-name descname"><span class="pre">SJF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.SJF:</span> <span class="pre">['NP',</span> <span class="pre">'SJFStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.SJF" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive SJF policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.SJF_PRIORITY">
+<span class="sig-name descname"><span class="pre">SJF_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.SJF_PRIORITY:</span> <span class="pre">['NP',</span> <span class="pre">'SJFStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.SJF_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive priority based SJF policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LJF">
+<span class="sig-name descname"><span class="pre">LJF</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LJF:</span> <span class="pre">['NP',</span> <span class="pre">'LJFStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LJF" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive LJF policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LJF_PRIORITY">
+<span class="sig-name descname"><span class="pre">LJF_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LJF_PRIORITY:</span> <span class="pre">['NP',</span> <span class="pre">'LJFStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LJF_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive priority based LJF policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.SEPT">
+<span class="sig-name descname"><span class="pre">SEPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.SEPT:</span> <span class="pre">['NP',</span> <span class="pre">'SEPTStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.SEPT" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive SEPT policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.SEPT_PRIORITY">
+<span class="sig-name descname"><span class="pre">SEPT_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.SEPT_PRIORITY:</span> <span class="pre">['NP',</span> <span class="pre">'SEPTStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.SEPT_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive priority based SEPT policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LEPT">
+<span class="sig-name descname"><span class="pre">LEPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LEPT:</span> <span class="pre">['NP',</span> <span class="pre">'LEPTStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LEPT" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive LEPT policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LEPT_PRIORITY">
+<span class="sig-name descname"><span class="pre">LEPT_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LEPT_PRIORITY:</span> <span class="pre">['NP',</span> <span class="pre">'LEPTStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LEPT_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Non-preemptive priority based LEPT policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.FCFS_PR">
+<span class="sig-name descname"><span class="pre">FCFS_PR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.FCFS_PR:</span> <span class="pre">['P',</span> <span class="pre">'FCFSPRStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.FCFS_PR" title="Permalink to this definition"></a></dt>
+<dd><p>Preemptive FCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.FCFS_PR_PRIORITY">
+<span class="sig-name descname"><span class="pre">FCFS_PR_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.FCFS_PR_PRIORITY:</span> <span class="pre">['P',</span> <span class="pre">'FCFSPRStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.FCFS_PR_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Preemptive priority based FCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LCFS_PR">
+<span class="sig-name descname"><span class="pre">LCFS_PR</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LCFS_PR:</span> <span class="pre">['P',</span> <span class="pre">'LCFSPRStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LCFS_PR" title="Permalink to this definition"></a></dt>
+<dd><p>Preemptive LCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.LCFS_PR_PRIORITY">
+<span class="sig-name descname"><span class="pre">LCFS_PR_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.LCFS_PR_PRIORITY:</span> <span class="pre">['P',</span> <span class="pre">'LCFSPRStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.LCFS_PR_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Preemptive priority based LCFS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.SRPT">
+<span class="sig-name descname"><span class="pre">SRPT</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.SRPT:</span> <span class="pre">['P',</span> <span class="pre">'SRPTStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.SRPT" title="Permalink to this definition"></a></dt>
+<dd><p>Preemptive SRPT policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.SRPT_PRIORITY">
+<span class="sig-name descname"><span class="pre">SRPT_PRIORITY</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.SRPT_PRIORITY:</span> <span class="pre">['P',</span> <span class="pre">'SRPTStrategyPriority']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.SRPT_PRIORITY" title="Permalink to this definition"></a></dt>
+<dd><p>Preemptive priority based SRPT policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.PS">
+<span class="sig-name descname"><span class="pre">PS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.PS:</span> <span class="pre">['PS',</span> <span class="pre">'TailStrategy',</span> <span class="pre">'EPSStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.PS" title="Permalink to this definition"></a></dt>
+<dd><p>Processor Sharing PS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.DPS">
+<span class="sig-name descname"><span class="pre">DPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.DPS:</span> <span class="pre">['PS',</span> <span class="pre">'TailStrategy',</span> <span class="pre">'DPSStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.DPS" title="Permalink to this definition"></a></dt>
+<dd><p>Processor Sharing DPS policy</p>
+</dd></dl>
+
+<dl class="py attribute">
+<dt class="sig sig-object py" id="pyJMT.SchedStrategy.GPS">
+<span class="sig-name descname"><span class="pre">GPS</span></span><em class="property"><span class="w"> </span><span class="p"><span class="pre">=</span></span><span class="w"> </span><span class="pre">&lt;SchedStrategy.GPS:</span> <span class="pre">['PS',</span> <span class="pre">'TailStrategy',</span> <span class="pre">'GPSStrategy']&gt;</span></em><a class="headerlink" href="#pyJMT.SchedStrategy.GPS" title="Permalink to this definition"></a></dt>
+<dd><p>Processor Sharing GPS policy</p>
+</dd></dl>
+
+</dd></dl>
+
+</section>
+
+
+           </div>
+          </div>
+          <footer><div class="rst-footer-buttons" role="navigation" aria-label="Footer">
+        <a href="Distributions.html" class="btn btn-neutral float-left" title="Service Distributions" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left" aria-hidden="true"></span> Previous</a>
+        <a href="Dropstrategies.html" class="btn btn-neutral float-right" title="Drop Strategies" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right" aria-hidden="true"></span></a>
+    </div>
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>&#169; Copyright 2023, James Stadler.</p>
+  </div>
+
+  Built with <a href="https://www.sphinx-doc.org/">Sphinx</a> using a
+    <a href="https://github.com/readthedocs/sphinx_rtd_theme">theme</a>
+    provided by <a href="https://readthedocs.org">Read the Docs</a>.
+   
+
+</footer>
+        </div>
+      </div>
+    </section>
+  </div>
+  <script>
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script> 
+
+</body>
+</html>
