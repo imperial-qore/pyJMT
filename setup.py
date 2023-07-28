@@ -2,7 +2,7 @@ from setuptools import setup, find_packages
 
 setup(
     name='pyJMT',
-    version='0.1.3',
+    version='0.1.4',
     author='James Stadler',
     author_email='jws22@ic.ac.uk',
     packages=find_packages(exclude=["test*", "docs*"]),
