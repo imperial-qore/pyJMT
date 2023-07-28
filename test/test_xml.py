@@ -104,8 +104,8 @@ class TestXML(unittest.TestCase):
         # model.jsimg_open()
         # model.saveTemp()
         model.saveResultsFileNamed("heyo", 1234)
-        pj.printResultsFromFile('heyo')
-        map = pj.getResultsFromFile("heyo")
+        pj.printResultsFromResultsFile('heyo')
+        map = pj.getResultsFromResultsFile("heyo")
 
         print("Opened ok")
 

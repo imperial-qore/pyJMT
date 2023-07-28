@@ -30,15 +30,16 @@ def add_extension_if_none(filename, extension):
     else:
         return filename
 
-def saveResultsFromJsimg(fileName, seed=None, maxTime=600):
+def saveResultsFromJsimgFile(fileName, seed=None, maxTime=600):
     """
-        Runs a simulation and generates a JMT results file with the given fileName
-         :param fileName: The file name for the results file to be given.
-   :type fileName: str
-   :param seed: The seed for the simulation. Leave blank or as None for a random seed
-   :type seed: int, optional
+    Runs a simulation and generates a JMT results file with the given fileName
+
+    :param fileName: The file name for the results file to be given.
+    :type fileName: str
+    :param seed: The seed for the simulation. Leave blank or as None for a random seed
+    :type seed: int, optional
     :param maxTime: The maximum time for the simulation to run. Default is 600 seconds
-   :type maxTime: int, optional
+    :type maxTime: int, optional
     """
     global JMTPath
     dir_path = os.path.join(os.getcwd(), "output_files")
@@ -53,7 +54,7 @@ def saveResultsFromJsimg(fileName, seed=None, maxTime=600):
     print(cmd)
     subprocess.run(cmd, shell=True)
 
-def printResultsFromFile(fileName):
+def printResultsFromResultsFile(fileName):
     """
     Prints results to console from a JMT results file
 
@@ -104,7 +105,7 @@ def printResultsFromFile(fileName):
                 print(f"{measure.get(attr, 'N/A'):<{col_widths[attr]}}", end=" ")
         print()
 
-def getResultsFromFile(fileName):
+def getResultsFromResultsFile(fileName):
     """
     Returns a dictionary of the results from a results file
 
@@ -233,6 +234,7 @@ class Network:
     def addLink(self, source, target):
         """
             Adds a link between two nodes
+
             :param source: The start node of the link
             :type source: Node
             :param target: The end node of the link
@@ -249,6 +251,7 @@ class Network:
     def addLinks(self, linkList):
         """
             Adds many links between nodes, takes in a list of pairs of nodes.
+
             :param linkList: The list of pairs of nodes to add links for.
             :type linkList: [(Node, Node)]
         """
@@ -257,7 +260,8 @@ class Network:
 
     def link(self, p):
         """
-              Adds many between links nodes, takes in a routing matrix.
+            Adds many between links nodes, takes in a routing matrix.
+
             :param p: The routing matrix.
             :type p: Routing Matrix
         """
@@ -286,6 +290,7 @@ class Network:
     def removeLink(self, source, target):
         """
            Removes a link between two nodes.
+
            :param source: The start node of the link.
            :type source: Node
            :param target: The end node of the link.
@@ -301,9 +306,10 @@ class Network:
 
     def removeLinks(self, linkList):
         """
-             Removes many links between nodes, takes in a list of pairs of nodes.
-            :param linkList: The list of pairs of nodes to remove links for.
-            :type linkList: [(Node, Node)]
+        Removes many links between nodes, takes in a list of pairs of nodes.
+
+        :param linkList: The list of pairs of nodes to remove links for.
+        :type linkList: [(Node, Node)]
         """
         for source, target in linkList:
             self.removeLink(source, target)
@@ -326,9 +332,10 @@ class Network:
 
     def saveNamedJsimg(self, fileName):
         """
-             Saves the current network to a file in output_files with a given name.
-             :param fileName: The name of the file.
-                     :type fileName: str
+        Saves the current network to a file in output_files with a given name.
+
+        :param fileName: The name of the file.
+        :type fileName: str
          """
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
@@ -336,9 +343,11 @@ class Network:
 
     def saveTempJsimg(self):
         """
-                   Saves the current network to a file in output_files with a temporary name and returns the name.
-                   :returns temporary file name
-               """
+           Saves the current network to a file in output_files with a temporary name and returns the name.
+
+           :return: temporary file name
+           :rtype: str
+        """
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
 
@@ -350,24 +359,26 @@ class Network:
 
     def saveResultsFileNamed(self, fileName, seed=None):
         """
-            Runs a simulation and generates a JMT results file with the given fileName from this Network as well as a Jsimg file
-             :param fileName: The file name for the results file to be given.
-           :type fileName: str
-           :param seed: The seed for the simulation.
-           :type seed: int, optional
+        Runs a simulation and generates a JMT results file with the given fileName from this Network as well as a Jsimg file
+
+        :param fileName: The file name for the results file to be given.
+        :type fileName: str
+        :param seed: The seed for the simulation.
+        :type seed: int, optional
         """
         self.saveNamedJsimg(fileName)
-        saveResultsFromJsimg(fileName, seed)
+        saveResultsFromJsimgFile(fileName, seed)
 
     def printResults(self, seed=None):
         """
                Prints results to console without saving anything
+
                 :param seed: The seed for the simulation.
                 :type seed: int, optional
            """
         tempfileName = self.saveTempJsimg()
         self.saveResultsFileNamed(tempfileName, seed)
-        printResultsFromFile(tempfileName)
+        printResultsFromResultsFile(tempfileName)
         dir = os.path.join(os.getcwd(), "output_files")
         os.unlink(os.path.join(dir, add_extension_if_none(tempfileName, "jsimg")))
         os.unlink(os.path.join(dir, f'{add_extension_if_none(tempfileName, "jsimg")}-result.jsim'))
@@ -381,7 +392,7 @@ class Network:
         """
         tempfileName = self.saveTempJsimg()
         self.saveResultsFileNamed(tempfileName, seed)
-        dict = getResultsFromFile(tempfileName)
+        dict = getResultsFromResultsFile(tempfileName)
         dir = os.path.join(os.getcwd(), "output_files")
         os.unlink(os.path.join(dir, add_extension_if_none(tempfileName, "jsimg")))
         os.unlink(os.path.join(dir, f'{add_extension_if_none(tempfileName, "jsimg")}-result.jsim'))
@@ -390,7 +401,8 @@ class Network:
     def init_routing_matrix(self):
         """
                Creates and returns a routing matrix for use with Network.link
-                :returns p : Routing Matrix
+
+                :return: Routing Matrix p
            """
         # TODO see if this is ok
         classes = self.get_classes()
