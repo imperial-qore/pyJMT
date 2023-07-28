@@ -11,6 +11,17 @@ import tempfile
 import requests
 from datetime import datetime
 
+JMTPath = None
+def installJMT():
+    global JMTPath
+    if JMTPath is None:
+        if not os.path.isfile("JMT.jar"):
+            # If not, download it
+            print(f"JMT.jar does not exist. Downloading from http://jmt.sourceforge.net/latest/JMT.jar")
+            response = requests.get("http://jmt.sourceforge.net/latest/JMT.jar")
+            with open("JMT.jar", 'wb') as f:
+                f.write(response.content)
+        JMTPath = os.path.join(os.getcwd(), "JMT.jar")
 
 def add_extension_if_none(filename, extension):
     base_name, ext = os.path.splitext(filename)
@@ -18,6 +29,7 @@ def add_extension_if_none(filename, extension):
         return f"{filename}.{extension}"
     else:
         return filename
+
 
 
 class Network:
@@ -48,13 +60,7 @@ class Network:
         self.maxTime = maxTime
         self.logDelimiter = ";"
         # Check if file exists
-        if not os.path.isfile("JMT.jar"):
-            # If not, download it
-            print(f"JMT.jar does not exist. Downloading from http://jmt.sourceforge.net/latest/JMT.jar")
-            response = requests.get("http://jmt.sourceforge.net/latest/JMT.jar")
-            with open("JMT.jar", 'wb') as f:
-                f.write(response.content)
-        self.JMTPath = os.path.join(os.getcwd(), "JMT.jar")
+        installJMT()
 
 
     def removeNode(self, node):
@@ -186,13 +192,14 @@ class Network:
         """
             Opens the Network in JMT, very useful for debugging
         """
+        global JMTPath
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
 
         # Create a temporary file in the specific directory
         with tempfile.NamedTemporaryFile(dir=dir_path, delete=False) as temp:
             self.generate_xml(os.path.join(dir_path, f"{temp.name}"))
-            cmd = f'java -cp "{self.JMTPath}" jmt.commandline.Jmt jsimg "{os.path.join(dir_path, f"{temp.name}")}"'
+            cmd = f'java -cp "{JMTPath}" jmt.commandline.Jmt jsimg "{os.path.join(dir_path, f"{temp.name}")}"'
             subprocess.run(cmd, shell=True)
 
         os.unlink(os.path.join(dir_path, f"{temp.name}"))
@@ -232,23 +239,26 @@ class Network:
         self.saveNamedJsimg(fileName)
         self.saveResultsFromJsimg(fileName, seed)
 
-    def saveResultsFromJsimg(self, fileName, seed=None):
+    def saveResultsFromJsimg(self, fileName, seed=None, maxTime=600):
         """
             Runs a simulation and generates a JMT results file with the given fileName from this Network
              :param fileName: The file name for the results file to be given.
        :type fileName: str
-       :param seed: The seed for the simulation.
+       :param seed: The seed for the simulation. Leave blank or as None for a random seed
        :type seed: int, optional
+        :param maxTime: The maximum time for the simulation to run. Default is 600 seconds
+       :type maxTime: int, optional
         """
+        global JMTPath
         dir_path = os.path.join(os.getcwd(), "output_files")
         os.makedirs(dir_path, exist_ok=True)
         adds = " "
         if not seed is None:
             adds += f"-seed {seed} "
-        if not self.maxTime is None:
-            adds += f"-maxtime {self.maxTime} "
+        if not maxTime is None:
+            adds += f"-maxtime {maxTime} "
 
-        cmd = f'java -cp "{self.JMTPath}" jmt.commandline.Jmt sim "{os.path.join(dir_path, add_extension_if_none(fileName, "jsimg"))}" {adds}'
+        cmd = f'java -cp "{JMTPath}" jmt.commandline.Jmt sim "{os.path.join(dir_path, add_extension_if_none(fileName, "jsimg"))}" {adds}'
         print(cmd)
         subprocess.run(cmd, shell=True)
 
