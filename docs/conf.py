@@ -17,7 +17,7 @@ extensions = ['sphinx.ext.autodoc', 'enum_tools.autoenum']
 
 import os
 import sys
-sys.path.insert(0, os.path.join(os.path.abspath(".."), "pyJMT"))
+sys.path.insert(0, os.path.abspath('..'))
 
 
 templates_path = ['_templates']
