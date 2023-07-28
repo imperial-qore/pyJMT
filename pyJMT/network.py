@@ -556,7 +556,6 @@ class Network:
         for join in self.nodes['joins']:
             node = ET.SubElement(sim, "node", name=join.name)
 
-            ET.SubElement(node, "section", className="ServiceTunnel")
 
             # generate join section
             joinSection = ET.SubElement(node, "section", className="Join")
@@ -570,6 +569,9 @@ class Network:
                 innersubparm = ET.SubElement(outersubparm, "subParameter", classPath="java.lang.Integer",
                                              name="numRequired")
                 ET.SubElement(innersubparm, "value").text = "-1"
+
+            ET.SubElement(node, "section", className="ServiceTunnel")
+
 
             self.generate_router(join, node)
 
@@ -662,7 +664,7 @@ class Network:
     def generate_metrics(self, sim):
         if self.defaultMetrics:
             # TODO CHECK WHAT DEFAULTS SHOULD BE EXACTLY
-            measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"] #TODO RESIDENCE TIME
+            measuresQueue = ["Number of Customers", "Utilization", "Response Time", "Throughput", "Arrival Rate"]
             for measure in measuresQueue:
                 for queue in self.nodes['queues']:
                     for oclass in queue.services.keys():
