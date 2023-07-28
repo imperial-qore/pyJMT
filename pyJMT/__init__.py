@@ -1,5 +1,5 @@
 # In __init__.py
-from .network import Network
+from .network import Network, getResultsFromFile, saveResultsFromJsimg, printResultsFromFile
 from .nodes import Source, Sink, Queue, Delay, Router, ClassSwitch, Fork, Join, FiniteCapacityRegion, Logger
 from .classes import OpenClass, ClosedClass
 from .service_distributions import Cox, Det, Disabled, Erlang, Exp, Gamma, HyperExp, Lognormal, Normal, Pareto, Replayer, \

@@ -30,6 +30,126 @@ def add_extension_if_none(filename, extension):
     else:
         return filename
 
+def saveResultsFromJsimg(fileName, seed=None, maxTime=600):
+    """
+        Runs a simulation and generates a JMT results file with the given fileName
+         :param fileName: The file name for the results file to be given.
+   :type fileName: str
+   :param seed: The seed for the simulation. Leave blank or as None for a random seed
+   :type seed: int, optional
+    :param maxTime: The maximum time for the simulation to run. Default is 600 seconds
+   :type maxTime: int, optional
+    """
+    global JMTPath
+    dir_path = os.path.join(os.getcwd(), "output_files")
+    os.makedirs(dir_path, exist_ok=True)
+    adds = " "
+    if not seed is None:
+        adds += f"-seed {seed} "
+    if not maxTime is None:
+        adds += f"-maxtime {maxTime} "
+
+    cmd = f'java -cp "{JMTPath}" jmt.commandline.Jmt sim "{os.path.join(dir_path, add_extension_if_none(fileName, "jsimg"))}" {adds}'
+    print(cmd)
+    subprocess.run(cmd, shell=True)
+
+def printResultsFromFile(fileName):
+    """
+    Prints results to console from a JMT results file
+
+    :param fileName: The file name for the results file to print from.
+    :type fileName: str
+    """
+    dir_path = os.path.join(os.getcwd(), "output_files")
+    filewithext = add_extension_if_none(fileName, 'jsimg')
+    tree = ET.parse(f'{os.path.join(dir_path, f"{filewithext}-result.jsim")}')
+    root = tree.getroot()
+
+    # Extract the model name from the root element
+    model_name = root.attrib.get('modelName', 'Unknown Model')
+
+    # Get all measures from the XML
+    measures = [measure.attrib for measure in root.findall('measure')]
+
+    # Sort the measures by station and then by class
+    measures_sorted = sorted(measures, key=lambda x: (x['station'], x['class']))
+
+    # Get unique attribute names from all measures
+    unique_attributes = set()
+    for measure in measures_sorted:
+        unique_attributes.update(measure.keys())
+
+    # Create a dictionary to store the column widths and initialize with the lengths of column headers
+    col_widths = {attr: len(attr) for attr in unique_attributes}
+
+    # Update column widths based on the length of attribute values in the measures
+    for measure in measures_sorted:
+        for attr in unique_attributes:
+            col_widths[attr] = max(col_widths[attr], len(measure.get(attr, 'N/A')))
+
+    # Print the column headers with Station and JobClass as the first two columns
+    print(f"{'Station':<{col_widths['station']}} {'JobClass':<{col_widths['class']}}", end=" ")
+    for attr in unique_attributes:
+        if attr not in ['station', 'class']:
+            print(f"{attr:<{col_widths[attr]}}", end=" ")
+    print()
+
+    # Print the table rows
+    for measure in measures_sorted:
+        station = measure['station']
+        job_class = measure['class']
+        print(f"{station:<{col_widths['station']}} {job_class:<{col_widths['class']}}", end=" ")
+        for attr in unique_attributes:
+            if attr not in ['station', 'class']:
+                print(f"{measure.get(attr, 'N/A'):<{col_widths[attr]}}", end=" ")
+        print()
+
+def getResultsFromFile(fileName):
+    """
+    Returns a dictionary of the results from a results file
+
+    :param fileName: The file name for the results file to print from.
+    :type fileName: str
+    """
+    dir_path = os.path.join(os.getcwd(), "output_files")
+    filewithext = add_extension_if_none(fileName, 'jsimg')
+    tree = ET.parse(f'{os.path.join(dir_path, f"{filewithext}-result.jsim")}')
+    root = tree.getroot()
+
+    # Extract the model name from the root element
+    model_name = root.attrib.get('modelName', 'Unknown Model')
+
+    # Get all measures from the XML
+    measures = [measure.attrib for measure in root.findall('measure')]
+
+    # Sort the measures by station and then by class
+    measures_sorted = sorted(measures, key=lambda x: (x['station'], x['class']))
+
+    # Get unique attribute names from all measures
+    unique_attributes = set()
+    for measure in measures_sorted:
+        unique_attributes.update(measure.keys())
+
+    # Prepare the final dictionary
+    results = {}
+
+    # Populate the dictionary
+    for measure in measures_sorted:
+        station = measure['station']
+        job_class = measure['class']
+
+        # Initialize dictionaries if they don't exist yet
+        if station not in results:
+            results[station] = {}
+        if job_class not in results[station]:
+            results[station][job_class] = {}
+
+        # Populate the job class dictionary
+        for attr in unique_attributes:
+            if attr not in ['station', 'class']:
+                results[station][job_class][attr] = measure.get(attr, 'N/A')
+
+    return results
 
 
 class Network:
@@ -237,79 +357,7 @@ class Network:
            :type seed: int, optional
         """
         self.saveNamedJsimg(fileName)
-        self.saveResultsFromJsimg(fileName, seed)
-
-    def saveResultsFromJsimg(self, fileName, seed=None, maxTime=600):
-        """
-            Runs a simulation and generates a JMT results file with the given fileName from this Network
-             :param fileName: The file name for the results file to be given.
-       :type fileName: str
-       :param seed: The seed for the simulation. Leave blank or as None for a random seed
-       :type seed: int, optional
-        :param maxTime: The maximum time for the simulation to run. Default is 600 seconds
-       :type maxTime: int, optional
-        """
-        global JMTPath
-        dir_path = os.path.join(os.getcwd(), "output_files")
-        os.makedirs(dir_path, exist_ok=True)
-        adds = " "
-        if not seed is None:
-            adds += f"-seed {seed} "
-        if not maxTime is None:
-            adds += f"-maxtime {maxTime} "
-
-        cmd = f'java -cp "{JMTPath}" jmt.commandline.Jmt sim "{os.path.join(dir_path, add_extension_if_none(fileName, "jsimg"))}" {adds}'
-        print(cmd)
-        subprocess.run(cmd, shell=True)
-
-    def printResultsFromFile(self, fileName):
-        """
-            Prints results to console from a JMT results file
-
-        """
-        dir_path = os.path.join(os.getcwd(), "output_files")
-        filewithext = add_extension_if_none(fileName, 'jsimg')
-        tree = ET.parse(f'{os.path.join(dir_path, f"{filewithext}-result.jsim")}')
-        root = tree.getroot()
-
-        # Extract the model name from the root element
-        model_name = root.attrib.get('modelName', 'Unknown Model')
-
-        # Get all measures from the XML
-        measures = [measure.attrib for measure in root.findall('measure')]
-
-        # Sort the measures by station and then by class
-        measures_sorted = sorted(measures, key=lambda x: (x['station'], x['class']))
-
-        # Get unique attribute names from all measures
-        unique_attributes = set()
-        for measure in measures_sorted:
-            unique_attributes.update(measure.keys())
-
-        # Create a dictionary to store the column widths and initialize with the lengths of column headers
-        col_widths = {attr: len(attr) for attr in unique_attributes}
-
-        # Update column widths based on the length of attribute values in the measures
-        for measure in measures_sorted:
-            for attr in unique_attributes:
-                col_widths[attr] = max(col_widths[attr], len(measure.get(attr, 'N/A')))
-
-        # Print the column headers with Station and JobClass as the first two columns
-        print(f"{'Station':<{col_widths['station']}} {'JobClass':<{col_widths['class']}}", end=" ")
-        for attr in unique_attributes:
-            if attr not in ['station', 'class']:
-                print(f"{attr:<{col_widths[attr]}}", end=" ")
-        print()
-
-        # Print the table rows
-        for measure in measures_sorted:
-            station = measure['station']
-            job_class = measure['class']
-            print(f"{station:<{col_widths['station']}} {job_class:<{col_widths['class']}}", end=" ")
-            for attr in unique_attributes:
-                if attr not in ['station', 'class']:
-                    print(f"{measure.get(attr, 'N/A'):<{col_widths[attr]}}", end=" ")
-            print()
+        saveResultsFromJsimg(fileName, seed)
 
     def printResults(self, seed=None):
         """
@@ -319,10 +367,25 @@ class Network:
            """
         tempfileName = self.saveTempJsimg()
         self.saveResultsFileNamed(tempfileName, seed)
-        self.printResultsFromFile(tempfileName)
+        printResultsFromFile(tempfileName)
         dir = os.path.join(os.getcwd(), "output_files")
         os.unlink(os.path.join(dir, add_extension_if_none(tempfileName, "jsimg")))
         os.unlink(os.path.join(dir, f'{add_extension_if_none(tempfileName, "jsimg")}-result.jsim'))
+
+    def getResults(self, seed=None):
+        """
+        Returns a dictionary of the results from the current network's simulation without saving anything.
+
+        :param seed: The seed for the simulation.
+        :type seed: int, optional
+        """
+        tempfileName = self.saveTempJsimg()
+        self.saveResultsFileNamed(tempfileName, seed)
+        dict = getResultsFromFile(tempfileName)
+        dir = os.path.join(os.getcwd(), "output_files")
+        os.unlink(os.path.join(dir, add_extension_if_none(tempfileName, "jsimg")))
+        os.unlink(os.path.join(dir, f'{add_extension_if_none(tempfileName, "jsimg")}-result.jsim'))
+        return dict
 
     def init_routing_matrix(self):
         """

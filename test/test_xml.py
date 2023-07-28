@@ -79,6 +79,9 @@ class TestXML(unittest.TestCase):
 
         model.printResults()
 
+        model.getResults()
+
+
     def test_Saving(self):
         # declare model
         model = pj.Network("M/M/1")
@@ -101,7 +104,8 @@ class TestXML(unittest.TestCase):
         # model.jsimg_open()
         # model.saveTemp()
         model.saveResultsFileNamed("heyo", 1234)
-        model.printResultsFromFile('heyo')
+        pj.printResultsFromFile('heyo')
+        map = pj.getResultsFromFile("heyo")
 
         print("Opened ok")
 
