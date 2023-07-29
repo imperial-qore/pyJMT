@@ -5,7 +5,7 @@ The pyJMT package is a python wrapper for the [Java Modelling Tools](https://jmt
 A short getting started guide along with installation instructions can be found [here](https://github.com/imperial-qore/pyJMT/blob/main/pyJMT_manual.pdf), with full documentation available [here](https://imperial-qore.github.io/pyJMT/).
 
 # Example
-The following example shows the solution of a basic M/M/1 queue:
+The following example shows the solution of a basic M/M/1 queueing system:
 ```
 import pyJMT as jmt
 
