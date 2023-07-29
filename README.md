@@ -32,9 +32,9 @@ if __name__ == "__main__":
     example_mm1()
 ```
 
-You can alternatively run it as
+You can alternatively run the above code as
 ```
-python3 getting-started.py
+python3 getting_started.py
 ```
 
 Additional sample models are available in [examples.py](https://raw.githubusercontent.com/imperial-qore/pyJMT/examples.py)
