@@ -6,8 +6,8 @@ def example_mm1():
     queue = jmt.Queue(model, "myQueue", jmt.SchedStrategy.FCFS)
     sink = jmt.Sink(model, "mySink")
 
-    # An open class with priority of 2
-    openclass = jmt.OpenClass(model, "Class1", 2)
+    # An open class 
+    openclass = jmt.OpenClass(model, "Class1")
     source.setArrival(openclass, jmt.Exp(0.5))
     queue.setService(openclass, jmt.Exp(1.0))
 
