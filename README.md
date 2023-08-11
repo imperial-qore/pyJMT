@@ -47,7 +47,7 @@ myQueue  Class1 61440           0.49916726343571804 true       115              
 myQueue  Class1 61440           0.4991462764898616  true       115              Arrival Rate        0.48942754624081064 station  0.01 0.03      0.5092588027856187 1000000    
 mySource Class1 61440           0.4991462764898616  true       115              Throughput          0.48942754624081064 station  0.01 0.03      0.5092588027856187 1000000    
 mySource Class1 61440           0.4991462764898616  true       115              Arrival Rate        0.48942754624081064 station  0.01 0.03      0.5092588027856187 1000000    
-``
+```
 and the simulation result file will be made  available under the output_files/ folder.
 
 Additional sample models are available in [examples.py](https://raw.githubusercontent.com/imperial-qore/pyJMT/main/examples.py).
