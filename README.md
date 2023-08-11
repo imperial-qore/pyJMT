@@ -33,6 +33,7 @@ if __name__ == "__main__":
 
 You can alternatively run the above code as
 ```
+pip install -r requirements.txt
 python3 getting_started.py
 ```
 
