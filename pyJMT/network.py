@@ -51,7 +51,7 @@ def saveResultsFromJsimgFile(fileName, seed=None, maxTime=600):
         adds += f"-maxtime {maxTime} "
 
     cmd = f'java -cp "{JMTPath}" jmt.commandline.Jmt sim "{os.path.join(dir_path, add_extension_if_none(fileName, "jsimg"))}" {adds}'
-    print(cmd)
+    #print(cmd)
     subprocess.run(cmd, shell=True)
 
 def printResultsFromResultsFile(fileName):
