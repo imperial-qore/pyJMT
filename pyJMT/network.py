@@ -138,17 +138,20 @@ def getResultsFromResultsFile(fileName):
     for measure in measures_sorted:
         station = measure['station']
         job_class = measure['class']
+        measure_type = measure['measureType']
 
         # Initialize dictionaries if they don't exist yet
         if station not in results:
             results[station] = {}
         if job_class not in results[station]:
             results[station][job_class] = {}
+        if measure_type not in results[station][job_class]:
+            results[station][job_class][measure_type] = {}
 
         # Populate the job class dictionary
         for attr in unique_attributes:
             if attr not in ['station', 'class']:
-                results[station][job_class][attr] = measure.get(attr, 'N/A')
+                results[station][job_class][measure_type][attr] = measure.get(attr, 'N/A')
 
     return results
 

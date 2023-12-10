@@ -58,3 +58,4 @@ coverage.xml
 JMT.jar
 docs/.doctrees
 docs/_build
+test.py
